@@ -1,0 +1,7 @@
+node_modules/
+dist/
+*.log
+.local-unused-assets/
+.local-docs/
+.agents/
+.codex/
