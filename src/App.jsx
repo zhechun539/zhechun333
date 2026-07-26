@@ -3,6 +3,7 @@ import {
   ArrowUpRight,
   BookOpenText,
   CheckCircle2,
+  ChevronDown,
   FileText,
   Leaf,
   Mail,
@@ -21,8 +22,8 @@ const assetUrl = (path) => `${import.meta.env.BASE_URL}${path}`;
 
 const navItems = [
   { label: '首页', href: '#home' },
-  { label: '经历', href: '#about' },
-  { label: '项目', href: '#projects' },
+  { label: '关于', href: '#about' },
+  { label: '经历', href: '#projects' },
   { label: '优势', href: '#strengths' },
   { label: '联系', href: '#contact' },
 ];
@@ -117,53 +118,60 @@ const experience = [
     type: '正式工作',
     role: '自媒体运营',
     company: '深圳华大基因细胞科技有限公司',
-    text: '负责公众号、小红书、短视频与 SEO 相关内容，参与品牌自媒体运营、小红书种草项目和节日互动策划。',
+    summaryLabel: '职责',
+    text: '公众号、小红书与短视频统筹，参与品牌种草。',
   },
   {
     time: '2024.12 - 2025.03',
     type: '实习',
     role: '小红书运营',
     company: '网易网络有限公司',
-    text: '从 0 到 1 搭建教育类小红书矩阵账号，围绕自然流内容完成咨询承接与留资沉淀。',
+    summaryLabel: '成果',
+    text: '从 0 到 1 搭建教育类账号矩阵，承接咨询留资。',
   },
   {
     time: '2024.06 - 2024.09',
     type: '实习',
     role: '新媒体运营',
     company: '畅捷通信息技术股份有限公司',
-    text: '围绕 B 端财务软件场景策划小红书内容，并同步分发至短视频平台，月均沉淀线索 30+。',
+    summaryLabel: '成果',
+    text: 'B 端内容多平台分发，月均沉淀 30+ 线索。',
   },
   {
     time: '2023.02 - 2023.11',
     type: '线上兼职',
     role: '新媒体运营 / 小红书运营',
     company: '北京趣拿软件科技有限公司（去哪儿）',
-    text: '撰写旅游攻略内容并优化标题、封面与引流路径，团队排名前三，获得银牌。',
+    summaryLabel: '成果',
+    text: '旅游攻略与引流优化，团队前三、获银牌。',
   },
   {
     time: '阶段性项目',
     type: '实习',
     role: '热点内容运营',
     company: '北京金堤科技有限公司（天眼查）',
-    text: '负责微博热点内容策划与传播，以及知乎选题、长文撰写和互动设计；微博热点排名第 1，知乎单篇阅读 10W+。',
+    summaryLabel: '成果',
+    text: '微博热点第 1，知乎单篇阅读 10W+。',
   },
   {
     time: '阶段性项目',
     type: '内容供给',
     role: '官方账号内容运营',
     company: '北京世纪好未来教育科技有限公司（学而思）',
-    text: '收集 37 个城市分校信息并完成本地化内容整理，为官方小红书账号及全国分部提供可复用内容，账号曝光 100W+。',
+    summaryLabel: '成果',
+    text: '整理 37 城素材，官方账号曝光 100W+。',
   },
   {
     time: '阶段性项目',
     type: '实习',
     role: '游戏宣发写作',
     company: '小黑羊（天津）文化传媒有限公司',
-    text: '围绕网络手游撰写游戏宣传稿，完成面向不同传播场景的内容表达，相关稿件全网阅读量超过 80W+。',
+    summaryLabel: '成果',
+    text: '手游宣发稿全网阅读 80W+。',
   },
 ];
 
-const projects = [
+const projectCatalog = [
   {
     title: '不牛马厨房',
     subtitle: 'AI 转盘点餐小程序',
@@ -178,7 +186,7 @@ const projects = [
       url: 'https://zhechun.space',
     },
     stats: [
-      { value: '240', label: '道家常菜' },
+      { value: '800', label: '道家常菜' },
       { value: '1', label: '个上线产品' },
       { value: '1', label: '套原创 Skill' },
     ],
@@ -318,7 +326,7 @@ const projects = [
       { group: '天眼查 · 知乎', label: '高三教师工伤认定', url: 'https://www.zhihu.com/question/5197691592/answer/42288031842' },
     ],
     summary:
-      '参与热点内容传播与官方账号内容供给，围绕平台语境完成选题、长文撰写和本地化内容信息整理。',
+      '在天眼查负责微博热点策划与传播、知乎选题和长文撰写；同时为学而思收集 37 个城市分校信息，整理可复用的本地化内容，支持官方账号与全国分部持续发布。',
   },
   {
     title: '个人账号运营',
@@ -361,6 +369,8 @@ const projects = [
       '补充展示公众号文章、校园媒体内容、旅游图文稿件和网络小说作品，体现更长线的文字表达与内容生产能力。',
   },
 ];
+
+const projects = [...projectCatalog.slice(1), projectCatalog[0]];
 
 const strengths = [
   {
@@ -921,7 +931,13 @@ function InteractivePortrait() {
         <span className="portrait-count" aria-hidden="true">0{activeDirection + 1}</span>
       </div>
       <figcaption>
-        <span className="portrait-label">求职方向</span>
+        <div className="portrait-heading-row">
+          <span className="portrait-label">求职方向</span>
+          <a className="portrait-email" href="mailto:2436528353@qq.com" aria-label="发送邮件至 2436528353@qq.com">
+            <Mail aria-hidden="true" />
+            <span>2436528353@qq.com</span>
+          </a>
+        </div>
         <strong>运营、策划、产品类</strong>
         <div className="portrait-tabs" role="tablist" aria-label="求职方向能力切换">
           {profileDirections.map((item, index) => (
@@ -960,7 +976,7 @@ function About() {
   return (
     <section className="section about-section" id="about">
       <div className="section-heading reveal-on-scroll">
-        <p className="eyebrow">About & Experience</p>
+        <p className="eyebrow">关于与经历</p>
         <h2>偏内容创意型的新媒体运营。</h2>
         <p>
           我关注内容在不同平台里的角色分工：小红书负责种草触达与心智渗透，公众号承接深度表达与信任建立，评论区和私信用于沉淀互动反馈和转化线索。
@@ -969,12 +985,6 @@ function About() {
       <div className="about-grid">
         <InteractivePortrait />
         <div className="about-body">
-          <div className="contact-strip reveal-on-scroll" aria-label="联系方式">
-            <a href="mailto:2436528353@qq.com">
-              <Mail aria-hidden="true" />
-              2436528353@qq.com
-            </a>
-          </div>
           <div className="timeline">
             {experience.map((item, index) => (
               <article className="timeline-item reveal-on-scroll" key={`${item.company}-${item.time}`}>
@@ -990,7 +1000,10 @@ function About() {
                     <span className="experience-type">{item.type}</span>
                   </div>
                   <p className="company">{item.company}</p>
-                  <p>{item.text}</p>
+                  <div className="career-summary">
+                    <span className="career-summary-label">{item.summaryLabel}</span>
+                    <span className="career-summary-text">{item.text}</span>
+                  </div>
                 </div>
               </article>
             ))}
@@ -1030,26 +1043,25 @@ function ImageLightbox({ activeIndex, images, onClose, onMove, title }) {
     };
   }, [imageCount, onClose, onMove]);
 
+  const handleOutsideImageClick = (event) => {
+    const target = event.target;
+
+    if (target instanceof Element && target.closest('.image-lightbox-image, button')) {
+      return;
+    }
+
+    onClose();
+  };
+
   return createPortal(
     <div
       className="image-lightbox"
       role="dialog"
       aria-modal="true"
       aria-label={`${title}作品大图`}
-      onMouseDown={(event) => {
-        if (event.target === event.currentTarget) {
-          onClose();
-        }
-      }}
+      onClick={handleOutsideImageClick}
     >
-      <div
-        className="image-lightbox-dialog"
-        onMouseDown={(event) => {
-          if (event.target === event.currentTarget) {
-            onClose();
-          }
-        }}
-      >
+      <div className="image-lightbox-dialog">
         <button
           className="image-lightbox-close"
           type="button"
@@ -1301,6 +1313,24 @@ function ProjectSourceLinks({ links, title }) {
     return null;
   }
 
+  if (links.length === 1) {
+    const [link] = links;
+
+    return (
+      <nav className="project-source-links project-source-links-single" aria-label={`${title}在线产品入口`}>
+        <div className="project-source-single-copy">
+          <span>在线产品</span>
+          <strong>{title}</strong>
+          <small>{link.label}</small>
+        </div>
+        <a className="project-source-single-action" href={link.url} target="_blank" rel="noreferrer noopener">
+          <span>打开在线体验</span>
+          <ArrowUpRight aria-hidden="true" />
+        </a>
+      </nav>
+    );
+  }
+
   const linkGroups = links.reduce((groups, link) => {
     const groupName = link.group || '更多作品';
     const existingGroup = groups.find((group) => group.name === groupName);
@@ -1316,18 +1346,25 @@ function ProjectSourceLinks({ links, title }) {
 
   return (
     <nav className="project-source-links" aria-label={`${title}原始作品链接`}>
-      <h4 className="project-source-heading">原始作品链接</h4>
-      <div className="project-source-groups" style={{ '--source-group-count': linkGroups.length }}>
-        {linkGroups.map((group) => (
-          <section
-            className="project-source-group"
-            key={group.name}
-            style={{ '--source-row-span': 64 + group.links.length * 38 }}
-          >
-            <h5>{group.name}</h5>
+      <header className="project-source-header">
+        <div>
+          <span className="project-source-kicker">作品索引</span>
+          <h4 className="project-source-heading">原始作品链接</h4>
+        </div>
+        <p>{links.length} 件作品 · {linkGroups.length} 个平台</p>
+      </header>
+      <div className="project-source-groups">
+        {linkGroups.map((group, groupIndex) => (
+          <section className="project-source-group" key={group.name}>
+            <header className="project-source-group-header">
+              <span>{String(groupIndex + 1).padStart(2, '0')}</span>
+              <h5>{group.name}</h5>
+              <small>{group.links.length} 件</small>
+            </header>
             <div className="project-source-list">
-              {group.links.map((link) => (
+              {group.links.map((link, linkIndex) => (
                 <a href={link.url} target="_blank" rel="noreferrer noopener" key={`${link.label}-${link.url}`}>
+                  <small>{String(linkIndex + 1).padStart(2, '0')}</small>
                   <span>{link.label}</span>
                   <ArrowUpRight aria-hidden="true" />
                 </a>
@@ -1354,7 +1391,7 @@ function AiDesignShowcase({ content }) {
   }, [content.examples.length]);
 
   return (
-    <section className="ai-design-showcase reveal-on-scroll" aria-labelledby="ai-design-title">
+    <section className="ai-design-showcase" aria-labelledby="ai-design-title">
       <div className="ai-design-copy">
         <div className="ai-design-kicker">
           <Sparkles aria-hidden="true" />
@@ -1392,18 +1429,58 @@ function AiDesignShowcase({ content }) {
   );
 }
 
-function AiProductSpotlight({ content }) {
+function AiProductCase({ images, project }) {
+  const content = project.aiProduct;
+
   return (
-    <section className="ai-product-spotlight reveal-on-scroll" aria-labelledby="ai-product-title">
-      <div className="ai-product-heading">
-        <div className="ai-design-kicker">
-          <Sparkles aria-hidden="true" />
-          <span>AI Native Build</span>
+    <div className="ai-product-case">
+      <header className="ai-product-case-masthead">
+        <div className="ai-product-case-title">
+          <p className="project-tag">{project.tag}</p>
+          <h3 id="project-modal-title">{project.title}</h3>
         </div>
-        <h4 id="ai-product-title">{content.title}</h4>
-      </div>
-      <div className="ai-product-story">
-        <p>{content.text}</p>
+        <div className="ai-product-case-status">
+          <span>项目状态</span>
+          <strong>独立完成 · 已上线</strong>
+          <small>{project.subtitle}</small>
+        </div>
+      </header>
+
+      <section className="ai-product-case-hero" aria-labelledby="ai-product-case-heading">
+        <ProjectCarousel images={images} title={project.title} key={project.title} />
+        <div className="ai-product-case-narrative">
+          <div className="ai-design-kicker">
+            <Sparkles aria-hidden="true" />
+            <span>AI Native Build</span>
+          </div>
+          <h4 id="ai-product-case-heading">{content.title}</h4>
+          <p>{project.summary}</p>
+          <dl className="project-stats" aria-label={`${project.title}核心数据`}>
+            {project.stats.map((stat) => (
+              <div className="project-stat" key={`${stat.value}-${stat.label}`}>
+                <dt>{stat.label}</dt>
+                <dd>{stat.value}</dd>
+              </div>
+            ))}
+          </dl>
+          <div className="ai-product-actions">
+            <a href={content.url} target="_blank" rel="noreferrer noopener" className="ai-product-link">
+              <span>打开 zhechun.space</span>
+              <ArrowUpRight aria-hidden="true" />
+            </a>
+            <span className="ai-skill-badge" aria-label={`原创转盘宠物 Skill ${content.skill}`}>
+              <span>ORIGINAL SKILL</span>
+              <strong>{content.skill}</strong>
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <section className="ai-product-case-details" aria-label="产品实现与适用场景">
+        <div className="ai-product-case-story">
+          <span>产品实现</span>
+          <p>{content.text}</p>
+        </div>
         <div className="ai-product-scenarios">
           <span>多场景体验</span>
           <ul aria-label="不牛马厨房适配的饮食场景">
@@ -1411,69 +1488,221 @@ function AiProductSpotlight({ content }) {
           </ul>
           <p>兼顾普通用户、健康饮食人群与不同地域口味，让推荐更贴近真实选择倾向。</p>
         </div>
-        <div className="ai-product-actions">
-          <a href={content.url} target="_blank" rel="noreferrer noopener" className="ai-product-link">
-            <span>打开 zhechun.space</span>
-            <ArrowUpRight aria-hidden="true" />
-          </a>
-          <span className="ai-skill-badge" aria-label={`原创转盘宠物 Skill ${content.skill}`}>
-            <span>ORIGINAL SKILL</span>
-            <strong>{content.skill}</strong>
-          </span>
+      </section>
+    </div>
+  );
+}
+
+function ProjectDetailModal({ index, onClose, project, returnFocusElement }) {
+  const closeButtonRef = useRef(null);
+  const dialogRef = useRef(null);
+  const carouselImages = [
+    { src: project.image, label: `${project.title}主图` },
+    ...project.gallery.filter((image) => image.src !== project.image),
+  ];
+  const hasSourceLinks = Boolean(project.links?.length);
+
+  useEffect(() => {
+    const previouslyFocused = document.activeElement;
+    const previousOverflow = document.body.style.overflow;
+    const dialog = dialogRef.current;
+
+    const handleKeyDown = (event) => {
+      if (document.querySelector('.image-lightbox')) {
+        return;
+      }
+
+      if (event.key === 'Escape') {
+        onClose();
+        return;
+      }
+
+      if (event.key !== 'Tab' || !dialog) {
+        return;
+      }
+
+      const focusable = [...dialog.querySelectorAll(
+        'a[href], button:not([disabled]), summary, [tabindex]:not([tabindex="-1"])',
+      )].filter((element) => !element.hasAttribute('hidden') && element.getClientRects().length > 0);
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last?.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first?.focus();
+      }
+    };
+
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', handleKeyDown);
+    closeButtonRef.current?.focus();
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', handleKeyDown);
+      (returnFocusElement || previouslyFocused)?.focus?.({ preventScroll: true });
+    };
+  }, [onClose, returnFocusElement]);
+
+  return createPortal(
+    <div
+      className="project-modal-backdrop"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) {
+          onClose();
+        }
+      }}
+    >
+      <article
+        className={`project-modal-window${project.aiProduct ? ' is-ai-product-modal' : ''}`}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="project-modal-title"
+        ref={dialogRef}
+      >
+        <header className="project-modal-bar">
+          <div className="project-modal-position">
+            <span>项目 {String(index + 1).padStart(2, '0')} / {String(projects.length).padStart(2, '0')}</span>
+          </div>
+          <button
+            type="button"
+            className="project-modal-close"
+            aria-label={`关闭${project.title}案例窗口`}
+            onClick={onClose}
+            ref={closeButtonRef}
+          >
+            <X aria-hidden="true" />
+          </button>
+        </header>
+        <div className="project-modal-scroll">
+          {project.aiProduct ? (
+            <AiProductCase images={carouselImages} project={project} />
+          ) : (
+            <>
+              <div className="experience-detail-heading">
+            <div className="experience-detail-title">
+              <p className="project-tag">{project.tag}</p>
+              <h3 id="project-modal-title">{project.title}</h3>
+            </div>
+            <div className="experience-detail-context">
+              <span>项目主题</span>
+              <p className="project-subtitle">{project.subtitle}</p>
+            </div>
+          </div>
+          <div className="experience-detail-content">
+            <ProjectCarousel images={carouselImages} title={project.title} key={project.title} />
+            <div className="experience-detail-copy">
+              <div className="project-summary-block">
+                <span>项目概述</span>
+                <p>{project.summary}</p>
+              </div>
+              <dl className="project-stats" aria-label={`${project.title}核心数据`}>
+                {project.stats.map((stat) => (
+                  <div className="project-stat" key={`${stat.value}-${stat.label}`}>
+                    <dt>{stat.label}</dt>
+                    <dd>{stat.value}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          </div>
+          <details className="project-modal-secondary">
+            <summary>
+              <span>{hasSourceLinks ? '完整介绍与作品链接' : '完整介绍'}</span>
+              <small>{hasSourceLinks ? '原始作品链接优先' : (project.aiProduct || project.aiDesign ? '含补充材料' : '展开阅读')}</small>
+              <ChevronDown aria-hidden="true" />
+            </summary>
+            <div className="project-modal-secondary-content">
+              <p className="project-modal-full-summary">{project.summary}</p>
+              <ProjectSourceLinks links={project.links} title={project.title} />
+              {project.aiProduct && <AiProductSpotlight content={project.aiProduct} />}
+              {project.aiDesign && <AiDesignShowcase content={project.aiDesign} />}
+            </div>
+              </details>
+            </>
+          )}
         </div>
-      </div>
-    </section>
+      </article>
+    </div>,
+    document.body,
   );
 }
 
 function Projects() {
+  const [selectedIndex, setSelectedIndex] = useState(() => {
+    const historyIndex = window.history.state?.portfolioProject;
+    return Number.isInteger(historyIndex) ? historyIndex : null;
+  });
+  const projectButtonRefs = useRef([]);
+  const selectedProject = selectedIndex === null ? null : projects[selectedIndex];
+
+  const openProject = (index) => {
+    window.history.pushState(
+      { ...window.history.state, portfolioProject: index },
+      '',
+      '#projects',
+    );
+    setSelectedIndex(index);
+  };
+
+  const returnToOverview = useCallback(() => {
+    window.history.back();
+  }, []);
+
+  useEffect(() => {
+    const handlePopState = (event) => {
+      const historyIndex = event.state?.portfolioProject;
+      setSelectedIndex(Number.isInteger(historyIndex) ? historyIndex : null);
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
   return (
     <section className="section projects-section" id="projects">
       <div className="section-heading projects-heading reveal-on-scroll">
-        <div>
-          <p className="eyebrow">Selected Works</p>
-          <h2>精选项目，用数据讲清内容价值。</h2>
+        <h2>项目经历</h2>
+      </div>
+      <div className="experience-overview-panel">
+        <div className="experience-overview-intro">
+          <p>共 {projects.length} 个项目</p>
+          <span>点击项目查看执行过程、数据与原始作品。</span>
         </div>
-          <p>覆盖品牌运营、内容增长与 AI 产品实践，呈现从策略判断到落地执行的完整能力。</p>
+        <div className="experience-overview-grid">
+          {projects.map((project, index) => (
+            <button
+              className={`experience-card${project.aiProduct ? ' is-supporting' : ''}`}
+              type="button"
+              onClick={() => openProject(index)}
+              ref={(node) => { projectButtonRefs.current[index] = node; }}
+              key={project.title}
+            >
+              <span className="experience-card-number">{String(index + 1).padStart(2, '0')}</span>
+              <span className="experience-card-visual">
+                <img src={project.image} alt="" loading="lazy" />
+              </span>
+              <span className="experience-card-copy">
+                <span className="experience-card-kicker">{project.aiProduct ? '独立产品实践 · AI 应用' : project.subtitle}</span>
+                <strong>{project.title}</strong>
+                <span>{project.stats[0].value} · {project.stats[0].label}</span>
+              </span>
+              <ArrowUpRight className="experience-card-arrow" aria-hidden="true" />
+            </button>
+          ))}
+        </div>
       </div>
-      <div className="project-list">
-        {projects.map((project, index) => {
-          const carouselImages = [
-            { src: project.image, label: `${project.title}主图` },
-            ...project.gallery.filter((image) => image.src !== project.image),
-          ];
-
-          return (
-            <article className="project-card reveal-on-scroll" key={project.title}>
-              <div className="project-lead">
-                <span className="project-index">{String(index + 1).padStart(2, '0')}</span>
-                <h3>{project.title}</h3>
-              </div>
-              <ProjectCarousel images={carouselImages} title={project.title} />
-              {project.aiProduct && <AiProductSpotlight content={project.aiProduct} />}
-              {project.aiDesign && <AiDesignShowcase content={project.aiDesign} />}
-              <ProjectSourceLinks links={project.links} title={project.title} />
-              <div className="project-details">
-                <div className="project-meta">
-                  <p className="project-tag">{project.tag}</p>
-                  <p className="project-subtitle">{project.subtitle}</p>
-                </div>
-                <div className="project-description">
-                  <p>{project.summary}</p>
-                  <dl className="project-stats" aria-label={`${project.title}核心数据`}>
-                    {project.stats.map((stat) => (
-                      <div className="project-stat" key={`${stat.value}-${stat.label}`}>
-                        <dt>{stat.label}</dt>
-                        <dd>{stat.value}</dd>
-                      </div>
-                    ))}
-                  </dl>
-                </div>
-              </div>
-            </article>
-          );
-        })}
-      </div>
+      {selectedProject && (
+        <ProjectDetailModal
+          index={selectedIndex}
+          onClose={returnToOverview}
+          project={selectedProject}
+          returnFocusElement={projectButtonRefs.current[selectedIndex]}
+        />
+      )}
     </section>
   );
 }
@@ -1482,8 +1711,8 @@ function Strengths() {
   return (
     <section className="section strengths-section" id="strengths">
       <div className="section-heading reveal-on-scroll">
-        <p className="eyebrow">Strengths</p>
-        <h2>从内容判断到执行复盘，形成完整运营动作。</h2>
+        <p className="eyebrow">能力结构</p>
+        <h2>内容运营能力结构</h2>
       </div>
       <div className="strength-workflow reveal-on-scroll" aria-label="内容运营完整流程">
         <ol className="workflow-flow">
@@ -1512,7 +1741,7 @@ function Strengths() {
           <div className="strength-icon"><Sparkles aria-hidden="true" /></div>
           <div className="strength-copy">
             <h3>AI 产品与 Skill 创作</h3>
-            <p>已独立制作并上线“不牛马厨房”转盘点餐小程序，同时完成 {projects[0].aiProduct.skill} 转盘宠物 Skill，能把 AI 从想法落到真实可用的产品体验。</p>
+            <p>已独立制作并上线“不牛马厨房”转盘点餐小程序，同时完成 {projectCatalog[0].aiProduct.skill} 转盘宠物 Skill，能把 AI 从想法落到真实可用的产品体验。</p>
           </div>
         </article>
       </div>
