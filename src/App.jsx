@@ -190,7 +190,7 @@ const projectCatalog = [
         '转盘宠物反馈',
         '在线即开即用',
       ],
-      url: 'https://zhechun.space',
+      url: 'https://freebite.zhechun.space',
     },
     stats: [
       { value: '800', label: '道家常菜' },
@@ -198,7 +198,7 @@ const projectCatalog = [
       { value: '1', label: '套原创 Skill' },
     ],
     links: [
-      { group: '不牛马厨房 · 在线体验', label: 'zhechun.space', url: 'https://zhechun.space' },
+      { group: '不牛马厨房 · 在线体验', label: 'freebite.zhechun.space', url: 'https://freebite.zhechun.space' },
     ],
     summary:
       '面向“今晚吃什么”的高频选择难题，将 800 道家常菜、随机转盘、偏好筛选和宠物反馈整合为一套可直接访问的决策体验。',
@@ -1473,7 +1473,7 @@ function AiProductCase({ images, project }) {
           </dl>
           <div className="ai-product-actions">
             <a href={content.url} target="_blank" rel="noreferrer noopener" className="ai-product-link">
-              <span>打开 zhechun.space</span>
+              <span>打开 freebite.zhechun.space</span>
               <ArrowUpRight aria-hidden="true" />
             </a>
             <span className="ai-skill-badge" aria-label={`原创转盘宠物 Skill ${content.skill}`}>
