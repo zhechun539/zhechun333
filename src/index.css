@@ -10841,19 +10841,38 @@ main::after {
 
 .ai-product-case-hero {
   display: grid;
-  grid-template-columns: minmax(320px, 0.78fr) minmax(0, 1.22fr);
-  gap: clamp(28px, 4vw, 52px);
+  grid-template-columns: minmax(330px, 1fr) minmax(0, 1fr);
+  gap: clamp(32px, 4vw, 52px);
   align-items: stretch;
 }
 
 .ai-product-case-hero .project-static-visual {
-  height: min(54dvh, 510px);
-  min-height: 410px;
+  display: grid;
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  max-height: none;
   margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  overflow: visible;
+  place-items: center;
+  align-self: stretch;
 }
 
-.ai-product-case-hero .project-static-image {
-  height: calc(min(54dvh, 510px) - var(--project-static-pad) - var(--project-static-pad));
+.project-modal-window .project-modal-scroll .ai-product-case-hero .project-static-image {
+  width: clamp(286px, 27vw, 352px);
+  height: auto;
+  max-width: 100%;
+  max-height: none;
+  border: 0;
+  border-radius: 6px;
+  box-shadow: 0 30px 58px -42px hsl(146 30% 16% / 0.42);
 }
 
 .ai-product-case-narrative {
@@ -10869,13 +10888,14 @@ main::after {
 }
 
 .ai-product-case-narrative h4 {
-  max-width: 16ch;
+  max-width: none;
   margin: 0;
   color: var(--text-primary);
   font-family: var(--display-font);
-  font-size: clamp(1.75rem, 3vw, 2.65rem);
+  font-size: clamp(1.7rem, 2.45vw, 2.2rem);
   font-weight: 500;
-  line-height: 1.22;
+  line-height: 1.28;
+  text-wrap: balance;
 }
 
 .ai-product-case-narrative > p,
@@ -10919,7 +10939,7 @@ main::after {
 
 .ai-product-case-details {
   display: grid;
-  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
   gap: clamp(28px, 5vw, 64px);
   padding: clamp(24px, 3.5vw, 38px) 0;
   border-top: 1px solid hsl(145 22% 38% / 0.18);
@@ -10932,9 +10952,41 @@ main::after {
   align-content: start;
 }
 
-.ai-product-case-details .ai-product-scenarios {
-  padding-top: 0;
-  border-top: 0;
+.ai-product-feature-block {
+  display: grid;
+  gap: 14px;
+  align-content: start;
+  padding: 18px 0;
+  border-top: 1px solid hsl(145 22% 38% / 0.18);
+  border-bottom: 1px solid hsl(145 22% 38% / 0.14);
+}
+
+.ai-product-feature-block > span {
+  color: hsl(18 36% 35%);
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.ai-product-feature-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ai-product-feature-tags > li {
+  padding: 7px 10px;
+  border: 1px solid hsl(145 24% 34% / 0.2);
+  border-radius: 4px;
+  background: linear-gradient(105deg, hsl(105 30% 95% / 0.72), hsl(50 46% 99% / 0.46));
+  color: hsl(146 25% 30%);
+  font-size: 0.74rem;
+  font-weight: 600;
+  line-height: 1.25;
+  white-space: nowrap;
 }
 
 @media (max-width: 760px) {
@@ -10979,12 +11031,16 @@ main::after {
   }
 
   .ai-product-case-hero .project-static-visual {
-    height: min(39dvh, 276px);
-    min-height: 0;
+    width: min(100%, 320px);
+    height: auto;
+    justify-self: center;
+    align-self: auto;
   }
 
   .ai-product-case-hero .project-static-image {
-    height: calc(min(39dvh, 276px) - var(--project-static-pad) - var(--project-static-pad));
+    width: 100%;
+    height: auto;
+    max-width: 320px;
   }
 
   .ai-product-case-narrative {
@@ -10993,7 +11049,8 @@ main::after {
   }
 
   .ai-product-case-narrative h4 {
-    font-size: clamp(1.45rem, 6.8vw, 1.9rem);
+    max-width: 18ch;
+    font-size: clamp(1.42rem, 6.2vw, 1.72rem);
   }
 
   .ai-product-case-narrative > p,
@@ -11037,6 +11094,20 @@ main::after {
     gap: 22px;
     padding: 22px 0;
   }
+
+  .ai-product-feature-block {
+    gap: 12px;
+    padding: 16px 0;
+  }
+
+  .ai-product-feature-tags {
+    gap: 7px;
+  }
+
+  .ai-product-feature-tags > li {
+    padding: 7px 9px;
+    font-size: 0.7rem;
+  }
 }
 
 /* v01.32 — a focused launch CTA for projects with one external destination. */
@@ -11051,6 +11122,33 @@ main::after {
   border-top: 1px solid hsl(145 24% 31% / 0.24);
   border-bottom: 1px solid hsl(145 24% 31% / 0.24);
   background: linear-gradient(90deg, hsl(105 30% 95% / 0.7), hsl(50 44% 98% / 0.38));
+}
+
+/* v01.40 — source links belong with the visible project summary, not beneath an unrelated empty span. */
+.experience-detail-copy > .project-source-links {
+  margin-top: clamp(18px, 2.5vw, 28px);
+}
+
+.experience-detail-copy > .project-source-links .project-source-header {
+  padding-bottom: 12px;
+}
+
+.experience-detail-copy > .project-source-links .project-source-heading {
+  font-size: clamp(1rem, 1.55vw, 1.26rem);
+}
+
+.experience-detail-copy > .project-source-links .project-source-group {
+  padding: 14px 0 8px;
+}
+
+.experience-detail-copy > .project-source-links .project-source-list a {
+  min-height: 40px;
+}
+
+@media (max-width: 760px) {
+  .experience-detail-copy > .project-source-links {
+    margin-top: 18px;
+  }
 }
 
 .project-source-single-copy {

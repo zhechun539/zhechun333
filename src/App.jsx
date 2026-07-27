@@ -174,15 +174,22 @@ const experience = [
 const projectCatalog = [
   {
     title: '不牛马厨房',
-    subtitle: 'AI 转盘点餐小程序',
-    tag: 'AI 产品制作 / 交互设计 / Skill 创作 / 上线部署',
+    subtitle: '餐食决策工具',
+    tag: 'AI 辅助制作 / 交互设计 / Skill 创作 / 上线部署',
     image: assetUrl('media/ai-design/buniuma-kitchen-promo.webp'),
     gallery: [],
     aiProduct: {
       skill: '@hatch wheel skill',
-      title: '从一个“今晚吃什么”的难题，做成真正能用的 AI 产品。',
-      text: '我独立完成产品构思、页面视觉、转盘交互与上线部署，并制作转盘宠物 Skill，让 AI 角色能够进入点餐体验，为用户的每次选择提供有趣、有反馈的陪伴。除通用转盘外，我还针对不同饮食需求与口味倾向设计了多种选择场景。',
-      scenarios: ['减肥', '甲状腺模式', '川味', '粤式', '清淡', '高蛋白', '少油可做', '湘味'],
+      title: '把“今晚吃什么”，做成轻松好用的餐食决策工具。',
+      text: '我借助 AI 完成产品构思、页面视觉、转盘交互与上线部署，并制作转盘宠物 Skill。用户端不提供 AI 功能：用户无需浏览冗长菜单，可以先用转盘快速缩小选择，再结合口味与饮食偏好获得更贴近当下需求的菜品建议。',
+      features: [
+        '选择困难救星',
+        '海量菜品',
+        '多标签客制化推荐',
+        '一键随机决策',
+        '转盘宠物反馈',
+        '在线即开即用',
+      ],
       url: 'https://zhechun.space',
     },
     stats: [
@@ -194,7 +201,7 @@ const projectCatalog = [
       { group: '不牛马厨房 · 在线体验', label: 'zhechun.space', url: 'https://zhechun.space' },
     ],
     summary:
-      '面向“选择困难”的日常场景，用转盘随机决策、菜品搭配和宠物反馈缩短决策路径，把 AI 能力落到一个可访问、可交互的完整小程序中。',
+      '面向“今晚吃什么”的高频选择难题，将 800 道家常菜、随机转盘、偏好筛选和宠物反馈整合为一套可直接访问的决策体验。',
   },
   {
     title: '品牌自媒体运营',
@@ -1451,7 +1458,7 @@ function AiProductCase({ images, project }) {
         <div className="ai-product-case-narrative">
           <div className="ai-design-kicker">
             <Sparkles aria-hidden="true" />
-            <span>AI Native Build</span>
+            <span>AI-Assisted Build</span>
           </div>
           <h4 id="ai-product-case-heading">{content.title}</h4>
           <p>{project.summary}</p>
@@ -1481,12 +1488,11 @@ function AiProductCase({ images, project }) {
           <span>产品实现</span>
           <p>{content.text}</p>
         </div>
-        <div className="ai-product-scenarios">
-          <span>多场景体验</span>
-          <ul aria-label="不牛马厨房适配的饮食场景">
-            {content.scenarios.map((scenario) => <li key={scenario}>{scenario}</li>)}
+        <div className="ai-product-feature-block">
+          <span>产品亮点</span>
+          <ul className="ai-product-feature-tags" aria-label="不牛马厨房产品亮点">
+            {content.features.map((feature) => <li key={feature}>{feature}</li>)}
           </ul>
-          <p>兼顾普通用户、健康饮食人群与不同地域口味，让推荐更贴近真实选择倾向。</p>
         </div>
       </section>
     </div>
@@ -1607,17 +1613,17 @@ function ProjectDetailModal({ index, onClose, project, returnFocusElement }) {
                   </div>
                 ))}
               </dl>
+              <ProjectSourceLinks links={project.links} title={project.title} />
             </div>
           </div>
           <details className="project-modal-secondary">
             <summary>
-              <span>{hasSourceLinks ? '完整介绍与作品链接' : '完整介绍'}</span>
-              <small>{hasSourceLinks ? '原始作品链接优先' : (project.aiProduct || project.aiDesign ? '含补充材料' : '展开阅读')}</small>
+              <span>完整介绍</span>
+              <small>{project.aiProduct || project.aiDesign ? '含补充材料' : '展开阅读'}</small>
               <ChevronDown aria-hidden="true" />
             </summary>
             <div className="project-modal-secondary-content">
               <p className="project-modal-full-summary">{project.summary}</p>
-              <ProjectSourceLinks links={project.links} title={project.title} />
               {project.aiProduct && <AiProductSpotlight content={project.aiProduct} />}
               {project.aiDesign && <AiDesignShowcase content={project.aiDesign} />}
             </div>
