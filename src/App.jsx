@@ -1584,7 +1584,7 @@ function ProjectDetailModal({ index, onClose, project, returnFocusElement }) {
             <X aria-hidden="true" />
           </button>
         </header>
-        <div className="project-modal-scroll">
+        <div className={`project-modal-scroll${project.links?.length ? ' has-project-source-links' : ''}`}>
           {project.aiProduct ? (
             <AiProductCase images={carouselImages} project={project} />
           ) : (
@@ -1614,9 +1614,9 @@ function ProjectDetailModal({ index, onClose, project, returnFocusElement }) {
                   </div>
                 ))}
               </dl>
-              <ProjectSourceLinks links={project.links} title={project.title} />
             </div>
           </div>
+          <ProjectSourceLinks links={project.links} title={project.title} />
           <details className="project-modal-secondary">
             <summary>
               <span>完整介绍</span>
@@ -1696,6 +1696,7 @@ function Projects() {
                 <span className="experience-card-kicker">{project.aiProduct ? '独立产品实践 · AI 应用' : project.subtitle}</span>
                 <strong>{project.title}</strong>
                 <span>{project.stats[0].value} · {project.stats[0].label}</span>
+                <span className="experience-card-action" aria-hidden="true">阅读案例</span>
               </span>
               <ArrowUpRight className="experience-card-arrow" aria-hidden="true" />
             </button>

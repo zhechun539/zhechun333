@@ -3969,6 +3969,7 @@ h2 {
   .experience-card.is-supporting:last-child {
     height: 176px;
     min-height: 176px;
+    margin-top: clamp(16px, 1.5vw, 24px);
     grid-column: 1 / -1;
     grid-template-columns: minmax(360px, 0.42fr) minmax(0, 0.58fr);
     grid-template-rows: minmax(0, 1fr);
@@ -3993,7 +3994,322 @@ h2 {
 
 @media (max-width: 960px) {
   .experience-card.is-supporting:last-child {
+    margin-top: 16px;
     grid-column: 1 / -1;
+  }
+}
+
+/* v01.48 — source indexes must remain reachable without opening secondary copy. */
+.project-modal-scroll.has-project-source-links {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* v01.49 — source groups return to the horizontal archive layout while the case stays scrollable. */
+@media (min-width: 761px) {
+  .experience-detail-content + .project-source-links .project-source-groups {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 clamp(28px, 4vw, 54px);
+  }
+
+  .experience-detail-content + .project-source-links .project-source-group {
+    display: block;
+    padding: 20px 0 12px;
+  }
+
+  .experience-detail-content + .project-source-links .project-source-group-header {
+    grid-template-columns: 28px minmax(0, 1fr) auto;
+    gap: 8px;
+    align-items: baseline;
+    margin: 0 0 7px;
+    padding-top: 0;
+  }
+
+  .experience-detail-content + .project-source-links .project-source-group-header > small {
+    grid-column: auto;
+    margin-top: 0;
+  }
+
+  .experience-detail-content + .project-source-links .project-source-list {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 0;
+  }
+}
+
+/* v01.46 final cascade — source indexes make the case window intentionally scrollable. */
+.project-modal-window:has(.project-modal-scroll.has-project-source-links) {
+  width: min(1180px, calc(100vw - 16px));
+  max-width: calc(100vw - 16px);
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.project-modal-scroll.has-project-source-links {
+  overflow-x: clip;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.project-modal-scroll.has-project-source-links > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
+@media (max-width: 680px) {
+  .project-modal-window:has(.project-modal-scroll.has-project-source-links) {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+/* v01.46 — a full-width source index keeps the case overview quiet and readable. */
+.experience-detail-content + .project-source-links {
+  width: min(100%, 1120px);
+  margin: clamp(26px, 4vw, 48px) auto 0;
+  padding: clamp(20px, 2.6vw, 30px) 0 0;
+  background: transparent;
+}
+
+.experience-detail-content + .project-source-links .project-source-groups {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+}
+
+.experience-detail-content + .project-source-links .project-source-group {
+  display: grid;
+  grid-template-columns: clamp(132px, 17%, 178px) minmax(0, 1fr);
+  gap: clamp(24px, 4vw, 48px);
+  align-items: start;
+  padding: 18px 0;
+}
+
+.experience-detail-content + .project-source-links .project-source-group-header {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  gap: 6px;
+  align-content: start;
+  margin: 0;
+  padding-top: 8px;
+}
+
+.experience-detail-content + .project-source-links .project-source-group-header > small {
+  grid-column: 2;
+  margin-top: 2px;
+}
+
+.experience-detail-content + .project-source-links .project-source-list {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  column-gap: clamp(16px, 2.8vw, 34px);
+  row-gap: 5px;
+}
+
+.experience-detail-content + .project-source-links .project-source-list a {
+  grid-template-columns: 22px minmax(6em, 1fr) 15px;
+  gap: 6px;
+  min-height: 44px;
+  padding: 8px 0;
+}
+
+@media (max-width: 760px) {
+  .experience-detail-content + .project-source-links {
+    margin-top: 28px;
+  }
+
+  .experience-detail-content + .project-source-links .project-source-group {
+    display: block;
+    padding: 16px 0 10px;
+  }
+
+  .experience-detail-content + .project-source-links .project-source-group-header {
+    grid-template-columns: 24px minmax(0, 1fr) auto;
+    margin-bottom: 7px;
+    padding-top: 0;
+  }
+
+  .experience-detail-content + .project-source-links .project-source-group-header > small {
+    grid-column: auto;
+    margin-top: 0;
+  }
+
+  .experience-detail-content + .project-source-links .project-source-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 16px;
+  }
+}
+
+/* v01.45 final cascade — the project summary is narrower than the main modal. */
+.experience-detail-copy > .project-source-links .project-source-groups {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+}
+
+.experience-detail-copy > .project-source-links .project-source-group {
+  display: grid;
+  grid-template-columns: clamp(108px, 24%, 142px) minmax(0, 1fr);
+  gap: clamp(16px, 2vw, 24px);
+  align-items: start;
+  padding: 14px 0 10px;
+}
+
+.experience-detail-copy > .project-source-links .project-source-group-header {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr);
+  gap: 5px;
+  align-content: start;
+  margin: 0;
+  padding-top: 7px;
+}
+
+.experience-detail-copy > .project-source-links .project-source-group-header > small {
+  grid-column: 2;
+  margin-top: 2px;
+}
+
+.experience-detail-copy > .project-source-links .project-source-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: clamp(14px, 2vw, 22px);
+  row-gap: 4px;
+}
+
+.experience-detail-copy > .project-source-links .project-source-list a {
+  grid-template-columns: 20px minmax(5em, 1fr) 15px;
+  gap: 5px;
+  padding: 7px 0;
+}
+
+.experience-detail-copy > .project-source-links .project-source-list span {
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+@media (max-width: 620px) {
+  .experience-detail-copy > .project-source-links .project-source-group {
+    display: block;
+    padding: 13px 0 8px;
+  }
+
+  .experience-detail-copy > .project-source-links .project-source-group-header {
+    grid-template-columns: 22px minmax(0, 1fr) auto;
+    margin-bottom: 5px;
+    padding-top: 0;
+  }
+
+  .experience-detail-copy > .project-source-links .project-source-group-header > small {
+    grid-column: auto;
+    margin-top: 0;
+  }
+}
+
+/* v01.45 — links are embedded in a narrow editorial column inside the case dialog.
+   Keep the platform rail, but limit this instance to readable two-column titles. */
+.experience-detail-copy > .project-source-links .project-source-groups {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+}
+
+.experience-detail-copy > .project-source-links .project-source-group {
+  display: grid;
+  grid-template-columns: clamp(108px, 24%, 142px) minmax(0, 1fr);
+  gap: clamp(16px, 2vw, 24px);
+  align-items: start;
+  padding: 14px 0 10px;
+}
+
+.experience-detail-copy > .project-source-links .project-source-group-header {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr);
+  gap: 5px;
+  align-content: start;
+  margin: 0;
+  padding-top: 7px;
+}
+
+.experience-detail-copy > .project-source-links .project-source-group-header > small {
+  grid-column: 2;
+  margin-top: 2px;
+}
+
+.experience-detail-copy > .project-source-links .project-source-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: clamp(14px, 2vw, 22px);
+  row-gap: 4px;
+}
+
+.experience-detail-copy > .project-source-links .project-source-list a {
+  grid-template-columns: 20px minmax(5em, 1fr) 15px;
+  gap: 5px;
+  padding: 7px 0;
+}
+
+.experience-detail-copy > .project-source-links .project-source-list span {
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+@media (max-width: 620px) {
+  .experience-detail-copy > .project-source-links .project-source-group {
+    display: block;
+    padding: 13px 0 8px;
+  }
+
+  .experience-detail-copy > .project-source-links .project-source-group-header {
+    grid-template-columns: 22px minmax(0, 1fr) auto;
+    margin-bottom: 5px;
+    padding-top: 0;
+  }
+
+  .experience-detail-copy > .project-source-links .project-source-group-header > small {
+    grid-column: auto;
+    margin-top: 0;
+  }
+}
+
+/* v01.44 — make each project tile read as an entry point, not a static image. */
+.experience-card-action {
+  display: inline-flex;
+  width: max-content;
+  max-width: 100%;
+  align-items: center;
+  margin-top: 2px;
+  padding-top: 7px;
+  color: hsl(146 29% 30%);
+  font-size: 0.64rem;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 180ms cubic-bezier(0.16, 1, 0.3, 1), transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.experience-card:hover .experience-card-action,
+.experience-card:focus-visible .experience-card-action {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.experience-card:focus-visible {
+  z-index: 2;
+  border-color: hsl(146 38% 28%);
+  outline: 2px solid hsl(48 52% 44%);
+  outline-offset: 3px;
+}
+
+@media (max-width: 960px) {
+  .experience-card-action {
+    padding-top: 5px;
+    font-size: 0.58rem;
+    opacity: 0.8;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .experience-card-action {
+    transition: none;
+    transform: none;
   }
 }
 
@@ -11390,5 +11706,70 @@ main::after {
 @media (max-width: 960px) {
   .experience-card.is-supporting:last-child {
     grid-column: 1 / -1;
+  }
+}
+
+/* v01.48 final cascade — source indexes stay scrollable in the compact case window. */
+.project-modal-scroll.has-project-source-links {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* v01.50 — source links keep a readable horizontal rhythm at every modal width. */
+.project-modal-scroll.has-project-source-links {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+
+.project-modal-scroll.has-project-source-links::-webkit-scrollbar {
+  display: block;
+  width: 6px;
+}
+
+.project-modal-scroll.has-project-source-links::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: hsl(145 22% 38% / 0.34);
+}
+
+@media (min-width: 521px) {
+  .experience-detail-content + .project-source-links .project-source-groups {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+
+  .experience-detail-content + .project-source-links .project-source-group {
+    display: grid;
+    grid-template-columns: clamp(132px, 20%, 176px) minmax(0, 1fr);
+    gap: clamp(18px, 3vw, 34px);
+    align-items: start;
+    padding: 16px 0;
+  }
+
+  .experience-detail-content + .project-source-links .project-source-group-header {
+    grid-template-columns: 24px minmax(0, 1fr);
+    gap: 6px;
+    align-content: start;
+    margin: 0;
+    padding-top: 8px;
+  }
+
+  .experience-detail-content + .project-source-links .project-source-group-header > small {
+    grid-column: 2;
+    margin-top: 2px;
+  }
+
+  .experience-detail-content + .project-source-links .project-source-list {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 184px), 1fr));
+    column-gap: clamp(12px, 2vw, 22px);
+  }
+}
+
+@media (max-width: 520px) {
+  .experience-detail-content + .project-source-links .project-source-list {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
