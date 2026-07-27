@@ -858,8 +858,9 @@ function Hero() {
         <figure className="magazine-visual">
           <img
             className="magazine-main-image"
-            src={assetUrl('assets/hero-forest-photo.png')}
+            src={assetUrl('assets/hero-forest-photo.webp')}
             alt="雾绿色森林树冠与白鸟飞过的自然光影"
+            fetchPriority="high"
           />
           <span className="grass-flow grass-flow-back" aria-hidden="true" />
           <span className="grass-flow grass-flow-front" aria-hidden="true" />

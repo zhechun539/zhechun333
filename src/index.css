@@ -95,7 +95,7 @@ a:focus-visible {
   color: hsl(52 38% 92%);
   background:
     linear-gradient(180deg, hsl(151 34% 7% / 0.2), hsl(151 38% 5% / 0.72)),
-    url("../public/assets/hero-forest-photo.png") 50% 58% / cover no-repeat;
+    url("../public/assets/hero-forest-photo.webp") 50% 58% / cover no-repeat;
   opacity: 1;
   transition: opacity 620ms ease;
 }
@@ -2631,7 +2631,7 @@ h2 {
 }
 
 .crop-tile {
-  background-image: url("../public/assets/hero-stream-flowers.png");
+  background-image: url("../public/assets/hero-stream-flowers.webp");
   background-repeat: no-repeat;
   background-size: cover;
   filter: saturate(0.58) contrast(0.9) brightness(1.08);
@@ -2647,7 +2647,7 @@ h2 {
 
 .crop-tile-two {
   background-color: hsl(158 20% 46%);
-  background-image: url("../public/assets/hero-lily-water.png");
+  background-image: url("../public/assets/hero-lily-water.webp");
   min-height: 128px;
   background-position: 52% 52%;
   background-size: 100% auto;
@@ -2668,7 +2668,7 @@ h2 {
 
 .mist-panel {
   min-height: 100px;
-  background: url("../public/assets/hero-wisteria-canopy.png") 50% 42% / cover no-repeat;
+  background: url("../public/assets/hero-wisteria-canopy.webp") 50% 42% / cover no-repeat;
   filter: saturate(0.82) contrast(0.9) brightness(1.03);
   opacity: 0.95;
   transform: translateY(16px);
@@ -7939,7 +7939,7 @@ main::after {
   inset: 0;
   background:
     linear-gradient(90deg, hsl(145 24% 8% / 0.36), transparent 62%),
-    url("../public/assets/hero-forest-photo.png") center 44% / cover no-repeat;
+    url("../public/assets/hero-forest-photo.webp") center 44% / cover no-repeat;
   transform: scale(1.04);
   animation: entryPageLandscapeSettle 1500ms 1320ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
@@ -8238,7 +8238,7 @@ main::after {
 }
 
 .entry-cinematic-image {
-  background-image: url("../public/assets/hero-forest-photo.png");
+  background-image: url("../public/assets/hero-forest-photo.webp");
   background-position: center 44%;
   background-size: cover;
   opacity: 0;
