@@ -1,28 +1,28 @@
 :root {
   color-scheme: light;
-  --surface-0: hsl(105 30% 97%);
-  --surface-1: hsl(92 30% 99%);
-  --surface-2: hsl(104 20% 92%);
-  --surface-3: hsl(42 26% 88%);
-  --text-primary: hsl(156 18% 13%);
-  --text-secondary: hsl(150 10% 31%);
-  --text-muted: hsl(140 8% 47%);
-  --accent: hsl(147 36% 32%);
-  --accent-hover: hsl(147 38% 26%);
-  --accent-dim: hsl(147 36% 32% / 0.12);
-  --accent-border: hsl(147 36% 32% / 0.22);
-  --clay: hsl(24 38% 54%);
-  --moss-soft: hsl(91 28% 74%);
-  --border: hsl(94 16% 82%);
-  --border-strong: hsl(120 12% 64%);
-  --shadow: hsl(150 24% 16% / 0.12);
+  --surface-0: hsl(45 30% 94%);
+  --surface-1: hsl(45 38% 98%);
+  --surface-2: hsl(194 18% 92%);
+  --surface-3: hsl(194 16% 85%);
+  --text-primary: hsl(160 24% 16%);
+  --text-secondary: hsl(160 13% 31%);
+  --text-muted: hsl(162 8% 45%);
+  --accent: hsl(160 35% 21%);
+  --accent-hover: hsl(160 38% 17%);
+  --accent-dim: hsl(160 35% 21% / 0.12);
+  --accent-border: hsl(160 35% 21% / 0.24);
+  --clay: hsl(194 17% 57%);
+  --moss-soft: hsl(194 20% 75%);
+  --border: hsl(194 16% 80%);
+  --border-strong: hsl(194 15% 63%);
+  --shadow: hsl(160 26% 14% / 0.14);
   --glass: hsl(50 46% 98% / 0.5);
   --glass-strong: hsl(50 48% 99% / 0.7);
   --glass-faint: hsl(50 44% 98% / 0.26);
-  --glass-green: hsl(105 28% 90% / 0.34);
-  --line-faint: hsl(118 13% 63% / 0.16);
-  --line-soft: hsl(118 13% 63% / 0.26);
-  --glass-shadow: 0 24px 80px -64px hsl(150 22% 18% / 0.35);
+  --glass-green: hsl(194 18% 90% / 0.34);
+  --line-faint: hsl(194 13% 63% / 0.16);
+  --line-soft: hsl(194 13% 63% / 0.26);
+  --glass-shadow: 0 24px 80px -64px hsl(160 22% 18% / 0.35);
   --display-font: "Songti SC", STSong, SimSun, "宋体", serif;
   --body-font: "Songti SC", STSong, SimSun, "宋体", serif;
   --script-font: "Songti SC", STSong, SimSun, "宋体", serif;
@@ -45,8 +45,8 @@ body {
   margin: 0;
   color: var(--text-primary);
   background:
-    radial-gradient(circle at 8% 20%, hsl(105 34% 91% / 0.6), transparent 28rem),
-    linear-gradient(180deg, var(--surface-0), hsl(108 25% 95%));
+    radial-gradient(circle at 8% 20%, hsl(194 30% 91% / 0.5), transparent 28rem),
+    linear-gradient(180deg, var(--surface-0), hsl(45 25% 96%));
   font-family: var(--body-font);
   letter-spacing: 0;
   text-rendering: optimizeLegibility;
@@ -1464,7 +1464,7 @@ video {
   height: 2px;
   pointer-events: none;
   content: "";
-  background: linear-gradient(90deg, var(--accent), hsl(43 52% 48%));
+  background: linear-gradient(90deg, var(--accent), var(--clay));
   opacity: 0.72;
   transform: scaleX(var(--scroll-ratio, 0));
   transform-origin: left center;
@@ -3331,7 +3331,7 @@ h2 {
 .portrait-tabs button:hover,
 .portrait-tabs button:focus-visible,
 .portrait-tabs button.is-active {
-  border-bottom-color: hsl(43 52% 48% / 0.72);
+  border-bottom-color: hsl(194 17% 57% / 0.72);
   color: var(--accent);
   background: hsl(104 24% 93% / 0.48);
 }
@@ -3453,7 +3453,7 @@ h2 {
   left: -12px;
   width: 2px;
   content: "";
-  background: linear-gradient(180deg, var(--accent), hsl(43 52% 48%));
+  background: linear-gradient(180deg, var(--accent), var(--clay));
   opacity: 0;
   transform: scaleY(0.4);
   transform-origin: center;
@@ -5209,7 +5209,7 @@ h2 {
   gap: 13px;
   align-content: start;
   padding-left: 16px;
-  border-left: 2px solid hsl(43 52% 48% / 0.48);
+  border-left: 2px solid hsl(194 17% 57% / 0.48);
 }
 
 .project-index {
@@ -5309,9 +5309,9 @@ h2 {
 }
 
 .project-source-links {
-  --source-gold: hsl(43 52% 46%);
-  --source-gold-dark: hsl(40 35% 30%);
-  --source-gold-line: hsl(44 52% 48% / 0.3);
+  --source-gold: hsl(194 17% 57%);
+  --source-gold-dark: hsl(194 22% 31%);
+  --source-gold-line: hsl(194 17% 57% / 0.3);
   width: min(100%, 980px);
   margin: 0 auto;
   padding: clamp(20px, 2.6vw, 30px) clamp(16px, 2.4vw, 26px);
@@ -5423,12 +5423,12 @@ h2 {
   margin: 0 auto;
   padding: clamp(22px, 3vw, 34px) 0;
   border-top: 1px solid hsl(147 24% 42% / 0.18);
-  border-bottom: 1px solid hsl(43 52% 48% / 0.28);
+  border-bottom: 1px solid hsl(194 17% 57% / 0.28);
 }
 
 .ai-design-copy {
   padding-left: 16px;
-  border-left: 2px solid hsl(43 52% 48% / 0.52);
+  border-left: 2px solid hsl(194 17% 57% / 0.52);
 }
 
 .ai-design-kicker {
@@ -5436,7 +5436,7 @@ h2 {
   gap: 8px;
   align-items: center;
   margin-bottom: 12px;
-  color: hsl(43 45% 36%);
+  color: hsl(194 20% 35%);
   font-size: 0.76rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -5828,7 +5828,7 @@ h2 {
 
 .strength-ai-placeholder,
 .strength-ai-capability {
-  border-top-color: hsl(43 54% 48% / 0.48);
+  border-top-color: hsl(194 17% 57% / 0.48);
   background: hsl(48 62% 94% / 0.72);
 }
 
@@ -6305,7 +6305,7 @@ body {
 
 .strength-ai-placeholder,
 .strength-ai-capability {
-  border-top-color: hsl(43 54% 48% / 0.48);
+  border-top-color: hsl(194 17% 57% / 0.48);
   background: hsl(48 62% 94% / 0.58);
 }
 
@@ -10104,7 +10104,7 @@ main::after {
   --source-ink: hsl(146 27% 22%);
   --source-muted: hsl(146 10% 42%);
   --source-rule: hsl(145 19% 34% / 0.2);
-  --source-gold: hsl(43 48% 43%);
+  --source-gold: hsl(194 17% 57%);
   width: 100%;
   margin: 4px 0 0;
   padding: 0;
