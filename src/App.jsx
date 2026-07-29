@@ -1,7 +1,6 @@
 import {
   ArrowUp,
   ArrowUpRight,
-  BookOpenText,
   CheckCircle2,
   ChevronDown,
   FileText,
@@ -15,10 +14,11 @@ import {
   Sparkles,
   X,
 } from 'lucide-react';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { createPortal, flushSync } from 'react-dom';
 
 const assetUrl = (path) => `${import.meta.env.BASE_URL}${path}`;
+const chapterNavigateEvent = 'portfolio:chapter-navigate';
 
 const navItems = [
   { label: '首页', href: '#home' },
@@ -379,6 +379,8 @@ const projectCatalog = [
 
 const projects = [...projectCatalog.slice(1), projectCatalog[0]];
 
+const romanProjectNumbers = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX'];
+
 const strengths = [
   {
     icon: <FileText aria-hidden="true" />,
@@ -434,12 +436,19 @@ const workflowSteps = [
   { number: '06', title: '数据复盘', detail: '表现 · 问题 · 迭代' },
 ];
 
+function getSectionFromHash() {
+  const section = window.location.hash.slice(1);
+  return navItems.some((item) => item.href === `#${section}`) ? section : 'home';
+}
+
 function usePageInteractions() {
   const [pageState, setPageState] = useState({
-    activeSection: 'home',
+    activeSection: getSectionFromHash(),
     scrollProgress: 0,
     showBackToTop: false,
+    transitionPhase: 'idle',
   });
+  const transitionLockRef = useRef(false);
 
   useEffect(() => {
     let frameId = 0;
@@ -448,21 +457,11 @@ function usePageInteractions() {
       frameId = 0;
       const scrollTop = window.scrollY || document.documentElement.scrollTop;
       const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-      const readingLine = scrollTop + Math.min(window.innerHeight * 0.42, 360);
-      let activeSection = 'home';
-
-      navItems.forEach((item) => {
-        const section = document.querySelector(item.href);
-        if (section && section.offsetTop <= readingLine) {
-          activeSection = item.href.slice(1);
-        }
-      });
-
-      setPageState({
-        activeSection,
+      setPageState((current) => ({
+        ...current,
         scrollProgress: Math.min(1, Math.max(0, scrollTop / maxScroll)),
         showBackToTop: scrollTop > window.innerHeight * 0.72,
-      });
+      }));
     };
 
     const requestUpdate = () => {
@@ -481,6 +480,74 @@ function usePageInteractions() {
       if (frameId) {
         window.cancelAnimationFrame(frameId);
       }
+    };
+  }, []);
+
+  useLayoutEffect(() => {
+    const root = document.documentElement;
+    const previousBehavior = root.style.scrollBehavior;
+    root.style.scrollBehavior = 'auto';
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    root.style.scrollBehavior = previousBehavior;
+  }, [pageState.activeSection]);
+
+  useEffect(() => {
+    const resetScrollInstantly = () => {
+      const root = document.documentElement;
+      const previousBehavior = root.style.scrollBehavior;
+      root.style.scrollBehavior = 'auto';
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+      window.requestAnimationFrame(() => {
+        root.style.scrollBehavior = previousBehavior;
+      });
+    };
+
+    const showSection = (activeSection) => {
+      setPageState((current) => ({
+        ...current,
+        activeSection,
+        scrollProgress: 0,
+        showBackToTop: false,
+        transitionPhase: 'direct',
+      }));
+      resetScrollInstantly();
+    };
+
+    const handleHashChange = () => {
+      showSection(getSectionFromHash());
+    };
+
+    const handleChapterNavigate = (event) => {
+      const href = event.detail?.href;
+      const targetSection = href?.replace(/^#/, '');
+      const isKnownSection = navItems.some((item) => item.href === href);
+      if (!isKnownSection || targetSection === getSectionFromHash() || transitionLockRef.current) return;
+
+      transitionLockRef.current = true;
+      resetScrollInstantly();
+      window.history.pushState(
+        { ...window.history.state, portfolioProject: undefined },
+        '',
+        href,
+      );
+      flushSync(() => {
+        setPageState((current) => ({
+          ...current,
+          activeSection: targetSection,
+          scrollProgress: 0,
+          showBackToTop: false,
+          transitionPhase: 'idle',
+        }));
+      });
+      resetScrollInstantly();
+      transitionLockRef.current = false;
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    window.addEventListener(chapterNavigateEvent, handleChapterNavigate);
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+      window.removeEventListener(chapterNavigateEvent, handleChapterNavigate);
     };
   }, []);
 
@@ -507,7 +574,7 @@ function usePageInteractions() {
 
     revealItems.forEach((item) => observer.observe(item));
     return () => observer.disconnect();
-  }, []);
+  }, [pageState.activeSection]);
 
   return pageState;
 }
@@ -894,13 +961,337 @@ function Hero() {
           <span className="mist-panel" />
         </div>
 
-        <a className="page-hint" href="#about" aria-label="向下浏览个人经历">
-          向下浏览
-          <ArrowUpRight aria-hidden="true" />
-        </a>
+        <PageContinuation className="page-hint" href="#about" label="关于" />
         <VinylMusicButton />
       </div>
     </section>
+  );
+}
+
+function PageContinuation({ className = '', href, label, isReturn = false }) {
+  const Icon = isReturn ? ArrowUp : ChevronDown;
+  const [isReady, setIsReady] = useState(false);
+  const runwayRef = useRef(null);
+  const readyRef = useRef(false);
+  const wheelArmedRef = useRef(false);
+  const wheelArmTimerRef = useRef(null);
+  const wheelDistanceRef = useRef(0);
+  const touchStartRef = useRef(null);
+  const navigationLockRef = useRef(false);
+  const settleTimerRef = useRef(null);
+  const settleFrameRef = useRef(null);
+  const settleAnimationRef = useRef(null);
+  const isSettlingRef = useRef(false);
+  const thresholdCrossedRef = useRef(false);
+  const lastInputDirectionRef = useRef(0);
+  const touchLastYRef = useRef(null);
+  const inputVelocityRef = useRef(0);
+  const lastInputTimestampRef = useRef(null);
+
+  const navigate = useCallback(() => {
+    if (navigationLockRef.current) return;
+    navigationLockRef.current = true;
+    window.dispatchEvent(new CustomEvent(chapterNavigateEvent, { detail: { href } }));
+  }, [href]);
+
+  useEffect(() => {
+    const revealDistance = 34;
+    const revealedRestDistance = 52;
+    const navigationDistance = 132;
+
+    const getRunwayMetrics = () => {
+      const runwayHeight = runwayRef.current?.offsetHeight ?? 0;
+      const maximumScroll = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+      return {
+        baseBottom: Math.max(0, maximumScroll - runwayHeight),
+        maximumScroll,
+        runwayHeight,
+      };
+    };
+
+    const resetArming = () => {
+      wheelArmedRef.current = false;
+      wheelDistanceRef.current = 0;
+      window.clearTimeout(wheelArmTimerRef.current);
+    };
+
+    const resetInputVelocity = () => {
+      inputVelocityRef.current = 0;
+      lastInputTimestampRef.current = null;
+    };
+
+    const recordDownwardVelocity = (distance) => {
+      const now = performance.now();
+      const elapsed = lastInputTimestampRef.current === null
+        ? 16
+        : Math.max(16, now - lastInputTimestampRef.current);
+      const instantaneousVelocity = Math.min(2.2, Math.max(0, distance) / elapsed);
+      inputVelocityRef.current = inputVelocityRef.current * 0.55 + instantaneousVelocity * 0.45;
+      lastInputTimestampRef.current = now;
+    };
+
+    const reveal = () => {
+      if (readyRef.current) return;
+      readyRef.current = true;
+      resetArming();
+      flushSync(() => setIsReady(true));
+    };
+
+    const conceal = () => {
+      thresholdCrossedRef.current = false;
+      resetInputVelocity();
+      if (!readyRef.current) return;
+      readyRef.current = false;
+      resetArming();
+      touchStartRef.current = null;
+      setIsReady(false);
+    };
+
+    const finishSpring = () => {
+      settleAnimationRef.current = null;
+      isSettlingRef.current = false;
+      lastInputDirectionRef.current = 0;
+      resetInputVelocity();
+      if (!readyRef.current) {
+        thresholdCrossedRef.current = false;
+        return;
+      }
+      wheelDistanceRef.current = 0;
+      window.clearTimeout(wheelArmTimerRef.current);
+      wheelArmTimerRef.current = window.setTimeout(() => {
+        wheelArmedRef.current = true;
+      }, 180);
+    };
+
+    const springBack = () => {
+      window.clearTimeout(settleTimerRef.current);
+      window.cancelAnimationFrame(settleFrameRef.current);
+      settleAnimationRef.current?.cancel();
+      settleAnimationRef.current = null;
+      wheelArmedRef.current = false;
+      window.clearTimeout(wheelArmTimerRef.current);
+
+      if (!readyRef.current && thresholdCrossedRef.current) reveal();
+
+      const { baseBottom, maximumScroll, runwayHeight } = getRunwayMetrics();
+      const readyOffset = Math.min(revealedRestDistance, runwayHeight * 0.62);
+      const target = Math.min(maximumScroll, baseBottom + (readyRef.current ? readyOffset : 0));
+      const start = window.scrollY;
+      const inputVelocity = Math.min(2.2, inputVelocityRef.current);
+      const inertiaDistance = inputVelocity > 0.04
+        ? Math.min(30, 5 + inputVelocity * 11)
+        : 0;
+      const minimumPeak = readyRef.current ? target + 6 : start;
+      const peak = Math.min(maximumScroll, Math.max(start + inertiaDistance, minimumPeak));
+      const inertiaDuration = peak - start > 0.5
+        ? Math.min(300, 150 + inputVelocity * 62)
+        : 0;
+      const returnDistance = Math.max(0, peak - target);
+      const returnDuration = Math.min(720, 460 + returnDistance * 8 + inputVelocity * 42);
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      if (reduceMotion || (Math.abs(target - start) < 1 && peak - start < 1)) {
+        window.scrollTo({ top: target, left: 0, behavior: 'auto' });
+        finishSpring();
+        return;
+      }
+
+      isSettlingRef.current = true;
+      let startedAt = null;
+      const startCompositedReturn = () => {
+        const pageView = document.querySelector('.portfolio-page-view');
+        const visualOffset = Math.max(0, window.scrollY - target);
+        window.scrollTo({ top: target, left: 0, behavior: 'auto' });
+
+        if (!pageView || visualOffset < 0.5) {
+          finishSpring();
+          return;
+        }
+
+        const returnAnimation = pageView.animate(
+          [
+            { transform: `translate3d(0, ${-visualOffset}px, 0)` },
+            { transform: 'translate3d(0, 0, 0)' },
+          ],
+          {
+            duration: returnDuration,
+            easing: 'cubic-bezier(0.45, 0, 0.55, 1)',
+          },
+        );
+        settleAnimationRef.current = returnAnimation;
+        returnAnimation.onfinish = finishSpring;
+      };
+
+      const step = (timestamp) => {
+        if (startedAt === null) startedAt = timestamp;
+        const elapsed = timestamp - startedAt;
+        let nextPosition;
+
+        if (elapsed < inertiaDuration) {
+          const progress = Math.min(1, elapsed / inertiaDuration);
+          const easedProgress = 1 - (1 - progress) ** 3;
+          nextPosition = start + (peak - start) * easedProgress;
+        } else {
+          startCompositedReturn();
+          return;
+        }
+
+        nextPosition = Math.min(maximumScroll, Math.max(0, nextPosition));
+        window.scrollTo({ top: nextPosition, left: 0, behavior: 'auto' });
+
+        if (elapsed < inertiaDuration) {
+          settleFrameRef.current = window.requestAnimationFrame(step);
+          return;
+        }
+      };
+      if (inertiaDuration > 0) {
+        settleFrameRef.current = window.requestAnimationFrame(step);
+      } else {
+        startCompositedReturn();
+      }
+    };
+
+    const scheduleSpringBack = () => {
+      window.clearTimeout(settleTimerRef.current);
+      const releaseDelay = 240 + Math.min(60, inputVelocityRef.current * 28);
+      settleTimerRef.current = window.setTimeout(springBack, releaseDelay);
+    };
+
+    const updateRunwayState = () => {
+      if (isSettlingRef.current || navigationLockRef.current) return;
+      const { baseBottom } = getRunwayMetrics();
+      const pullDistance = window.scrollY - baseBottom;
+
+      if (window.scrollY < baseBottom - 10) {
+        conceal();
+        return;
+      }
+
+      if (!readyRef.current && pullDistance >= revealDistance) {
+        thresholdCrossedRef.current = true;
+      }
+      if (pullDistance > 0 && lastInputDirectionRef.current > 0) scheduleSpringBack();
+    };
+
+    const onWheel = (event) => {
+      if (event.deltaY <= 0) {
+        lastInputDirectionRef.current = -1;
+        wheelDistanceRef.current = 0;
+        resetInputVelocity();
+        window.clearTimeout(settleTimerRef.current);
+        if (isSettlingRef.current) {
+          window.cancelAnimationFrame(settleFrameRef.current);
+          settleAnimationRef.current?.cancel();
+          settleAnimationRef.current = null;
+          isSettlingRef.current = false;
+        }
+        return;
+      }
+      lastInputDirectionRef.current = 1;
+      const { baseBottom } = getRunwayMetrics();
+      if (window.scrollY < baseBottom - 3) return;
+      recordDownwardVelocity(event.deltaY);
+      scheduleSpringBack();
+      if (!readyRef.current || !wheelArmedRef.current) return;
+
+      wheelDistanceRef.current += event.deltaY;
+      if (wheelDistanceRef.current >= navigationDistance) {
+        event.preventDefault();
+        navigate();
+      }
+    };
+
+    const onTouchStart = (event) => {
+      touchLastYRef.current = event.touches[0]?.clientY ?? null;
+      const { baseBottom } = getRunwayMetrics();
+      touchStartRef.current = readyRef.current
+        && wheelArmedRef.current
+        && window.scrollY >= baseBottom - 3
+        ? event.touches[0]?.clientY ?? null
+        : null;
+    };
+
+    const onTouchMove = (event) => {
+      const currentY = event.touches[0]?.clientY;
+      if (typeof currentY === 'number' && touchLastYRef.current !== null) {
+        const touchDistance = touchLastYRef.current - currentY;
+        lastInputDirectionRef.current = touchDistance > 0 ? 1 : -1;
+        touchLastYRef.current = currentY;
+        if (lastInputDirectionRef.current < 0) {
+          resetInputVelocity();
+          window.clearTimeout(settleTimerRef.current);
+          if (isSettlingRef.current) {
+            window.cancelAnimationFrame(settleFrameRef.current);
+            settleAnimationRef.current?.cancel();
+            settleAnimationRef.current = null;
+            isSettlingRef.current = false;
+          }
+        } else {
+          recordDownwardVelocity(touchDistance);
+          scheduleSpringBack();
+        }
+      }
+      if (touchStartRef.current === null || !readyRef.current || !wheelArmedRef.current) return;
+      if (typeof currentY === 'number' && touchStartRef.current - currentY >= 76) {
+        event.preventDefault();
+        navigate();
+      }
+    };
+
+    const onTouchEnd = () => {
+      touchLastYRef.current = null;
+      if (lastInputDirectionRef.current > 0) scheduleSpringBack();
+    };
+
+    updateRunwayState();
+    window.addEventListener('scroll', updateRunwayState, { passive: true });
+    window.addEventListener('resize', updateRunwayState);
+    window.addEventListener('wheel', onWheel, { passive: false });
+    window.addEventListener('touchstart', onTouchStart, { passive: true });
+    window.addEventListener('touchmove', onTouchMove, { passive: false });
+    window.addEventListener('touchend', onTouchEnd, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', updateRunwayState);
+      window.removeEventListener('resize', updateRunwayState);
+      window.removeEventListener('wheel', onWheel);
+      window.removeEventListener('touchstart', onTouchStart);
+      window.removeEventListener('touchmove', onTouchMove);
+      window.removeEventListener('touchend', onTouchEnd);
+      window.clearTimeout(wheelArmTimerRef.current);
+      window.clearTimeout(settleTimerRef.current);
+      window.cancelAnimationFrame(settleFrameRef.current);
+      settleAnimationRef.current?.cancel();
+    };
+  }, [navigate]);
+
+  const continuationControl = (
+    <a
+        className={`page-continuation${className ? ` ${className}` : ''}${isReturn ? ' is-return' : ''}${isReady ? ' is-ready' : ''}`}
+        href={href}
+        aria-label={isReturn ? `返回${label}` : `前往下一页：${label}`}
+        aria-hidden={!isReady}
+        tabIndex={isReady ? 0 : -1}
+        onClick={(event) => {
+          event.preventDefault();
+          navigate();
+        }}
+      >
+        <span className="page-continuation-copy">
+          <small>{isReturn ? '循环阅读' : '下一部分'} · {label}</small>
+          <strong>{isReturn ? '继续向下滑动，返回首页' : '继续向下滑动，进入下一部分'}</strong>
+        </span>
+        <span className="page-continuation-icon" aria-hidden="true">
+          <Icon />
+        </span>
+      </a>
+  );
+
+  return (
+    <>
+      <span className="page-continuation-runway" ref={runwayRef} aria-hidden="true" />
+      {createPortal(continuationControl, document.body)}
+    </>
   );
 }
 
@@ -939,6 +1330,7 @@ function InteractivePortrait() {
         <span className="portrait-count" aria-hidden="true">0{activeDirection + 1}</span>
       </div>
       <figcaption>
+        <p className="portrait-editorial-index" aria-hidden="true">Profile / 01</p>
         <div className="portrait-heading-row">
           <span className="portrait-label">求职方向</span>
           <a className="portrait-email" href="mailto:2436528353@qq.com" aria-label="发送邮件至 2436528353@qq.com">
@@ -983,9 +1375,12 @@ function InteractivePortrait() {
 function About() {
   return (
     <section className="section about-section" id="about">
-      <div className="section-heading reveal-on-scroll">
+      <div className="section-heading editorial-page-heading reveal-on-scroll" data-watermark="ABOUT">
         <p className="eyebrow">关于与经历</p>
-        <h2>偏内容创意型的新媒体运营。</h2>
+        <h2 className="about-editorial-title">
+          <span>偏内容创意型的</span>
+          <span>新媒体运营。</span>
+        </h2>
         <p>
           我关注内容在不同平台里的角色分工：小红书负责种草触达与心智渗透，公众号承接深度表达与信任建立，评论区和私信用于沉淀互动反馈和转化线索。
         </p>
@@ -993,6 +1388,11 @@ function About() {
       <div className="about-grid">
         <InteractivePortrait />
         <div className="about-body">
+          <div className="about-timeline-heading">
+            <p className="eyebrow">Career Archive</p>
+            <h2>职业履历</h2>
+            <span>沿时间向下阅读，每一段经历保留最关键的职责与成果。</span>
+          </div>
           <div className="timeline">
             {experience.map((item, index) => (
               <article className="timeline-item reveal-on-scroll" key={`${item.company}-${item.time}`}>
@@ -1018,6 +1418,7 @@ function About() {
           </div>
         </div>
       </div>
+      <PageContinuation href="#projects" label="经历" />
     </section>
   );
 }
@@ -1645,6 +2046,8 @@ function Projects() {
   });
   const projectButtonRefs = useRef([]);
   const selectedProject = selectedIndex === null ? null : projects[selectedIndex];
+  const featuredProjects = projects.slice(0, 3);
+  const catalogProjects = projects.slice(3);
 
   const openProject = (index) => {
     window.history.pushState(
@@ -1671,38 +2074,82 @@ function Projects() {
 
   return (
     <section className="section projects-section" id="projects">
-      <div className="section-heading projects-heading reveal-on-scroll">
+      <div className="section-heading editorial-page-heading projects-heading reveal-on-scroll" data-watermark="PROJECTS">
+        <p className="eyebrow">Selected Work</p>
         <h2>项目经历</h2>
+        <p>从内容策划、平台运营到转化承接，以代表项目呈现执行过程与结果。</p>
       </div>
       <div className="experience-overview-panel">
-        <div className="experience-overview-intro">
-          <p>共 {projects.length} 个项目</p>
-          <span>点击项目查看执行过程、数据与原始作品。</span>
-        </div>
-        <div className="experience-overview-grid">
-          {projects.map((project, index) => (
+        <section className="featured-projects" aria-labelledby="featured-projects-title">
+          <div className="project-group-heading">
+            <div>
+              <p className="eyebrow">Featured Projects</p>
+              <h3 id="featured-projects-title">精选项目</h3>
+            </div>
+            <span>01 — 03</span>
+          </div>
+          <div className="featured-project-grid">
+            {featuredProjects.map((project, index) => (
+              <button
+                className="featured-project reveal-on-scroll"
+                type="button"
+                onClick={() => openProject(index)}
+                ref={(node) => { projectButtonRefs.current[index] = node; }}
+                key={project.title}
+              >
+                <span className="featured-project-visual">
+                  <img src={project.image} alt="" loading={index === 0 ? 'eager' : 'lazy'} />
+                </span>
+                <span className="featured-project-meta">
+                  <span className="featured-project-number">{romanProjectNumbers[index]}</span>
+                  <span className="featured-project-copy">
+                    <strong>{project.title}</strong>
+                    <span>{project.subtitle}</span>
+                  </span>
+                  <ArrowUpRight aria-hidden="true" />
+                </span>
+                <span className="featured-project-result">{project.stats[0].value} · {project.stats[0].label}</span>
+              </button>
+            ))}
+          </div>
+        </section>
+
+        <section className="project-catalog" aria-labelledby="project-catalog-title">
+          <div className="project-group-heading">
+            <div>
+              <p className="eyebrow">Project Index</p>
+              <h3 id="project-catalog-title">项目编目</h3>
+            </div>
+            <span>04 — {String(projects.length).padStart(2, '0')}</span>
+          </div>
+          <div className="project-catalog-list">
+          {catalogProjects.map((project, catalogIndex) => {
+            const index = catalogIndex + featuredProjects.length;
+            return (
             <button
-              className={`experience-card${project.aiProduct ? ' is-supporting' : ''}`}
+              className="project-catalog-row reveal-on-scroll"
               type="button"
               onClick={() => openProject(index)}
               ref={(node) => { projectButtonRefs.current[index] = node; }}
               key={project.title}
             >
-              <span className="experience-card-number">{String(index + 1).padStart(2, '0')}</span>
-              <span className="experience-card-visual">
-                <img src={project.image} alt="" loading="lazy" />
-              </span>
-              <span className="experience-card-copy">
-                <span className="experience-card-kicker">{project.aiProduct ? '独立产品实践 · AI 应用' : project.subtitle}</span>
+              <span className="project-catalog-number">{romanProjectNumbers[index]}</span>
+              <span className="project-catalog-copy">
                 <strong>{project.title}</strong>
-                <span>{project.stats[0].value} · {project.stats[0].label}</span>
-                <span className="experience-card-action" aria-hidden="true">阅读案例</span>
+                <span>{project.summary}</span>
               </span>
-              <ArrowUpRight className="experience-card-arrow" aria-hidden="true" />
+              <span className="project-catalog-type">
+                <span>{project.aiProduct ? '独立产品实践 · AI 应用' : project.subtitle}</span>
+                <span>阅读案例</span>
+              </span>
+              <ArrowUpRight aria-hidden="true" />
             </button>
-          ))}
+            );
+          })}
+          </div>
+        </section>
         </div>
-      </div>
+      <PageContinuation href="#strengths" label="优势" />
       {selectedProject && (
         <ProjectDetailModal
           index={selectedIndex}
@@ -1718,41 +2165,63 @@ function Projects() {
 function Strengths() {
   return (
     <section className="section strengths-section" id="strengths">
-      <div className="section-heading reveal-on-scroll">
+      <div className="section-heading editorial-page-heading reveal-on-scroll" data-watermark="STRENGTHS">
         <p className="eyebrow">能力结构</p>
         <h2>内容运营能力结构</h2>
+        <p>从内容判断到数据复盘，把每一次创作放进可执行、可协同、可迭代的工作链路。</p>
       </div>
-      <div className="strength-workflow reveal-on-scroll" aria-label="内容运营完整流程">
-        <ol className="workflow-flow">
-          {workflowSteps.map((step) => (
-            <li className="workflow-step" key={step.number}>
-              <span className="workflow-number">{step.number}</span>
-              <div>
-                <h3>{step.title}</h3>
-                <p>{step.detail}</p>
-              </div>
-            </li>
-          ))}
-        </ol>
-      </div>
-      <div className="strength-capabilities">
-        {strengths.map((item) => (
-          <article className="strength-card reveal-on-scroll" key={item.title}>
-            <div className="strength-icon">{item.icon}</div>
-            <div className="strength-copy">
-              <h3>{item.title}</h3>
-              <p>{item.text}</p>
+      <div className="strengths-editorial-layout">
+        <div className="strengths-editorial-column strengths-process-column">
+          <div className="strength-block-heading reveal-on-scroll">
+            <span>01</span>
+            <div>
+              <p>工作方法</p>
+              <h3>一条完整的内容运营链路</h3>
             </div>
-          </article>
-        ))}
-        <article className="strength-card strength-ai-capability reveal-on-scroll">
-          <div className="strength-icon"><Sparkles aria-hidden="true" /></div>
-          <div className="strength-copy">
-            <h3>AI 产品与 Skill 创作</h3>
-            <p>已独立制作并上线“不牛马厨房”转盘点餐小程序，同时完成 {projectCatalog[0].aiProduct.skill} 转盘宠物 Skill，能把 AI 从想法落到真实可用的产品体验。</p>
           </div>
-        </article>
+          <div className="strength-workflow reveal-on-scroll" aria-label="内容运营完整流程">
+            <ol className="workflow-flow">
+              {workflowSteps.map((step) => (
+                <li className="workflow-step" key={step.number}>
+                  <span className="workflow-number">{step.number}</span>
+                  <div>
+                    <h3>{step.title}</h3>
+                    <p>{step.detail}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </div>
+        <div className="strengths-editorial-column strengths-capability-column">
+          <div className="strength-block-heading reveal-on-scroll">
+            <span>02</span>
+            <div>
+              <p>核心能力</p>
+              <h3>能独立推进，也能进入协作</h3>
+            </div>
+          </div>
+          <div className="strength-capabilities">
+            {strengths.map((item) => (
+              <article className="strength-card reveal-on-scroll" key={item.title}>
+                <div className="strength-icon">{item.icon}</div>
+                <div className="strength-copy">
+                  <h3>{item.title}</h3>
+                  <p>{item.text}</p>
+                </div>
+              </article>
+            ))}
+            <article className="strength-card strength-ai-capability reveal-on-scroll">
+              <div className="strength-icon"><Sparkles aria-hidden="true" /></div>
+              <div className="strength-copy">
+                <h3>AI 产品与 Skill 创作</h3>
+                <p>已独立制作并上线“不牛马厨房”转盘点餐小程序，同时完成 {projectCatalog[0].aiProduct.skill} 转盘宠物 Skill，能把 AI 从想法落到真实可用的产品体验。</p>
+              </div>
+            </article>
+          </div>
+        </div>
       </div>
+      <PageContinuation href="#contact" label="联系" />
     </section>
   );
 }
@@ -1760,23 +2229,32 @@ function Strengths() {
 function Contact() {
   return (
     <section className="contact-section" id="contact">
-      <div className="contact-inner reveal-on-scroll">
-        <p className="eyebrow">Contact</p>
-        <h2>期待在真实业务里继续把内容做得可见、可信，也可转化。</h2>
-        <p>
-          如果你想了解我的完整作品、平台链接或具体项目复盘，可以通过邮件联系我。
-        </p>
-        <div className="contact-actions">
-          <a className="button button-primary" href="mailto:2436528353@qq.com">
-            <Mail aria-hidden="true" />
-            2436528353@qq.com
-          </a>
+      <img
+        className="contact-background"
+        src={assetUrl('assets/contact-green-light.png')}
+        alt=""
+        aria-hidden="true"
+      />
+      <div className="contact-inner editorial-page-heading reveal-on-scroll" data-watermark="CONTACT">
+        <div className="contact-masthead">
+          <p className="eyebrow">Contact</p>
+          <span>05 / 05</span>
         </div>
-      </div>
-      <div className="contact-orbit" aria-hidden="true">
-        <BookOpenText />
-        <Sparkles />
-        <Leaf />
+        <h2 className="contact-statement">
+          <span>期待在真实业务里</span>
+          <span>继续把内容做得</span>
+          <span>可见、可信，也可转化。</span>
+        </h2>
+        <div className="contact-information-grid">
+          <div className="contact-actions">
+            <span>求职联系</span>
+            <a className="button button-primary" href="mailto:2436528353@qq.com">
+              <Mail aria-hidden="true" />
+              2436528353@qq.com
+            </a>
+          </div>
+        </div>
+        <PageContinuation href="#home" label="首页" isReturn />
       </div>
     </section>
   );
@@ -2112,17 +2590,31 @@ function PortfolioEntry({ onEnter }) {
 }
 
 export default function App() {
-  const { activeSection, scrollProgress, showBackToTop } = usePageInteractions();
+  const {
+    activeSection,
+    scrollProgress,
+    showBackToTop,
+    transitionPhase,
+  } = usePageInteractions();
+  const pages = {
+    home: <Hero />,
+    about: <About />,
+    projects: <Projects />,
+    strengths: <Strengths />,
+    contact: <Contact />,
+  };
 
   return (
     <>
+      <a className="skip-link" href="#main-content">跳到主要内容</a>
       <Header activeSection={activeSection} scrollProgress={scrollProgress} />
-      <main>
-        <Hero />
-        <About />
-        <Projects />
-        <Strengths />
-        <Contact />
+      <main className="portfolio-page-shell" id="main-content" tabIndex="-1">
+        <div
+          className={`portfolio-page-view is-${transitionPhase}`}
+          key={activeSection}
+        >
+          {pages[activeSection]}
+        </div>
       </main>
       <BackToTop visible={showBackToTop} />
       <ClickBloom />
