@@ -536,7 +536,7 @@ function usePageInteractions() {
           activeSection: targetSection,
           scrollProgress: 0,
           showBackToTop: false,
-          transitionPhase: 'idle',
+          transitionPhase: 'chapter',
         }));
       });
       resetScrollInstantly();
@@ -1157,7 +1157,26 @@ function PageContinuation({ className = '', href, label, isReturn = false }) {
       settleTimerRef.current = window.setTimeout(springBack, releaseDelay);
     };
 
+    const isProjectModalOpen = () => Boolean(document.querySelector('.project-modal-backdrop'));
+
+    const suspendForProjectModal = () => {
+      wheelDistanceRef.current = 0;
+      touchStartRef.current = null;
+      touchLastYRef.current = null;
+      lastInputDirectionRef.current = 0;
+      resetInputVelocity();
+      window.clearTimeout(settleTimerRef.current);
+      window.cancelAnimationFrame(settleFrameRef.current);
+      settleAnimationRef.current?.cancel();
+      settleAnimationRef.current = null;
+      isSettlingRef.current = false;
+    };
+
     const updateRunwayState = () => {
+      if (isProjectModalOpen()) {
+        suspendForProjectModal();
+        return;
+      }
       if (isSettlingRef.current || navigationLockRef.current) return;
       const { baseBottom } = getRunwayMetrics();
       const pullDistance = window.scrollY - baseBottom;
@@ -1173,7 +1192,34 @@ function PageContinuation({ className = '', href, label, isReturn = false }) {
       if (pullDistance > 0 && lastInputDirectionRef.current > 0) scheduleSpringBack();
     };
 
+    const isProjectModalEvent = (event) => (
+      isProjectModalOpen()
+      || (
+        event.target instanceof Element
+        && Boolean(event.target.closest('.project-modal-backdrop'))
+      )
+    );
+
+    const getProjectModalScroll = (event) => (
+      event.target instanceof Element
+        ? event.target.closest('.project-modal-scroll')
+        : null
+    );
+
     const onWheel = (event) => {
+      if (isProjectModalEvent(event)) {
+        suspendForProjectModal();
+        const modalScroll = getProjectModalScroll(event);
+        const isAtScrollBoundary = !modalScroll
+          || (event.deltaY < 0 && modalScroll.scrollTop <= 0)
+          || (
+            event.deltaY > 0
+            && modalScroll.scrollTop + modalScroll.clientHeight >= modalScroll.scrollHeight - 1
+          );
+        if (isAtScrollBoundary) event.preventDefault();
+        return;
+      }
+
       if (event.deltaY <= 0) {
         lastInputDirectionRef.current = -1;
         wheelDistanceRef.current = 0;
@@ -1202,6 +1248,12 @@ function PageContinuation({ className = '', href, label, isReturn = false }) {
     };
 
     const onTouchStart = (event) => {
+      if (isProjectModalEvent(event)) {
+        suspendForProjectModal();
+        touchLastYRef.current = event.touches[0]?.clientY ?? null;
+        return;
+      }
+
       touchLastYRef.current = event.touches[0]?.clientY ?? null;
       const { baseBottom } = getRunwayMetrics();
       touchStartRef.current = readyRef.current
@@ -1212,6 +1264,24 @@ function PageContinuation({ className = '', href, label, isReturn = false }) {
     };
 
     const onTouchMove = (event) => {
+      if (isProjectModalEvent(event)) {
+        const currentY = event.touches[0]?.clientY;
+        const touchDistance = typeof currentY === 'number' && touchLastYRef.current !== null
+          ? touchLastYRef.current - currentY
+          : 0;
+        const modalScroll = getProjectModalScroll(event);
+        const isAtScrollBoundary = !modalScroll
+          || (touchDistance < 0 && modalScroll.scrollTop <= 0)
+          || (
+            touchDistance > 0
+            && modalScroll.scrollTop + modalScroll.clientHeight >= modalScroll.scrollHeight - 1
+          );
+        suspendForProjectModal();
+        touchLastYRef.current = typeof currentY === 'number' ? currentY : null;
+        if (isAtScrollBoundary) event.preventDefault();
+        return;
+      }
+
       const currentY = event.touches[0]?.clientY;
       if (typeof currentY === 'number' && touchLastYRef.current !== null) {
         const touchDistance = touchLastYRef.current - currentY;
@@ -1239,6 +1309,10 @@ function PageContinuation({ className = '', href, label, isReturn = false }) {
     };
 
     const onTouchEnd = () => {
+      if (isProjectModalOpen()) {
+        suspendForProjectModal();
+        return;
+      }
       touchLastYRef.current = null;
       if (lastInputDirectionRef.current > 0) scheduleSpringBack();
     };
