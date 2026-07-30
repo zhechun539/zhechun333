@@ -997,7 +997,7 @@ function PageContinuation({ className = '', href, label, isReturn = false }) {
   useEffect(() => {
     const revealDistance = 34;
     const revealedRestDistance = 52;
-    const navigationDistance = 132;
+    const navigationDistance = 44;
 
     const getRunwayMetrics = () => {
       const runwayHeight = runwayRef.current?.offsetHeight ?? 0;
@@ -1188,6 +1188,8 @@ function PageContinuation({ className = '', href, label, isReturn = false }) {
 
       if (!readyRef.current && pullDistance >= revealDistance) {
         thresholdCrossedRef.current = true;
+        springBack();
+        return;
       }
       if (pullDistance > 0 && lastInputDirectionRef.current > 0) scheduleSpringBack();
     };
@@ -1217,6 +1219,11 @@ function PageContinuation({ className = '', href, label, isReturn = false }) {
             && modalScroll.scrollTop + modalScroll.clientHeight >= modalScroll.scrollHeight - 1
           );
         if (isAtScrollBoundary) event.preventDefault();
+        return;
+      }
+
+      if (isSettlingRef.current && event.deltaY > 0) {
+        event.preventDefault();
         return;
       }
 
@@ -1283,6 +1290,16 @@ function PageContinuation({ className = '', href, label, isReturn = false }) {
       }
 
       const currentY = event.touches[0]?.clientY;
+      if (
+        isSettlingRef.current
+        && typeof currentY === 'number'
+        && touchLastYRef.current !== null
+        && currentY < touchLastYRef.current
+      ) {
+        touchLastYRef.current = currentY;
+        event.preventDefault();
+        return;
+      }
       if (typeof currentY === 'number' && touchLastYRef.current !== null) {
         const touchDistance = touchLastYRef.current - currentY;
         lastInputDirectionRef.current = touchDistance > 0 ? 1 : -1;
@@ -1302,7 +1319,7 @@ function PageContinuation({ className = '', href, label, isReturn = false }) {
         }
       }
       if (touchStartRef.current === null || !readyRef.current || !wheelArmedRef.current) return;
-      if (typeof currentY === 'number' && touchStartRef.current - currentY >= 76) {
+      if (typeof currentY === 'number' && touchStartRef.current - currentY >= 25) {
         event.preventDefault();
         navigate();
       }
