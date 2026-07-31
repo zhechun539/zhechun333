@@ -2000,6 +2000,7 @@ function ProjectDetailModal({ index, onClose, project, returnFocusElement }) {
     ...project.gallery.filter((image) => image.src !== project.image),
   ];
   const hasSourceLinks = Boolean(project.links?.length);
+  const hasSupplementalMaterial = Boolean(project.aiDesign);
 
   useEffect(() => {
     const previouslyFocused = document.activeElement;
@@ -2076,7 +2077,7 @@ function ProjectDetailModal({ index, onClose, project, returnFocusElement }) {
             <X aria-hidden="true" />
           </button>
         </header>
-        <div className={`project-modal-scroll${project.links?.length ? ' has-project-source-links' : ''}`}>
+        <div className={`project-modal-scroll${hasSourceLinks ? ' has-project-source-links' : ''}`}>
           {project.aiProduct ? (
             <AiProductCase images={carouselImages} project={project} />
           ) : (
@@ -2109,18 +2110,18 @@ function ProjectDetailModal({ index, onClose, project, returnFocusElement }) {
             </div>
           </div>
           <ProjectSourceLinks links={project.links} title={project.title} />
-          <details className="project-modal-secondary">
-            <summary>
-              <span>完整介绍</span>
-              <small>{project.aiProduct || project.aiDesign ? '含补充材料' : '展开阅读'}</small>
-              <ChevronDown aria-hidden="true" />
-            </summary>
-            <div className="project-modal-secondary-content">
-              <p className="project-modal-full-summary">{project.summary}</p>
-              {project.aiProduct && <AiProductSpotlight content={project.aiProduct} />}
-              {project.aiDesign && <AiDesignShowcase content={project.aiDesign} />}
-            </div>
-              </details>
+          {hasSupplementalMaterial && (
+            <details className="project-modal-secondary">
+              <summary>
+                <span>补充材料</span>
+                <small>展开查看</small>
+                <ChevronDown aria-hidden="true" />
+              </summary>
+              <div className="project-modal-secondary-content">
+                <AiDesignShowcase content={project.aiDesign} />
+              </div>
+            </details>
+          )}
             </>
           )}
         </div>
