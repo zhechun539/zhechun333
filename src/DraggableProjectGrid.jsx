@@ -24,6 +24,7 @@ export default function DraggableProjectGrid({ projects, onProjectOpen }) {
     top: GRID_EDGE,
     bottom: GRID_EDGE,
   });
+  const sprocketCount = projects.length * 2 + 2;
 
   const measure = useCallback(() => {
     const container = containerRef.current;
@@ -75,12 +76,12 @@ export default function DraggableProjectGrid({ projects, onProjectOpen }) {
     <div
       className={`draggable-project-grid${isDragging ? ' is-dragging' : ''}`}
       ref={containerRef}
-      aria-label="九个项目组成的可浏览项目总览"
+      aria-label={`${projects.length} 个项目组成的可浏览项目总览`}
     >
       <motion.div
         className="draggable-project-grid-track"
         ref={gridRef}
-        style={{ x, y }}
+        style={{ x, y, '--project-count': projects.length }}
         drag="x"
         dragConstraints={constraints}
         dragElastic={0}
@@ -89,7 +90,7 @@ export default function DraggableProjectGrid({ projects, onProjectOpen }) {
         onDragEnd={handleDragEnd}
       >
         <span className="project-film-sprockets project-film-sprockets-top" aria-hidden="true">
-          {Array.from({ length: 20 }, (_, index) => <i key={`top-${index}`} />)}
+          {Array.from({ length: sprocketCount }, (_, index) => <i key={`top-${index}`} />)}
         </span>
         <span className="project-film-roll-label" aria-hidden="true">FILM</span>
         {projects.map((project, index) => (
@@ -109,7 +110,7 @@ export default function DraggableProjectGrid({ projects, onProjectOpen }) {
             <span className="draggable-project-tile-copy">
               <span>
                 <strong>{project.title}</strong>
-                <small>{project.aiProduct ? '独立产品实践 · AI 应用' : project.subtitle}</small>
+                <small>{project.aiProduct ? '独立产品实践 · AI 应用' : project.aiSkill ? '工作流实践 · AI Skill' : project.subtitle}</small>
               </span>
               <ArrowUpRight aria-hidden="true" />
             </span>
@@ -119,7 +120,7 @@ export default function DraggableProjectGrid({ projects, onProjectOpen }) {
           </button>
         ))}
         <span className="project-film-sprockets project-film-sprockets-bottom" aria-hidden="true">
-          {Array.from({ length: 20 }, (_, index) => <i key={`bottom-${index}`} />)}
+          {Array.from({ length: sprocketCount }, (_, index) => <i key={`bottom-${index}`} />)}
         </span>
       </motion.div>
     </div>

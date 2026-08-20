@@ -6,6 +6,14 @@
   font-weight: 400;
 }
 
+@font-face {
+  font-family: "Liyu Shoushu Postcard";
+  src: url("./assets/fonts/liyu-shoushu-postcard.woff2") format("woff2");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 400;
+}
+
 :root {
   color-scheme: light;
   --surface-0: hsl(45 30% 94%);
@@ -34,6 +42,7 @@
   --display-font: "Songti SC", STSong, SimSun, "宋体", serif;
   --body-font: "Songti SC", STSong, SimSun, "宋体", serif;
   --script-font: "Songti SC", STSong, SimSun, "宋体", serif;
+  --postcard-font: "Liyu Shoushu Postcard", "STKaiti", "Kaiti SC", "KaiTi", cursive;
   --text-display: clamp(2.55rem, 6.25vw, 5.55rem);
   --text-title: clamp(2rem, 4.6vw, 4.6rem);
   --text-heading: clamp(1.15rem, 2vw, 1.65rem);
@@ -4862,7 +4871,7 @@ h2 {
 
 .about-section .experience-umbrella-note {
   max-width: 34em;
-  margin: -4px auto 13px;
+  margin: 16px auto 13px;
   color: hsl(148 14% 43%);
   font-family: var(--body-font);
   font-size: 0.72rem;
@@ -4921,7 +4930,7 @@ h2 {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  margin: -4px auto 8px;
+  margin: -4px auto 0;
 }
 
 .about-section .experience-umbrella-handle-control,
@@ -4982,6 +4991,7 @@ h2 {
     padding-inline: 14px;
   }
 }
+
 
 .about-section .experience-postcard-index {
   display: flex;
@@ -5101,7 +5111,7 @@ h2 {
 
   .about-section .experience-umbrella-note {
     max-width: 25em;
-    margin-top: -8px;
+    margin-top: 16px;
     font-size: 0.69rem;
   }
 
@@ -18299,6 +18309,7 @@ body {
   position: relative;
   z-index: 2;
   display: block;
+  container-type: inline-size;
   width: 100%;
   aspect-ratio: 1014 / 772;
   padding: 0;
@@ -18364,7 +18375,7 @@ body {
   inset: 0;
   display: block;
   color: hsl(150 24% 27% / 0.88);
-  font-family: "STKaiti", "Kaiti SC", "KaiTi", "FZKai-Z03", cursive;
+  font-family: var(--postcard-font);
   pointer-events: none;
 }
 
@@ -18443,7 +18454,7 @@ body {
   inset: 0;
   display: block;
   color: hsl(150 24% 27% / 0.84);
-  font-family: "STKaiti", "Kaiti SC", "KaiTi", "FZKai-Z03", cursive;
+  font-family: var(--postcard-font);
   pointer-events: none;
 }
 
@@ -18473,14 +18484,14 @@ body {
   display: block;
   width: 32.55%;
   overflow: visible;
-  font-size: 0.31rem;
+  font-size: 1.68cqw;
   font-weight: 400;
-  letter-spacing: -0.045em;
+  letter-spacing: 0;
   line-height: 1;
   text-align: left;
   white-space: nowrap;
   text-shadow: 0.25px 0.35px 0 hsl(150 20% 22% / 0.18);
-  transform: translateY(-88%) rotate(-0.25deg);
+  transform: translateY(-100%) rotate(-0.25deg);
   transform-origin: left bottom;
 }
 
@@ -18506,8 +18517,8 @@ body {
   }
 
   .about-section .about-postcard-handwriting > span {
-    font-size: 0.27rem;
-    letter-spacing: -0.06em;
+    font-size: 1.68cqw;
+    letter-spacing: 0;
   }
 
   .about-section .about-postcard-hint {
@@ -18652,8 +18663,8 @@ body.experience-reading .about-section .about-grid {
 }
 
 .about-postcard-reader .about-postcard-handwriting > span {
-  font-size: clamp(0.62rem, 1.55vw, 0.78rem);
-  letter-spacing: -0.025em;
+  font-size: 1.68cqw;
+  letter-spacing: 0;
 }
 
 .about-postcard-reader .about-postcard-address > span {
@@ -18792,9 +18803,9 @@ body.experience-reading .about-section .about-grid {
   }
 
   .about-postcard-reader .about-postcard-handwriting > span {
-    font-size: clamp(0.5rem, 2.5vw, 0.68rem);
-    letter-spacing: -0.045em;
-    transform: translateY(-88%) rotate(-0.25deg) scaleX(0.74);
+    font-size: 1.68cqw;
+    letter-spacing: 0;
+    transform: translateY(-100%) rotate(-0.25deg);
   }
 
   .about-section .experience-postcard-detail.is-visible {
@@ -19102,10 +19113,11 @@ body.experience-reading .about-section .about-grid {
 
 .about-section .about-experience-archive-result span {
   display: inline-block;
-  margin-right: 10px;
+  margin-right: 12px;
   color: var(--accent);
-  font-size: 0.72rem;
-  font-weight: 600;
+  font-size: 0.86rem;
+  font-weight: 650;
+  letter-spacing: 0.04em;
 }
 
 @media (max-width: 680px) {
@@ -19360,7 +19372,7 @@ body.experience-reading .about-section .about-grid {
 .draggable-project-grid-track {
   position: absolute;
   display: grid;
-  grid-template-columns: repeat(9, 286px);
+  grid-template-columns: repeat(var(--project-count, 9), 286px);
   grid-auto-rows: 340px;
   gap: 18px;
   width: max-content;
@@ -19487,7 +19499,7 @@ body.experience-reading .about-section .about-grid {
   }
 
   .draggable-project-grid-track {
-    grid-template-columns: repeat(9, 248px);
+    grid-template-columns: repeat(var(--project-count, 9), 248px);
     grid-auto-rows: 224px;
     gap: 16px;
     padding: 32px 16px;
@@ -19596,6 +19608,7 @@ body.experience-reading .about-section .about-grid {
   display: block;
   width: 100%;
   height: 100%;
+  background: transparent;
   touch-action: manipulation;
   opacity: 0;
   transition: opacity 260ms ease;
@@ -19626,61 +19639,75 @@ body.experience-reading .about-section .about-grid {
   text-align: center;
 }
 
-/* v03.09 - evenly hung cards, full-card reader, and refractive glass controls. */
+/* v03.25 - soft acrylic controls inspired by the old iOS lock-screen keypad. */
 .about-section .experience-umbrella-controls .experience-umbrella-handle-control,
 .about-section .experience-umbrella-controls .experience-umbrella-spin-control {
   position: relative;
-  min-width: 150px;
-  min-height: 48px;
+  isolation: isolate;
+  min-width: 174px;
+  min-height: 58px;
   overflow: hidden;
-  border: 1px solid hsl(0 0% 100% / 0.72);
-  border-radius: 16px;
-  background: hsl(0 0% 100% / 0.38);
-  color: hsl(158 31% 23%);
+  padding-inline: 28px;
+  border: 1px solid hsl(0 0% 100% / 0.58);
+  border-radius: 999px;
+  background: transparent;
+  color: hsl(158 31% 22%);
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0;
+  text-shadow: 0 1px 0 hsl(0 0% 100% / 0.48);
   box-shadow:
-    inset 0 1px 0 hsl(0 0% 100% / 0.92),
-    inset 0 -1px 0 hsl(156 28% 44% / 0.12),
-    0 10px 26px hsl(151 28% 20% / 0.12);
-  -webkit-backdrop-filter: blur(18px) saturate(165%);
-  backdrop-filter: blur(18px) saturate(165%);
-  transition: transform 180ms ease, border-color 180ms ease, background-color 180ms ease, box-shadow 180ms ease;
+    inset 0 1px 0 hsl(0 0% 100% / 0.74),
+    inset 0 -1px 0 hsl(0 0% 100% / 0.2),
+    inset 0 0 18px hsl(0 0% 100% / 0.08),
+    0 8px 22px -13px hsl(151 18% 24% / 0.2);
+  -webkit-backdrop-filter: blur(22px) saturate(108%);
+  backdrop-filter: blur(22px) saturate(108%);
+  transition:
+    transform 200ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 200ms ease,
+    background-color 200ms ease,
+    box-shadow 200ms ease;
 }
 
 .about-section .experience-umbrella-controls .experience-umbrella-handle-control::before,
 .about-section .experience-umbrella-controls .experience-umbrella-spin-control::before {
   position: absolute;
-  inset: 1px 8px auto;
-  height: 46%;
-  border-radius: 13px 13px 50% 50%;
-  background: hsl(0 0% 100% / 0.2);
+  inset: 1px 10px 48%;
+  z-index: -1;
+  border-radius: 999px 999px 44% 44%;
+  background: linear-gradient(180deg, hsl(0 0% 100% / 0.32), hsl(0 0% 100% / 0.04));
   content: '';
   pointer-events: none;
 }
 
 .about-section .experience-umbrella-controls .experience-umbrella-handle-control:hover,
 .about-section .experience-umbrella-controls .experience-umbrella-spin-control:hover {
-  border-color: hsl(0 0% 100% / 0.9);
-  background: hsl(0 0% 100% / 0.52);
+  border-color: hsl(0 0% 100% / 0.74);
+  background: transparent;
   box-shadow:
-    inset 0 1px 0 hsl(0 0% 100% / 0.98),
-    inset 0 -1px 0 hsl(156 28% 44% / 0.14),
-    0 13px 30px hsl(151 28% 20% / 0.15);
+    inset 0 1px 0 hsl(0 0% 100% / 0.84),
+    inset 0 -1px 0 hsl(0 0% 100% / 0.26),
+    inset 0 0 20px hsl(0 0% 100% / 0.12),
+    0 10px 24px -13px hsl(151 18% 24% / 0.24);
   transform: translateY(-1px);
 }
 
 .about-section .experience-umbrella-controls .experience-umbrella-handle-control[aria-pressed='true'],
 .about-section .experience-umbrella-controls .experience-umbrella-spin-control[aria-pressed='true'] {
   border-color: hsl(0 0% 100% / 0.78);
-  background: hsl(153 46% 72% / 0.58);
+  background: transparent;
   box-shadow:
-    inset 0 1px 0 hsl(0 0% 100% / 0.9),
-    inset 0 -10px 24px hsl(155 34% 42% / 0.1),
-    0 10px 24px hsl(151 28% 20% / 0.13);
+    inset 0 1px 0 hsl(0 0% 100% / 0.78),
+    inset 0 -1px 0 hsl(0 0% 100% / 0.24),
+    inset 0 0 20px hsl(0 0% 100% / 0.11),
+    0 8px 20px -13px hsl(151 18% 24% / 0.22);
 }
 
 .about-section .experience-umbrella-controls .experience-umbrella-handle-control:active,
 .about-section .experience-umbrella-controls .experience-umbrella-spin-control:active {
-  transform: scale(0.97);
+  transform: translateY(1px) scale(0.975);
 }
 
 .experience-card-reader {
@@ -19823,13 +19850,15 @@ body.experience-reading .about-section .about-grid {
   .about-section .experience-three-umbrella-stage {
     height: 480px;
     min-height: 480px;
-    margin-inline: -6px;
+    margin-inline: 0;
   }
 
   .about-section .experience-umbrella-controls .experience-umbrella-handle-control,
   .about-section .experience-umbrella-controls .experience-umbrella-spin-control {
-    min-width: min(42vw, 156px);
-    padding-inline: 14px;
+    min-width: min(43vw, 164px);
+    min-height: 54px;
+    padding-inline: 18px;
+    font-size: 0.86rem;
   }
 
   .experience-card-reader {
@@ -19839,6 +19868,21 @@ body.experience-reading .about-section .about-grid {
   .experience-card-reader-sheet {
     width: min(88vw, 390px);
     padding: 28px 26px;
+  }
+}
+
+@media (max-width: 760px) {
+  .about-section .experience-three-umbrella,
+  .about-section .experience-three-umbrella-stage,
+  .about-section .experience-three-umbrella-stage .experience-umbrella-canvas,
+  .about-section .experience-three-umbrella-stage .experience-umbrella-webgl-canvas {
+    width: 100%;
+    max-width: 100%;
+    background: transparent;
+  }
+
+  .about-section .experience-three-umbrella-stage {
+    margin-inline: 0;
   }
 }
 
@@ -20049,5 +20093,105 @@ body.experience-reading .about-section .about-grid {
 
   .project-rationale-capabilities > ul {
     grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* v03.22 - mobile collage scale, natural postcard type, and touch carousel paging. */
+.carousel-stage {
+  --carousel-swipe-x: 0px;
+  touch-action: pan-y;
+}
+
+.carousel-stage .carousel-image-trigger {
+  transform: translateX(calc(-50% + var(--carousel-swipe-x)));
+  transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.carousel-stage.is-swiping .carousel-image-trigger {
+  transition: none;
+}
+
+.carousel-stage .carousel-image-trigger:active {
+  transform: translateX(calc(-50% + var(--carousel-swipe-x))) scale(0.992);
+}
+
+.about-section .about-postcard-handwriting::before {
+  content: '';
+  position: absolute;
+  top: 40.5%;
+  left: 17.55%;
+  width: 32.55%;
+  border-top: 1px solid hsl(150 16% 35% / 0.32);
+  transform: rotate(-0.25deg);
+  transform-origin: left center;
+}
+
+@media (max-width: 760px) {
+  .vinyl-switcher.turntable-switcher {
+    width: 84px;
+  }
+
+  .vinyl-switcher.turntable-switcher .turntable-player {
+    gap: 3px;
+    padding: 4px;
+    border-radius: 10px;
+  }
+
+  .vinyl-switcher.turntable-switcher .turntable-deck {
+    border-radius: 8px;
+  }
+
+  .vinyl-switcher.turntable-switcher .turntable-controls {
+    gap: 0;
+  }
+
+  .vinyl-switcher.turntable-switcher .turntable-controls button {
+    width: 28px;
+    min-width: 28px;
+    height: 28px;
+    min-height: 28px;
+  }
+
+  .vinyl-switcher.turntable-switcher .turntable-controls button::before {
+    inset: 4px;
+  }
+
+  .vinyl-switcher.turntable-switcher .turntable-controls svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  .hero-guitar-sticker {
+    width: 121px;
+  }
+
+  .hero-cat-sticker {
+    width: clamp(60px, 16.5vw, 66px);
+  }
+
+  .hero-mint-guitar-sticker {
+    width: clamp(34px, 9.5vw, 38px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .carousel-stage .carousel-image-trigger {
+    transition: none;
+  }
+}
+
+/* v03.32 - keep long AI Skill names and tags fully readable on narrow screens. */
+@media (max-width: 680px) {
+  .is-ai-skill-modal .experience-detail-heading .project-tag,
+  .is-ai-skill-modal .experience-detail-title h3 {
+    overflow: visible;
+    white-space: normal;
+    text-overflow: clip;
+    overflow-wrap: anywhere;
+  }
+
+  .is-ai-skill-modal .experience-detail-title h3 {
+    font-size: clamp(1.08rem, 5.2vw, 1.38rem);
+    line-height: 1.12;
   }
 }

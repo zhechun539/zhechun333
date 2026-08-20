@@ -185,7 +185,7 @@ const projectCatalog = [
     image: assetUrl('media/ai-design/buniuma-kitchen-promo.webp'),
     gallery: [],
     aiProduct: {
-      skill: '@hatch wheel skill',
+      skill: 'Hatch Wheel Pet',
       title: '把“今晚吃什么”，做成轻松好用的餐食决策工具。',
       text: '我借助 AI 完成产品构思、页面视觉、转盘交互与上线部署，并制作转盘宠物 Skill。用户端不提供 AI 功能：用户无需浏览冗长菜单，可以先用转盘快速缩小选择，再结合口味与饮食偏好获得更贴近当下需求的菜品建议。',
       features: [
@@ -446,7 +446,92 @@ const projectCatalog = [
   },
 ];
 
-const projects = [...projectCatalog.slice(1), projectCatalog[0]];
+const aiSkillProjects = [
+  {
+    title: 'Hatch Wheel Pet',
+    subtitle: '转盘动态宠物制作 Skill',
+    tag: '角色设计 / 四状态动画 / 资产校验 / 页面接入',
+    image: assetUrl('assets/skill-wheel-pet-idle.webp'),
+    gallery: [
+      { src: assetUrl('assets/skill-wheel-pet-idle.webp'), label: '包仔小厨待机状态' },
+      { src: assetUrl('assets/skill-wheel-pet-run-right.webp'), label: '包仔小厨向右奔跑状态' },
+      { src: assetUrl('assets/skill-wheel-pet-run-left.webp'), label: '包仔小厨向左奔跑状态' },
+      { src: assetUrl('assets/skill-wheel-pet-done.webp'), label: '包仔小厨完成反馈状态' },
+    ],
+    stats: [
+      { value: '5', label: '套已接入宠物' },
+      { value: '4', label: '种交互状态' },
+      { value: '1', label: '套资产工作流' },
+    ],
+    links: [
+      { group: '不牛马厨房 · 在线体验', label: '查看转盘宠物实际交互', url: 'https://freebite.zhechun.space' },
+    ],
+    summary:
+      '把用户的角色设想转化为可直接接入网页的四状态动态宠物，让点菜工具不仅替用户完成选择，也通过角色反馈建立轻量的陪伴感。',
+    rationale: {
+      motivation:
+        '在制作“不牛马厨房”时，我发现转盘解决的是“今天吃什么”的决策效率，但如果交互在菜品抽中后立刻结束，产品仍然只是一个用完即走的功能。真正能让用户愿意反复打开的，不只有功能结果，还包括过程中得到的情绪反馈和角色记忆。因此，我把宠物角色引入点菜流程：它在等待时保持待机，跟随转盘方向左右奔跑，并在抽中菜品后给出完成反馈。角色不再只是装饰，而成为用户操作状态的可视化回应。动态角色落地的难点也不是生成一张可爱的图，而是让同一角色在不同动作里保持一致，同时满足透明背景、画布尺寸、动作方向和网页小尺寸展示等要求。为了避免每增加一只宠物都重复沟通、裁切、校验和返工，我把角色确认、四状态制作、规格校验、打包安装和真实页面检查沉淀成一套 Skill。',
+      evidence:
+        '“不牛马厨房”目前已经接入草莓甜心小厨、奶茶小狗、慵懒小猫、Astr 和包仔小厨 5 套宠物。每套角色包含待机、向右奔跑、向左奔跑和完成反馈 4 种状态；拖动转盘时，宠物会根据交互方向切换动作，抽中菜品后进入完成状态。网站同时保留四状态图片的自定义上传入口，让角色系统既能提供预设，也能承接用户自己的宠物形象。这次实践验证了 Skill 不只负责出图，还能把情绪价值转化成可安装、可检查的产品资产。',
+      capabilities: ['情绪价值产品化', '角色状态设计', '动态资产标准化', '质量校验', '前端交互接入'],
+    },
+    aiSkill: true,
+  },
+  {
+    title: 'Prepare and Review Interviews',
+    subtitle: '面试前后证据链 Skill',
+    tag: '公司研究 / JD 拆解 / 证据匹配 / 面后复盘',
+    image: assetUrl('assets/skill-interview-evidence-map.png'),
+    gallery: [],
+    stats: [
+      { value: '面前+面后', label: '双阶段工作流' },
+      { value: '4', label: '环证据链' },
+      { value: '持续', label: '个人档案更新' },
+    ],
+    links: [],
+    summary:
+      '围绕“岗位要求、个人证据、面试表达、面后复盘”建立持续积累的证据链，让面试准备从通用题库变成基于真实经历的针对性判断与训练。',
+    rationale: {
+      motivation:
+        '我在自己的求职过程中发现，很多面试准备看似搜集了大量资料，最后却没有真正回答三个问题：公司为什么需要这个岗位、我的哪些经历能够证明匹配、哪些能力缺口需要如实说明并提前补齐。公司资料、JD、简历和作品集往往被分开处理，最终得到的只是通用自我介绍和高频题库。面试后的信息也常常没有继续发挥价值，复盘停留在“这里没答好”或“当时有点紧张”，没有进一步判断面试官在验证什么、回答缺少哪段证据，以及问题暴露了怎样的能力缺口。因此，我把面试前后的工作放进同一个 Skill：先沉淀用户已经确认的履历与作品证据，再研究公司和岗位，把 JD 意图映射到可验证的个人案例；面试后继续结合录音、转写或笔记逐题分析，把失误改写成可练习的回答和下一步行动。',
+      evidence:
+        '在一次国内营销岗位的匿名化初面复盘中，Skill 没有把问题简单归因于“表达不够自信”，而是识别出更关键的能力分界：回答只罗列了公众号、小红书、抖音和达人等渠道，却没有说明活动目标、核心人群、产品卖点、阶段节奏、转化承接和衡量指标。这意味着候选人证明了内容执行经验，却还没有充分证明整合营销方案能力。基于这一判断，复盘把原回答重构为完整的大促方案框架，并同步生成 90 秒岗位化自我介绍、可复用的 STAR 案例、能力缺口和下一轮反问清单，让一次面试转化成下一次可以直接调用的证据和训练任务。',
+      capabilities: ['用户信息建模', '资料检索与信源判断', 'JD 意图拆解', '个人证据匹配', '反馈闭环设计'],
+    },
+    aiSkill: true,
+  },
+  {
+    title: 'Make Transparent Sticker',
+    subtitle: '透明贴纸标准化 Skill',
+    tag: '透明抠图 / 视觉规范 / 资产复用 / 输出质检',
+    image: assetUrl('assets/person-guitar-sticker-v2.png'),
+    gallery: [
+      { src: assetUrl('assets/person-guitar-sticker-v2.png'), label: '人物弹唱透明贴纸' },
+      { src: assetUrl('assets/cat-sticker-v2.png'), label: '橘白猫咪透明贴纸' },
+      { src: assetUrl('assets/green-grape-soda-sticker.png'), label: '青提气泡饮透明贴纸' },
+      { src: assetUrl('assets/mint-guitar-sticker.png'), label: '薄荷吉他透明贴纸' },
+      { src: assetUrl('assets/guitar-sticker.png'), label: '吉他透明贴纸' },
+    ],
+    stats: [
+      { value: '5', label: '类页面贴纸' },
+      { value: '透明', label: 'PNG 资产' },
+      { value: '1', label: '套制作规范' },
+    ],
+    links: [],
+    summary:
+      '把作品集里反复出现的抠图与贴纸制作需求转化为可复用的透明贴纸生产标准，在提高效率的同时保持页面资产的一致性。',
+    rationale: {
+      motivation:
+        '在制作个人作品集时，我需要把猫咪、饮品、乐器和人物等不同来源的素材转化成尺寸接近、风格统一的贴纸。最初看起来只是重复抠图，但真正影响页面质感的远不止背景是否透明：主体在画布中的大小、四周留白、白色描边、阴影强度和边缘质量只要不一致，同一页面上的素材就会像来自不同系统；逐张手工调整又会占用大量时间，也很难保证每次都使用相同标准。我因此把自己对贴纸效果的判断从“凭感觉修图”转化为可复用的制作规则：保留原始对象的身份、材质和关键细节，统一透明背景、主体占比、留白、白色轮廓和轻阴影，并在输出后检查透明通道、边缘残留和实际页面效果。',
+      evidence:
+        '目前作品集中已经使用人物弹唱、猫咪、青提汽水和吉他等多类透明贴纸。它们的原始形态和比例差异较大，但经过同一套处理逻辑后，可以作为统一的视觉语言进入页面，在不遮挡核心信息的前提下补充个人感和场景感。后续新增素材时，也不再需要从零决定抠图、描边和阴影标准。这个案例验证了 Skill 的价值不只是少做几次抠图，而是把一次性的视觉劳动转化为稳定、可复用的资产生产流程。',
+      capabilities: ['重复需求抽象', '视觉规范制定', '透明资产处理', '输出质量检查', '工作流封装'],
+    },
+    aiSkill: true,
+  },
+];
+
+const projects = [...projectCatalog.slice(1), projectCatalog[0], ...aiSkillProjects];
 
 const strengths = [
   {
@@ -2188,7 +2273,13 @@ function AboutPostcard() {
   const closeTimerRef = useRef(null);
   const closingRef = useRef(false);
   const competency = '我擅长从产品卖点与用户情绪中提炼内容切口，并按平台角色组织小红书种草、公众号深度表达与评论区、私信互动承接，让选题、内容生产、反馈沉淀和转化线索形成一条可执行、可复盘的传播链路。';
-  const competencyLines = competency.match(/.{1,18}/gu) ?? [competency];
+  const competencyLines = [
+    '我擅长从产品卖点与用户情绪中提炼内容切',
+    '口，并按平台角色组织小红书种草、公众号',
+    '深度表达与评论区、私信互动承接，让选题',
+    '内容生产、反馈沉淀和转化线索形成一条可',
+    '执行、可复盘的传播链路。',
+  ];
 
   const closeExpandedPostcard = useCallback(() => {
     if (!isExpanded || closingRef.current) return;
@@ -2415,6 +2506,8 @@ function ProjectCarousel({ images, title }) {
   const carouselRef = useRef(null);
   const thumbsRef = useRef(null);
   const thumbRefs = useRef([]);
+  const swipeRef = useRef(null);
+  const suppressImageClickRef = useRef(false);
   const imageCount = images.length;
 
   const stopAutoplay = useCallback(() => setAutoplayStopped(true), []);
@@ -2422,6 +2515,60 @@ function ProjectCarousel({ images, title }) {
     setActiveIndex((index) => (index + step + imageCount) % imageCount);
   }, [imageCount]);
   const closeLightbox = useCallback(() => setLightboxOpen(false), []);
+
+  const resetSwipeVisual = useCallback((stage) => {
+    stage.classList.remove('is-swiping');
+    stage.style.setProperty('--carousel-swipe-x', '0px');
+  }, []);
+
+  const handleSwipePointerDown = (event) => {
+    if (event.pointerType === 'mouse' || event.button !== 0 || event.target.closest('.carousel-button')) return;
+    swipeRef.current = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      deltaX: 0,
+      deltaY: 0,
+    };
+    event.currentTarget.setPointerCapture(event.pointerId);
+  };
+
+  const handleSwipePointerMove = (event) => {
+    const swipe = swipeRef.current;
+    if (!swipe || swipe.pointerId !== event.pointerId) return;
+    swipe.deltaX = event.clientX - swipe.startX;
+    swipe.deltaY = event.clientY - swipe.startY;
+
+    if (Math.abs(swipe.deltaX) <= Math.abs(swipe.deltaY) || Math.abs(swipe.deltaX) < 6) return;
+    const stage = event.currentTarget;
+    const boundedOffset = Math.max(-stage.clientWidth * 0.32, Math.min(stage.clientWidth * 0.32, swipe.deltaX));
+    stage.classList.add('is-swiping');
+    stage.style.setProperty('--carousel-swipe-x', `${boundedOffset}px`);
+    stopAutoplay();
+  };
+
+  const finishSwipe = (event) => {
+    const swipe = swipeRef.current;
+    if (!swipe || swipe.pointerId !== event.pointerId) return;
+    const stage = event.currentTarget;
+    if (stage.hasPointerCapture(event.pointerId)) stage.releasePointerCapture(event.pointerId);
+
+    const isHorizontal = Math.abs(swipe.deltaX) > Math.abs(swipe.deltaY) * 1.15;
+    const threshold = Math.min(58, stage.clientWidth * 0.16);
+    const didSwipe = isHorizontal && Math.abs(swipe.deltaX) >= threshold;
+    suppressImageClickRef.current = didSwipe;
+    swipeRef.current = null;
+    resetSwipeVisual(stage);
+
+    if (didSwipe) move(swipe.deltaX < 0 ? 1 : -1);
+  };
+
+  const cancelSwipe = (event) => {
+    if (swipeRef.current?.pointerId !== event.pointerId) return;
+    swipeRef.current = null;
+    suppressImageClickRef.current = false;
+    resetSwipeVisual(event.currentTarget);
+  };
 
   useEffect(() => {
     const carousel = carouselRef.current;
@@ -2505,7 +2652,13 @@ function ProjectCarousel({ images, title }) {
       aria-label={`${title}作品截图浏览`}
       ref={carouselRef}
     >
-      <div className="carousel-stage">
+      <div
+        className="carousel-stage"
+        onPointerDown={handleSwipePointerDown}
+        onPointerMove={handleSwipePointerMove}
+        onPointerUp={finishSwipe}
+        onPointerCancel={cancelSwipe}
+      >
         {imageCount > 1 && (
           <>
             <img
@@ -2528,7 +2681,12 @@ function ProjectCarousel({ images, title }) {
           className="carousel-image-trigger"
           type="button"
           aria-label={`放大查看${title}当前截图：${currentImage.label}`}
-          onClick={() => {
+          onClick={(event) => {
+            if (suppressImageClickRef.current) {
+              suppressImageClickRef.current = false;
+              event.preventDefault();
+              return;
+            }
             stopAutoplay();
             setLightboxOpen(true);
           }}
@@ -2900,7 +3058,7 @@ function ProjectDetailModal({ index, onClose, project, returnFocusElement }) {
       }}
     >
       <article
-        className={`project-modal-window${project.aiProduct ? ' is-ai-product-modal' : ''}`}
+        className={`project-modal-window${project.aiProduct ? ' is-ai-product-modal' : ''}${project.aiSkill ? ' is-ai-skill-modal' : ''}`}
         role="dialog"
         aria-modal="true"
         aria-labelledby="project-modal-title"
@@ -3189,7 +3347,7 @@ function Strengths() {
               <div className="strength-icon"><Sparkles aria-hidden="true" /></div>
               <div className="strength-copy">
                 <h3>AI 产品与 Skill 创作</h3>
-                <p>已独立制作并上线“不牛马厨房”转盘点餐小程序，同时完成 {projectCatalog[0].aiProduct.skill} 转盘宠物 Skill，能把 AI 从想法落到真实可用的产品体验。</p>
+                <p>已独立制作并上线“不牛马厨房”，并围绕动态宠物、面试准备复盘和透明贴纸生产完成 3 套 Skill，把个人判断转化为可复用、可校验的工作流。</p>
               </div>
             </article>
           </div>
