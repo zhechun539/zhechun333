@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "skills": {
+    "ui-ux-pro-max": {
+      "name": "ui-ux-pro-max",
+      "version": "1.0.0",
+      "source": "redskill",
+      "install_dir": "C:\\UGit\\zhechun333\\skills\\ui-ux-pro-max",
+      "installed_at": "1785942962975",
+      "sha256": "d25ad4a191d5bc9670f5edb52a7dac264845dfc198b38a9084de43418d95d2cd"
+    }
+  }
+}

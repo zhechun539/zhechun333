@@ -5,3 +5,5 @@ dist/
 .local-docs/
 .agents/
 .codex/
+output/imagegen/
+.tmp-assets/

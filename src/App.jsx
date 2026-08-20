@@ -8,14 +8,20 @@ import {
   Mail,
   Map,
   Maximize2,
-  Menu,
   MessageCircle,
+  Pause,
   Play,
+  RotateCw,
+  Search,
+  SkipBack,
+  SkipForward,
   Sparkles,
   X,
 } from 'lucide-react';
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal, flushSync } from 'react-dom';
+import DraggableProjectGrid from './DraggableProjectGrid';
+import ExperienceUmbrella from './ExperienceUmbrella';
 
 const assetUrl = (path) => `${import.meta.env.BASE_URL}${path}`;
 const chapterNavigateEvent = 'portfolio:chapter-navigate';
@@ -118,56 +124,56 @@ const experience = [
     type: '正式工作',
     role: '自媒体运营',
     company: '深圳华大基因细胞科技有限公司',
-    summaryLabel: '职责',
-    text: '公众号、小红书与短视频统筹，参与品牌种草。',
+    responsibility: '统筹公众号、小红书、短视频与 SEO 内容，参与品牌种草、节点传播和互动承接。',
+    achievement: '完成 50+ 篇原创推文，短视频阅读 10W+，持续沉淀品牌内容资产。',
   },
   {
     time: '2024.12 - 2025.03',
     type: '实习',
     role: '小红书运营',
     company: '网易网络有限公司',
-    summaryLabel: '成果',
-    text: '从 0 到 1 搭建教育类账号矩阵，承接咨询留资。',
+    responsibility: '从 0 到 1 搭建教育类小红书账号矩阵，持续测试标题、封面和正文结构，通过评论区与私信承接咨询。',
+    achievement: '稳定产出每周 2–3 个爆款，累计承接 200+ 后台咨询，月留资 100+。',
   },
   {
     time: '2024.06 - 2024.09',
     type: '实习',
     role: '新媒体运营',
     company: '畅捷通信息技术股份有限公司',
-    summaryLabel: '成果',
-    text: 'B 端内容多平台分发，月均沉淀 30+ 线索。',
+    responsibility: '围绕中小企业财务场景策划 B 端内容，同步分发至小红书、抖音和快手，并跟进互动承接。',
+    achievement: '累计完成 100+ 个选题内容，单篇曝光 1W+，月均沉淀 30+ 条线索。',
   },
   {
     time: '2023.02 - 2023.11',
     type: '线上兼职',
     role: '新媒体运营 / 小红书运营',
     company: '北京趣拿软件科技有限公司（去哪儿）',
-    summaryLabel: '成果',
-    text: '旅游攻略与引流优化，团队前三、获银牌。',
+    responsibility: '围绕酒店、机票和景点等出行场景撰写旅游攻略，优化标题、封面与 APP 引流路径。',
+    achievement: '完成 63 篇攻略文章，累计获赞 1.2W，团队排名 TOP 3 并获银牌。',
   },
   {
     time: '阶段性项目',
     type: '实习',
     role: '热点内容运营',
     company: '北京金堤科技有限公司（天眼查）',
-    summaryLabel: '成果',
-    text: '微博热点第 1，知乎单篇阅读 10W+。',
+    responsibility: '负责微博热点策划与传播，并完成知乎选题、资料梳理和长文撰写。',
+    achievement: '微博热点排名 TOP 1，知乎单篇阅读 10W+。',
   },
   {
     time: '阶段性项目',
     type: '内容供给',
     role: '官方账号内容运营',
     company: '北京世纪好未来教育科技有限公司（学而思）',
-    summaryLabel: '成果',
-    text: '整理 37 城素材，官方账号曝光 100W+。',
+    responsibility: '收集并整理全国分校的本地化信息，形成可复用内容素材，支持官方账号持续发布。',
+    achievement: '完成 37 个城市素材整理，相关官方账号内容曝光 100W+。',
   },
   {
     time: '阶段性项目',
     type: '实习',
     role: '游戏宣发写作',
     company: '小黑羊（天津）文化传媒有限公司',
-    summaryLabel: '成果',
-    text: '手游宣发稿全网阅读 80W+。',
+    responsibility: '围绕手游卖点和玩家兴趣完成宣发选题、资料整合与稿件撰写。',
+    achievement: '手游宣发稿全网阅读 80W+。',
   },
 ];
 
@@ -202,6 +208,13 @@ const projectCatalog = [
     ],
     summary:
       '面向“今晚吃什么”的高频选择难题，将 800 道家常菜、随机转盘、偏好筛选和宠物反馈整合为一套可直接访问的决策体验。',
+    rationale: {
+      motivation:
+        '我做“不牛马厨房”，是想把过去用内容解释问题的能力再向前推进一步：直接做出一个帮助用户完成决策的工具。“今晚吃什么”看似是小问题，背后却是高频选择疲劳——菜单越多，人反而越难决定；完全随机虽然快，又可能忽略人数、口味和最近吃过什么。我的思路不是继续增加推荐内容，而是设计一条从缩小选择到确认行动的路径，让用户少想一步，但仍保留对结果的控制。',
+      evidence:
+        '产品先用转盘打断反复比较，再允许用户按用餐人数和地域口味筛选；抽中后继续提供热量、时长、辣度、食材和步骤，并用“加入清单”“今天做它”把结果推进到行动，同时尽量避开最近做过的 3 道菜。800 道菜不是为了展示数量，而是作为筛选与随机机制的内容底座；宠物反馈则让一次功能操作有即时的情绪回应。',
+      capabilities: ['生活问题提炼', '信息架构组织', '决策路径设计', 'AI 协同实现', '可用体验落地'],
+    },
   },
   {
     title: '品牌自媒体运营',
@@ -236,6 +249,13 @@ const projectCatalog = [
     ],
     summary:
       '通过公众号、小红书和短视频共同放大品牌声量，结合电商节点、粉丝互动和百科词条搭建，完成从内容触达到信任承接的运营闭环。',
+    rationale: {
+      motivation:
+        '我做品牌自媒体，不只是为了增加发布频次，而是想解决科技品牌最难的两个距离：专业技术与普通用户之间的认知距离，以及品牌机构与真实用户之间的情感距离。华大小鹿背后有鹿茸活性成分、人体功效测试等科研依据，但数据本身不会自动转化成信任；只讲成分，用户觉得难懂，只追热点，品牌又会失去专业性。因此，我希望让不同平台各自承担角色：公众号解释“为什么可信”，小红书回答“和我的生活有什么关系”，短视频与 IP 内容让品牌变得可感知、可记忆。',
+      evidence:
+        '在《“制妆强国”黄金时代已至》中，我把化妆品监管改革、新原料与银发需求，连接到品牌的鹿茸科研、胶原表达和 28 天人体功效数据，让宏观信息落到用户能理解的“信任理由”。小红书“苏暮雨三不接”则把专业卖点翻译成“三不要”；“8 岁小朋友 3D 打印小鹿”的故事又让我看到，IP 不只是装饰，也能为品牌留下人与人之间的情感记忆。',
+      capabilities: ['专业信息翻译', '平台角色分工', '品牌语气控制', '内容信任构建', '专业与亲近感平衡'],
+    },
   },
   {
     title: '小红书种草协同',
@@ -255,6 +275,13 @@ const projectCatalog = [
     ],
     summary:
       '对接第三方与达人资源，跟进发布节奏、内容方向和数据表现，复盘高赞内容共性，提升品牌在小红书场景里的可信度。',
+    rationale: {
+      motivation:
+        '我参与种草协同，是因为品牌自述只能说明“我是谁”，却很难独立回答“为什么用户要相信”。第三方内容真正的价值也不只是借达人流量，而是把产品放进不同人的真实生活语境，替用户完成一次使用想象：它在什么情况下有用、适合什么样的人、为什么值得尝试。因此，我想验证的不是“发多少篇”，而是同一个产品进入哪些人群、场景和表达方式后，才能形成可信而不重复的传播。',
+      evidence:
+        '同一款精华，我跟进的内容没有套用同一个模板：“西藏好物分享”借高原干燥、日晒和出行便携建立使用必要性；“i 人 Vlog”把产品放进低压力的日常生活；“垮脸修复”则从明确困扰和期待状态切入。在复核 84 篇稿件时，我还发现“小鹿精华”与“华大小鹿精华”标签混用会分散搜索资产，因此推动后续合作统一标签。',
+      capabilities: ['达人与场景匹配', '卖点多语境转译', '内容审核与节奏管理', '搜索资产统一', '数据复盘'],
+    },
   },
   {
     title: '教育类小红书获客',
@@ -277,6 +304,13 @@ const projectCatalog = [
     ],
     summary:
       '快速搭建矩阵账号，持续测试笔记标题、封面和正文结构，通过评论区与私信承接咨询，推动自然流量转化为有效线索。',
+    rationale: {
+      motivation:
+        '我做教育类小红书获客，是因为家长真正缺少的往往不是更多课程介绍，而是一个能够判断“孩子现在处于什么位置、接下来该做什么”的坐标。教育决策周期长、信任门槛高，泛泛制造焦虑只会带来短暂流量；真正能触发咨询的内容，要把模糊焦虑拆成具体问题：孩子在哪个年级、离关键节点还有多久、哪门学科在掉队、下一阶段该怎样安排。内容先帮助家长把问题说清楚，课程咨询才会成为自然的下一步。',
+      evidence:
+        '在项目既有的“陪读妈妈”账号人设下，我把内容做得高度阶段化：“不要让孩子毁了自己的高一”从第一次月考波动切入，再分别给出数学、英语、物理的动作；“高三那年的一月”把 507 分到 687 分的变化落到各学科安排；“中考倒计时 154 天”则直接用剩余时间组织学习布局。内容由人设入口、阶段痛点、可执行方案，再走向资料或私信承接。',
+      capabilities: ['用户阶段分层', '账号矩阵测试', '内容漏斗设计', '评论私信承接', '线索交接与增长探索'],
+    },
   },
   {
     title: 'B 端软件内容运营',
@@ -296,6 +330,13 @@ const projectCatalog = [
     ],
     summary:
       '围绕中小企业财务场景策划小红书内容，并同步分发至抖音、快手等平台，通过高频互动沉淀潜在线索。',
+    rationale: {
+      motivation:
+        '我做 B 端软件内容，是因为这类产品的传播障碍往往不是功能不够，而是产品参数离用户的工作问题太远。中小企业和财务人员不会为了理解软件而研究一整套产品语言，他们更关心：我的企业规模适不适合、能不能减少重复工作、成本是否可控、和其他软件相比该怎么选。B 端内容的意义，就是把复杂产品改写成决策依据，降低用户理解、比较和试错的风险。',
+      evidence:
+        '在导师已搭建好的“财务软件销售／财务人”账号方向下，我主要负责搜集、改写、发布和互动，并逐渐理解到：有效改写不是换一种说法，而是重新组织用户的判断顺序。“498 元的用友和 798 元的金蝶怎么选”用价格、功能、品牌与适用场景帮助比较；“用友软件 1.36 元一天”则把 498 元年费换算成日成本，让抽象价格变成可感知的经营支出。',
+      capabilities: ['复杂产品通俗化', '比较型内容组织', '高频内容变体生产', '需求识别', '曝光与销售线索连接'],
+    },
   },
   {
     title: '旅游攻略内容引流',
@@ -311,6 +352,13 @@ const projectCatalog = [
     links: [],
     summary:
       '围绕酒店、机票、景点等出行决策场景撰写攻略，优化封面与标题，把优质内容导向去哪儿 APP 的服务链路。',
+    rationale: {
+      motivation:
+        '我做旅游攻略引流，是因为旅行交易并不是从下单页开始，而是从“我适合去哪、几天怎么排、住哪里更合适”开始。用户搜索攻略时，实际上正在逐步降低一次旅行的不确定性。只有先帮他完成目的地、路线、预算和住宿判断，机票、酒店与景点服务才有机会自然进入后面的预订链路。因此，我想做的不是把用户生硬地推向 APP，而是让攻略本身先完成一部分决策服务，再把需求顺势连接到去哪儿的产品能力。',
+      evidence:
+        '成都住宿攻略没有笼统罗列酒店，而是拆成“学生党”和“情侣党”：前者突出 102 元、3 人入住和拍照空间，后者突出 148 元、2 人入住及度假配套，让用户先按同行关系和预算判断。其他内容也会围绕“四天三夜”“春日出游”“明星同款打卡”等不同意图，组织酒店、航班、景点与餐饮信息。',
+      capabilities: ['搜索意图识别', '旅行人群与场景拆分', '信息筛选与路线组织', '标题封面优化', '内容与业务链路连接'],
+    },
   },
   {
     title: '热点传播与官方账号',
@@ -334,6 +382,13 @@ const projectCatalog = [
     ],
     summary:
       '在天眼查负责微博热点策划与传播、知乎选题和长文撰写；同时为学而思收集 37 个城市分校信息，整理可复用的本地化内容，支持官方账号与全国分部持续发布。',
+    rationale: {
+      motivation:
+        '我做热点传播与官方账号，是因为官方账号如果只围绕品牌自说自话，就很难持续进入用户的注意力。真正有价值的官方内容，不是机械追热点，而是在公众正在讨论的问题中找到品牌有资格提供的信息：教育品牌可以帮助家长做生活与学习选择，商业信息平台则应补充企业背景、经营关系和事实依据。我的动机，是让品牌进入公共讨论时既有速度，也有自己的信息增量，而不是只借热搜标题获得短暂曝光。',
+      evidence:
+        '学而思“寒假暖冬旅行”把临近寒假的出行焦虑整理成 12 个目的地选择，“亲子日历选购”则围绕年龄、兴趣和使用方式提供判断；我还收集 37 个城市分校信息，整理成可复用的本地化素材。天眼查的高三教师热点中，微博先补充涉事学校的成立时间、业务范围和对外投资，知乎再展开学校背景与事件脉络，形成短平台追时效、长平台补信息的分工。',
+      capabilities: ['热点价值判断', '事实核验', '品牌专业视角提取', '长短内容协同', '官方表达边界'],
+    },
   },
   {
     title: '个人账号运营',
@@ -355,6 +410,13 @@ const projectCatalog = [
     ],
     summary:
       '独立运营垂类内容账号，围绕选题、封面、文案和反馈不断测试，积累对平台情绪、视觉表达和内容转化的实感判断。',
+    rationale: {
+      motivation:
+        '我做个人账号，是想拥有一个没有公司品牌、预算和成熟策略托底的实验场，验证自己的内容判断是否真的成立。资源有限反而迫使我回答更本质的问题：当我不露脸、没有专业拍摄条件时，用户为什么还要看我？我逐渐意识到，内容竞争力不一定来自精致制作，也可以来自更高的信息密度、更真实的筛选和更准确的情绪连接。因此，我用两个账号验证了两种内容价值：穿搭／店铺号帮助用户减少消费决策成本，文案号帮助用户表达身份和情绪。',
+      evidence:
+        '“学生党回购过的平价店铺”把起球、瑕疵和“需要看运气”等缺点也写出来，用不完美信息建立可信度；当普通合集表现回落后，我又测试“近期清仓、建议看见就去”的限时信息。文案号中，“黄子弘凡真爱粉挑战”把歌词整理成可参与、可验证身份的互动内容，“严浩翔主题”则围绕粉丝熟悉的表达形成收藏需求。',
+      capabilities: ['资源约束下的形式选择', '信息型与情绪型选题', '标题封面测试', '用户反馈复盘', '跨平台与商业化验证'],
+    },
   },
   {
     title: '内容写作与补充作品',
@@ -374,12 +436,17 @@ const projectCatalog = [
     ],
     summary:
       '补充展示公众号文章、校园媒体内容、旅游图文稿件和网络小说作品，体现更长线的文字表达与内容生产能力。',
+    rationale: {
+      motivation:
+        '我持续写公众号、小说和诗歌，不是为了补充作品数量，而是因为运营的底层不只是抓注意力，还包括理解一个人为什么会被一句话击中，以及怎样把复杂感受组织成他人能够进入的叙事。短内容训练即时判断，长写作则迫使我处理结构、节奏、视角和情绪因果。它让我不只会把信息写得“能看”，也能把那些不容易说清楚的感受写得“被理解”。',
+      evidence:
+        '在个人公众号《细数失眠》中，《希望我能成为快乐的大人》用春、夏、秋、冬组织成长中的期待、自卑、焦虑和自我和解，让一句愿望变成一条有来处的情绪路径；校园公众号内容训练我在公共主题中寻找可共鸣的叙事入口。持续写小说与诗歌，又让我练习更长周期的人物、语言和情节控制。',
+      capabilities: ['情绪洞察', '长文结构', '叙事节奏', '多文体切换', '私人感受的公共表达'],
+    },
   },
 ];
 
 const projects = [...projectCatalog.slice(1), projectCatalog[0]];
-
-const romanProjectNumbers = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX'];
 
 const strengths = [
   {
@@ -413,7 +480,7 @@ const profileDirections = [
   {
     label: '运营',
     title: '平台运营',
-    text: '关注内容排期、账号互动与数据复盘，让内容稳定进入真实传播链路。',
+    text: '搭建内容排期、账号互动与数据复盘节奏，让日常运营稳定执行。',
   },
   {
     label: '策划',
@@ -520,13 +587,27 @@ function usePageInteractions() {
     const handleChapterNavigate = (event) => {
       const href = event.detail?.href;
       const targetSection = href?.replace(/^#/, '');
+      const projectIndex = Number.isInteger(event.detail?.projectIndex)
+        ? event.detail.projectIndex
+        : null;
       const isKnownSection = navItems.some((item) => item.href === href);
-      if (!isKnownSection || targetSection === getSectionFromHash() || transitionLockRef.current) return;
+      if (!isKnownSection || transitionLockRef.current) return;
+
+      if (targetSection === getSectionFromHash()) {
+        if (projectIndex === null) return;
+        window.history.pushState(
+          { ...window.history.state, portfolioProject: projectIndex },
+          '',
+          href,
+        );
+        window.dispatchEvent(new PopStateEvent('popstate', { state: window.history.state }));
+        return;
+      }
 
       transitionLockRef.current = true;
       resetScrollInstantly();
       window.history.pushState(
-        { ...window.history.state, portfolioProject: undefined },
+        { ...window.history.state, portfolioProject: projectIndex ?? undefined },
         '',
         href,
       );
@@ -580,19 +661,23 @@ function usePageInteractions() {
 }
 
 function Header({ activeSection, scrollProgress }) {
-  const [open, setOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+
+  useEffect(() => {
+    setSearchOpen(false);
+  }, [activeSection]);
 
   useEffect(() => {
     const onKeyDown = (event) => {
       if (event.key === 'Escape') {
-        setOpen(false);
+        setSearchOpen(false);
       }
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
   }, []);
 
-  const closeMenu = () => setOpen(false);
+  const closeSearch = () => setSearchOpen(false);
 
   return (
     <header className="site-header">
@@ -615,38 +700,43 @@ function Header({ activeSection, scrollProgress }) {
           );
         })}
       </nav>
+      <nav className="mobile-nav" aria-label="移动端导航">
+        {navItems.map((item) => {
+          const isActive = activeSection === item.href.slice(1);
+          return (
+            <a
+              className={isActive ? 'is-active' : undefined}
+              key={item.href}
+              href={item.href}
+              aria-current={isActive ? 'page' : undefined}
+            >
+              {item.label}
+            </a>
+          );
+        })}
+      </nav>
       <div className="header-actions">
+        {activeSection === 'home' && (
+          <PortfolioSearch className="header-search-form" inputId="header-project-search" />
+        )}
         <a className="button button-primary" href="mailto:2436528353@qq.com">
           <Mail aria-hidden="true" />
           联系我
         </a>
         <button
-          className="menu-toggle"
+          className="mobile-search-toggle"
           type="button"
-          aria-label={open ? '关闭导航' : '打开导航'}
-          aria-expanded={open}
-          onClick={() => setOpen((value) => !value)}
+          aria-label="搜索作品集项目"
+          aria-expanded={searchOpen}
+          onClick={() => setSearchOpen((value) => !value)}
         >
-          {open ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
+          <Search aria-hidden="true" />
         </button>
       </div>
-      {open && (
-        <nav className="mobile-nav" aria-label="移动端导航">
-          {navItems.map((item) => {
-            const isActive = activeSection === item.href.slice(1);
-            return (
-              <a
-                className={isActive ? 'is-active' : undefined}
-                key={item.href}
-                href={item.href}
-                aria-current={isActive ? 'page' : undefined}
-                onClick={closeMenu}
-              >
-                {item.label}
-              </a>
-            );
-          })}
-        </nav>
+      {searchOpen && (
+        <div className="mobile-search-panel">
+          <PortfolioSearch autoFocus onResultSelected={closeSearch} />
+        </div>
       )}
       <span
         className="header-scroll-progress"
@@ -657,17 +747,96 @@ function Header({ activeSection, scrollProgress }) {
   );
 }
 
+function PortfolioSearch({
+  autoFocus = false,
+  onResultSelected,
+  className = '',
+  inputId = 'mobile-project-search',
+}) {
+  const [query, setQuery] = useState('');
+  const normalizedQuery = query.trim().toLocaleLowerCase('zh-CN');
+  const resultsId = `${inputId}-results`;
+  const searchResults = normalizedQuery
+    ? projects
+      .map((project, index) => ({ project, index }))
+      .filter(({ project }) => [
+        project.title,
+        project.subtitle,
+        project.tag,
+        project.summary,
+        ...project.stats.flatMap((stat) => [stat.label, stat.value]),
+      ].some((value) => value?.toLocaleLowerCase('zh-CN').includes(normalizedQuery)))
+      .slice(0, 4)
+    : [];
+
+  const openSearchResult = (index) => {
+    onResultSelected?.();
+    window.dispatchEvent(new CustomEvent(chapterNavigateEvent, {
+      detail: { href: '#projects', projectIndex: index },
+    }));
+  };
+
+  return (
+    <form
+      className={`portfolio-search-form mobile-search-form ${normalizedQuery ? 'is-populated' : ''} ${className}`.trim()}
+      role="search"
+      aria-label="搜索作品集项目"
+      onSubmit={(event) => {
+        event.preventDefault();
+        if (searchResults[0]) openSearchResult(searchResults[0].index);
+      }}
+    >
+      <label className="portfolio-search-label mobile-search-label" htmlFor={inputId}>
+        <Search aria-hidden="true" />
+        <span className="sr-only">搜索作品集项目</span>
+        <input
+          id={inputId}
+          type="search"
+          value={query}
+          placeholder="搜索项目关键词"
+          autoFocus={autoFocus}
+          autoComplete="off"
+          aria-controls={resultsId}
+          aria-expanded={Boolean(normalizedQuery)}
+          onChange={(event) => setQuery(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key !== 'Escape') return;
+            setQuery('');
+            event.currentTarget.blur();
+          }}
+        />
+      </label>
+      {normalizedQuery && (
+        <div
+          className="portfolio-search-results mobile-search-results"
+          id={resultsId}
+          aria-live="polite"
+        >
+          {searchResults.length > 0 ? searchResults.map(({ project, index }) => (
+            <button type="button" onClick={() => openSearchResult(index)} key={project.title}>
+              <span>{project.title}</span>
+              <ArrowUpRight aria-hidden="true" />
+            </button>
+          )) : <p>暂未找到相关项目，试试“品牌”“小红书”或“AI”。</p>}
+        </div>
+      )}
+    </form>
+  );
+}
+
 function VinylMusicButton() {
   const [active, setActive] = useState(false);
   const [trackIndex, setTrackIndex] = useState(0);
-  const [showTrackLabel, setShowTrackLabel] = useState(false);
+  const [playerOffset, setPlayerOffset] = useState({ x: 0, y: 0 });
+  const [isPlayerDragging, setIsPlayerDragging] = useState(false);
   const contextRef = useRef(null);
   const vinylSourceRef = useRef(null);
   const masterGainRef = useRef(null);
   const chordTimerRef = useRef(null);
   const noteTimerRef = useRef(null);
-  const labelTimerRef = useRef(null);
   const chordIndexRef = useRef(0);
+  const playerRef = useRef(null);
+  const playerDragRef = useRef(null);
 
   const tracks = [
     {
@@ -795,7 +964,7 @@ function VinylMusicButton() {
     noteTimerRef.current = window.setInterval(() => playVinylNote(context, masterGain, track), track.noteInterval);
   };
 
-  const stopMusic = () => {
+  const stopMusic = (fadeDuration = 0.38) => {
     if (chordTimerRef.current) {
       window.clearInterval(chordTimerRef.current);
       chordTimerRef.current = null;
@@ -808,7 +977,7 @@ function VinylMusicButton() {
       const now = contextRef.current.currentTime;
       masterGainRef.current.gain.cancelScheduledValues(now);
       masterGainRef.current.gain.setValueAtTime(masterGainRef.current.gain.value || 0.0001, now);
-      masterGainRef.current.gain.exponentialRampToValueAtTime(0.0001, now + 0.38);
+      masterGainRef.current.gain.exponentialRampToValueAtTime(0.0001, now + fadeDuration);
     }
     const source = vinylSourceRef.current;
     const masterGain = masterGainRef.current;
@@ -822,11 +991,10 @@ function VinylMusicButton() {
       }
       source?.disconnect();
       masterGain?.disconnect();
-    }, 420);
-    setActive(false);
+    }, Math.ceil((fadeDuration + 0.04) * 1000));
   };
 
-  const switchTrack = async () => {
+  const startTrack = async (index) => {
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     if (!AudioContext) {
       return;
@@ -835,21 +1003,106 @@ function VinylMusicButton() {
     const context = contextRef.current || new AudioContext();
     contextRef.current = context;
     await context.resume();
-    const nextIndex = active ? (trackIndex + 1) % tracks.length : trackIndex;
-    if (active) stopMusic();
-    startVinylMusic(context, tracks[nextIndex]);
-    setTrackIndex(nextIndex);
+    if (masterGainRef.current) stopMusic(0.14);
+    startVinylMusic(context, tracks[index]);
+    setTrackIndex(index);
     setActive(true);
-    setShowTrackLabel(true);
-    window.clearTimeout(labelTimerRef.current);
-    labelTimerRef.current = window.setTimeout(() => setShowTrackLabel(false), 1800);
+  };
+
+  const togglePlayback = async () => {
+    if (active) {
+      stopMusic();
+      setActive(false);
+      return;
+    }
+    await startTrack(trackIndex);
+  };
+
+  const changeTrack = async (direction) => {
+    const nextIndex = (trackIndex + direction + tracks.length) % tracks.length;
+    if (active) {
+      await startTrack(nextIndex);
+      return;
+    }
+    setTrackIndex(nextIndex);
+  };
+
+  const movePlayerWithinPoster = (deltaX, deltaY) => {
+    const player = playerRef.current;
+    const poster = player?.offsetParent;
+    if (!player || !poster) return;
+
+    const playerRect = player.getBoundingClientRect();
+    const posterRect = poster.getBoundingClientRect();
+    const boundedX = Math.min(Math.max(deltaX, posterRect.left - playerRect.left), posterRect.right - playerRect.right);
+    const boundedY = Math.min(Math.max(deltaY, posterRect.top - playerRect.top), posterRect.bottom - playerRect.bottom);
+    setPlayerOffset((current) => ({ x: current.x + boundedX, y: current.y + boundedY }));
+  };
+
+  const handlePlayerPointerDown = (event) => {
+    if (event.button !== 0 || event.target.closest('.turntable-controls')) return;
+    const player = event.currentTarget;
+    const poster = player.offsetParent;
+    if (!poster) return;
+
+    const playerRect = player.getBoundingClientRect();
+    const posterRect = poster.getBoundingClientRect();
+    playerDragRef.current = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      startOffset: playerOffset,
+      minX: posterRect.left - playerRect.left,
+      maxX: posterRect.right - playerRect.right,
+      minY: posterRect.top - playerRect.top,
+      maxY: posterRect.bottom - playerRect.bottom,
+    };
+    player.setPointerCapture(event.pointerId);
+    setIsPlayerDragging(true);
+  };
+
+  const handlePlayerPointerMove = (event) => {
+    const drag = playerDragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+
+    const deltaX = Math.min(Math.max(event.clientX - drag.startX, drag.minX), drag.maxX);
+    const deltaY = Math.min(Math.max(event.clientY - drag.startY, drag.minY), drag.maxY);
+    setPlayerOffset({ x: drag.startOffset.x + deltaX, y: drag.startOffset.y + deltaY });
+  };
+
+  const finishPlayerDrag = (event) => {
+    if (playerDragRef.current?.pointerId !== event.pointerId) return;
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+    playerDragRef.current = null;
+    setIsPlayerDragging(false);
+  };
+
+  const handlePlayerKeyDown = (event) => {
+    if (event.target !== event.currentTarget) return;
+    const directions = {
+      ArrowLeft: [-1, 0],
+      ArrowRight: [1, 0],
+      ArrowUp: [0, -1],
+      ArrowDown: [0, 1],
+    };
+    if (event.key === 'Home' || event.key === 'Escape') {
+      event.preventDefault();
+      setPlayerOffset({ x: 0, y: 0 });
+      return;
+    }
+    const direction = directions[event.key];
+    if (!direction) return;
+    event.preventDefault();
+    const step = event.shiftKey ? 24 : 8;
+    movePlayerWithinPoster(direction[0] * step, direction[1] * step);
   };
 
   useEffect(() => {
     return () => {
       window.clearInterval(chordTimerRef.current);
       window.clearInterval(noteTimerRef.current);
-      window.clearTimeout(labelTimerRef.current);
       try {
         vinylSourceRef.current?.stop();
       } catch {
@@ -860,107 +1113,462 @@ function VinylMusicButton() {
   }, []);
 
   return (
-    <div className="vinyl-switcher">
-      <button
-        className={`sound-toggle${active ? ' is-active' : ''}`}
-        type="button"
-        aria-label={active ? `正在播放${tracks[trackIndex].title}，点击切换下一首` : `播放${tracks[trackIndex].title}`}
-        aria-pressed={active}
-        onClick={switchTrack}
-        title={active ? `${tracks[trackIndex].title} · 点击切歌` : '点击播放森林歌单'}
-      >
-        <span className="vinyl-player" aria-hidden="true">
-          <span className="vinyl-record"><span className="vinyl-label" /></span>
-          <span className="vinyl-arm" />
-        </span>
-        <span className="vinyl-copy">
-          <strong>{tracks[trackIndex].title}</strong>
-          <small>{active ? '点击切歌' : '点击播放'}</small>
-        </span>
-      </button>
-      <span className={`vinyl-track-label${showTrackLabel ? ' is-visible' : ''}`} aria-live="polite">
-        {tracks[trackIndex].title}
+    <div
+      ref={playerRef}
+      className={`vinyl-switcher turntable-switcher${isPlayerDragging ? ' is-dragging' : ''}`}
+      role="group"
+      aria-label={`可移动唱片机，当前曲目${tracks[trackIndex].title}`}
+      aria-keyshortcuts="ArrowUp ArrowDown ArrowLeft ArrowRight Home"
+      tabIndex={0}
+      title="拖动唱片机移动，双击或按 Home 复位"
+      style={{ '--turntable-x': `${playerOffset.x}px`, '--turntable-y': `${playerOffset.y}px` }}
+      onPointerDown={handlePlayerPointerDown}
+      onPointerMove={handlePlayerPointerMove}
+      onPointerUp={finishPlayerDrag}
+      onPointerCancel={finishPlayerDrag}
+      onDoubleClick={(event) => {
+        if (event.target.closest('.turntable-controls')) return;
+        setPlayerOffset({ x: 0, y: 0 });
+      }}
+      onKeyDown={handlePlayerKeyDown}
+    >
+      <div className={`turntable-player${active ? ' is-playing' : ''}`}>
+        <div className="turntable-deck">
+          <img
+            className="turntable-shell"
+            src={assetUrl('assets/turntable-player-sage-reference.png')}
+            alt=""
+            aria-hidden="true"
+            decoding="async"
+            draggable="false"
+          />
+          <span className="turntable-platter">
+            <span className="turntable-record"><span className="turntable-record-label" /></span>
+          </span>
+          <span className="turntable-tonearm">
+            <span className="turntable-tonearm-base" />
+            <span className="turntable-tonearm-bar" />
+            <span className="turntable-tonearm-head" />
+          </span>
+          <span className="turntable-power-light" />
+          <div className="turntable-footer">
+            <span className="turntable-track" aria-live="polite">
+              <strong>{tracks[trackIndex].title}</strong>
+              <small>{active ? '正在播放' : '准备播放'}</small>
+            </span>
+            <div className="turntable-controls" role="group" aria-label="音乐播放控制">
+              <button type="button" aria-label="播放上一首" onClick={() => changeTrack(-1)}>
+                <SkipBack aria-hidden="true" />
+              </button>
+              <button
+                className="turntable-play-toggle"
+                type="button"
+                aria-label={active ? `暂停${tracks[trackIndex].title}` : `播放${tracks[trackIndex].title}`}
+                aria-pressed={active}
+                onClick={togglePlayback}
+              >
+                {active ? <Pause aria-hidden="true" /> : <Play aria-hidden="true" />}
+              </button>
+              <button type="button" aria-label="播放下一首" onClick={() => changeTrack(1)}>
+                <SkipForward aria-hidden="true" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DraggableHeroElement({ as: Element = 'button', label, className = '', children }) {
+  const [offset, setOffset] = useState({ x: 0, y: 0 });
+  const [rotation, setRotation] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [isRotating, setIsRotating] = useState(false);
+  const stickerRef = useRef(null);
+  const dragRef = useRef(null);
+
+  const moveWithinPoster = (deltaX, deltaY) => {
+    const sticker = stickerRef.current;
+    const poster = sticker?.offsetParent;
+    if (!sticker || !poster) return;
+
+    const stickerRect = sticker.getBoundingClientRect();
+    const posterRect = poster.getBoundingClientRect();
+    const boundedX = Math.min(Math.max(deltaX, posterRect.left - stickerRect.left), posterRect.right - stickerRect.right);
+    const boundedY = Math.min(Math.max(deltaY, posterRect.top - stickerRect.top), posterRect.bottom - stickerRect.bottom);
+    setOffset((current) => ({ x: current.x + boundedX, y: current.y + boundedY }));
+  };
+
+  const handlePointerDown = (event) => {
+    if (event.button !== 0) return;
+    const sticker = event.currentTarget;
+    const poster = sticker.offsetParent;
+    if (!poster) return;
+
+    const stickerRect = sticker.getBoundingClientRect();
+    const posterRect = poster.getBoundingClientRect();
+    const isRotateGesture = Boolean(event.target.closest('.sticker-rotate-handle')) || event.altKey;
+    const pointerAngle = Math.atan2(
+      event.clientY - (stickerRect.top + stickerRect.height / 2),
+      event.clientX - (stickerRect.left + stickerRect.width / 2),
+    ) * (180 / Math.PI);
+    dragRef.current = {
+      mode: isRotateGesture ? 'rotate' : 'move',
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      startOffset: offset,
+      minX: posterRect.left - stickerRect.left,
+      maxX: posterRect.right - stickerRect.right,
+      minY: posterRect.top - stickerRect.top,
+      maxY: posterRect.bottom - stickerRect.bottom,
+      centerX: stickerRect.left + stickerRect.width / 2,
+      centerY: stickerRect.top + stickerRect.height / 2,
+      lastAngle: pointerAngle,
+      rotation,
+    };
+    sticker.setPointerCapture(event.pointerId);
+    setIsDragging(true);
+    setIsRotating(isRotateGesture);
+  };
+
+  const handlePointerMove = (event) => {
+    const drag = dragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+
+    if (drag.mode === 'rotate') {
+      const pointerAngle = Math.atan2(event.clientY - drag.centerY, event.clientX - drag.centerX) * (180 / Math.PI);
+      let angleDelta = pointerAngle - drag.lastAngle;
+      if (angleDelta > 180) angleDelta -= 360;
+      if (angleDelta < -180) angleDelta += 360;
+      drag.rotation += angleDelta;
+      drag.lastAngle = pointerAngle;
+      setRotation(drag.rotation);
+      return;
+    }
+
+    const deltaX = Math.min(Math.max(event.clientX - drag.startX, drag.minX), drag.maxX);
+    const deltaY = Math.min(Math.max(event.clientY - drag.startY, drag.minY), drag.maxY);
+    setOffset({ x: drag.startOffset.x + deltaX, y: drag.startOffset.y + deltaY });
+  };
+
+  const finishDrag = (event) => {
+    if (dragRef.current?.pointerId !== event.pointerId) return;
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+    dragRef.current = null;
+    setIsDragging(false);
+    setIsRotating(false);
+  };
+
+  const handleKeyDown = (event) => {
+    const directions = {
+      ArrowLeft: [-1, 0],
+      ArrowRight: [1, 0],
+      ArrowUp: [0, -1],
+      ArrowDown: [0, 1],
+    };
+    if (event.key === 'Home' || event.key === 'Escape') {
+      event.preventDefault();
+      setOffset({ x: 0, y: 0 });
+      setRotation(0);
+      return;
+    }
+    const rotationDirection = event.key === '[' || (event.altKey && event.key === 'ArrowLeft')
+      ? -1
+      : event.key === ']' || (event.altKey && event.key === 'ArrowRight')
+        ? 1
+        : 0;
+    if (rotationDirection) {
+      event.preventDefault();
+      setRotation((current) => current + rotationDirection * (event.shiftKey ? 15 : 5));
+      return;
+    }
+    const direction = directions[event.key];
+    if (!direction) return;
+    event.preventDefault();
+    const step = event.shiftKey ? 24 : 8;
+    moveWithinPoster(direction[0] * step, direction[1] * step);
+  };
+
+  const isButton = Element === 'button';
+
+  return (
+    <Element
+      ref={stickerRef}
+      className={`hero-draggable ${className}${isDragging ? ' is-dragging' : ''}${isRotating ? ' is-rotating' : ''}`.trim()}
+      type={isButton ? 'button' : undefined}
+      tabIndex={isButton ? undefined : 0}
+      aria-label={label}
+      aria-keyshortcuts="ArrowUp ArrowDown ArrowLeft ArrowRight Alt+ArrowLeft Alt+ArrowRight BracketLeft BracketRight Home"
+      title="拖动主体移动，拖动旋转把手转动，双击或按 Home 复位"
+      style={{
+        '--sticker-x': `${offset.x}px`,
+        '--sticker-y': `${offset.y}px`,
+        '--sticker-user-rotation': `${rotation}deg`,
+      }}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={finishDrag}
+      onPointerCancel={finishDrag}
+      onDoubleClick={() => {
+        setOffset({ x: 0, y: 0 });
+        setRotation(0);
+      }}
+      onKeyDown={handleKeyDown}
+    >
+      {children}
+      <span className="sticker-rotate-handle" aria-hidden="true">
+        <RotateCw />
       </span>
+    </Element>
+  );
+}
+
+function DraggableHeroSticker({ src, label, className = '' }) {
+  return (
+    <DraggableHeroElement className={`hero-sticker ${className}`} label={label}>
+      <img
+        src={src}
+        alt=""
+        aria-hidden="true"
+        decoding="async"
+        draggable="false"
+      />
+    </DraggableHeroElement>
+  );
+}
+
+function DraggableGrapeSodaSticker() {
+  const orbitLetters = 'ZHECHUNZHECHUN'.split('');
+
+  return (
+    <DraggableHeroElement
+      as="div"
+      className="hero-sticker hero-grape-soda-sticker"
+      label="移动青提气泡饮与环绕字标"
+    >
+      <span className="grape-word-orbit is-back" aria-hidden="true">
+        {orbitLetters.map((letter, index) => (
+          <span
+            className="grape-orbit-letter"
+            key={`back-${letter}-${index}`}
+            style={{
+              '--orbit-letter-index': orbitLetters.length - 1 - index,
+              '--orbit-static-distance': `${1 + index * 7.1}%`,
+            }}
+          >
+            {letter}
+          </span>
+        ))}
+      </span>
+      <img
+        src={assetUrl('assets/green-grape-soda-sticker.png')}
+        alt=""
+        aria-hidden="true"
+        decoding="async"
+        draggable="false"
+      />
+      <span className="grape-word-orbit is-front" aria-hidden="true">
+        {orbitLetters.map((letter, index) => (
+          <span
+            className="grape-orbit-letter"
+            key={`front-${letter}-${index}`}
+            style={{
+              '--orbit-letter-index': orbitLetters.length - 1 - index,
+              '--orbit-static-distance': `${1 + index * 7.1}%`,
+            }}
+          >
+            {letter}
+          </span>
+        ))}
+      </span>
+    </DraggableHeroElement>
+  );
+}
+
+const phoneMessage = '用审美判断、内容组织和平台语感，完成从选题到传播反馈的运营表达。';
+
+function HeroPhone() {
+  const [phoneState, setPhoneState] = useState('idle');
+  const [visibleMessage, setVisibleMessage] = useState('');
+  const audioRef = useRef(null);
+  const ringRequestRef = useRef(0);
+  const typingTimerRef = useRef(null);
+
+  const stopRinging = useCallback(() => {
+    ringRequestRef.current += 1;
+    const audio = audioRef.current;
+    if (!audio) return;
+    window.clearInterval(audio.intervalId);
+    const now = audio.context.currentTime;
+    audio.gain.gain.cancelScheduledValues(now);
+    audio.gain.gain.setTargetAtTime(0, now, 0.018);
+    window.setTimeout(() => {
+      audio.oscillators.forEach((oscillator) => {
+        try {
+          oscillator.stop();
+        } catch {
+          // The oscillator may already be stopped during view cleanup.
+        }
+      });
+      audio.context.close();
+    }, 90);
+    audioRef.current = null;
+  }, []);
+
+  const startRinging = useCallback(async () => {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContext) return;
+
+    const requestId = ringRequestRef.current + 1;
+    ringRequestRef.current = requestId;
+    const context = new AudioContext();
+    await context.resume();
+    if (requestId !== ringRequestRef.current) {
+      context.close();
+      return;
+    }
+    const masterGain = context.createGain();
+    masterGain.gain.value = 0;
+    masterGain.connect(context.destination);
+
+    const oscillators = [440, 480].map((frequency) => {
+      const oscillator = context.createOscillator();
+      oscillator.type = 'sine';
+      oscillator.frequency.value = frequency;
+      oscillator.connect(masterGain);
+      oscillator.start();
+      return oscillator;
+    });
+
+    const ring = () => {
+      const start = context.currentTime;
+      masterGain.gain.cancelScheduledValues(start);
+      masterGain.gain.setValueAtTime(0, start);
+      masterGain.gain.linearRampToValueAtTime(0.055, start + 0.025);
+      masterGain.gain.setValueAtTime(0.055, start + 0.34);
+      masterGain.gain.linearRampToValueAtTime(0, start + 0.39);
+      masterGain.gain.setValueAtTime(0, start + 0.57);
+      masterGain.gain.linearRampToValueAtTime(0.055, start + 0.595);
+      masterGain.gain.setValueAtTime(0.055, start + 0.91);
+      masterGain.gain.linearRampToValueAtTime(0, start + 0.96);
+    };
+
+    ring();
+    const intervalId = window.setInterval(ring, 1780);
+    audioRef.current = { context, gain: masterGain, intervalId, oscillators };
+  }, []);
+
+  useEffect(() => () => {
+    window.clearInterval(typingTimerRef.current);
+    stopRinging();
+  }, [stopRinging]);
+
+  const handlePhoneClick = () => {
+    if (phoneState === 'idle') {
+      setPhoneState('ringing');
+      startRinging();
+      return;
+    }
+
+    if (phoneState === 'ringing') {
+      stopRinging();
+      setPhoneState('answered');
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduceMotion) {
+        setVisibleMessage(phoneMessage);
+        return;
+      }
+
+      let characterIndex = 0;
+      typingTimerRef.current = window.setInterval(() => {
+        characterIndex += 1;
+        setVisibleMessage(phoneMessage.slice(0, characterIndex));
+        if (characterIndex >= phoneMessage.length) {
+          window.clearInterval(typingTimerRef.current);
+        }
+      }, 68);
+    }
+  };
+
+  const actionLabel = phoneState === 'idle'
+    ? '点击电话，让它响起来'
+    : phoneState === 'ringing'
+      ? '电话响铃中，再点击接听'
+      : '电话已接听';
+
+  return (
+    <div className={`hero-phone-experience is-${phoneState}`}>
+      <p className="hero-phone-message" aria-live="polite">
+        {visibleMessage}
+        {phoneState === 'answered' && visibleMessage.length < phoneMessage.length ? (
+          <span className="hero-phone-caret" aria-hidden="true" />
+        ) : null}
+      </p>
+      <button
+        className="hero-phone-button"
+        type="button"
+        aria-label={actionLabel}
+        aria-pressed={phoneState === 'answered'}
+        onClick={handlePhoneClick}
+      >
+        <img
+          src={assetUrl('assets/rotary-phone.png')}
+          alt="薄荷蓝复古转盘电话"
+          draggable="false"
+        />
+      </button>
+      <p className="hero-phone-status" aria-live="polite">{actionLabel}</p>
     </div>
   );
 }
 
 function Hero() {
-  const posterRef = useRef(null);
-
-  const movePosterLight = (event) => {
-    const poster = posterRef.current;
-    if (!poster || event.pointerType === 'touch') return;
-    const bounds = poster.getBoundingClientRect();
-    poster.style.setProperty('--pointer-x', `${((event.clientX - bounds.left) / bounds.width - 0.5) * 2}`);
-    poster.style.setProperty('--pointer-y', `${((event.clientY - bounds.top) / bounds.height - 0.5) * 2}`);
-  };
-
-  const resetPosterLight = () => {
-    posterRef.current?.style.setProperty('--pointer-x', '0');
-    posterRef.current?.style.setProperty('--pointer-y', '0');
-  };
-
   return (
     <section className="hero-section" id="home" aria-label="首页">
       <div
         className="magazine-poster"
         aria-label="折椿新媒体运营作品集封面"
-        onPointerMove={movePosterLight}
-        onPointerLeave={resetPosterLight}
-        ref={posterRef}
       >
-        <span className="magazine-grain" aria-hidden="true" />
-        <span className="soft-light soft-light-one" aria-hidden="true" />
-        <span className="soft-light soft-light-two" aria-hidden="true" />
-        <span className="film-flash" aria-hidden="true" />
-        <div className="rain-scene" aria-hidden="true">
-          {Array.from({ length: 10 }, (_, index) => (
-            <span className={`rain-drop rain-drop-${index + 1}`} key={index}>
-              <span className="rain-splash" />
-            </span>
-          ))}
-        </div>
-
-        <figure className="magazine-visual">
-          <img
-            className="magazine-main-image"
-            src={assetUrl('assets/hero-forest-photo.webp')}
-            alt="雾绿色森林树冠与白鸟飞过的自然光影"
-            fetchPriority="high"
-          />
-          <span className="grass-flow grass-flow-back" aria-hidden="true" />
-          <span className="grass-flow grass-flow-front" aria-hidden="true" />
-          <span className="film-frame-note" aria-hidden="true">F400 · 1/250 · CONTENT LOG</span>
-        </figure>
-
         <div className="magazine-copy">
+          <HeroPhone />
+        </div>
+
+        <div className="hero-intro" aria-label="作品集方向">
           <p className="hero-kicker">内容策划 / 账号运营 / 品牌表达</p>
-          <h1>
-            <span>折椿</span>
-            <small>Editorial Content Portfolio</small>
-          </h1>
-          <p className="hero-copy">
-            用审美判断、内容组织和平台语感，完成从选题到传播反馈的运营表达。
-          </p>
-          <div className="hero-index">
-            <a href="#projects">
-              精选项目
-              <ArrowUpRight aria-hidden="true" />
-            </a>
-            <a href="mailto:2436528353@qq.com">
-              联系我
-              <ArrowUpRight aria-hidden="true" />
-            </a>
-          </div>
+          <p className="hero-subtitle">Editorial Content Portfolio</p>
         </div>
 
-        <div className="magazine-collage" aria-hidden="true">
-          <span className="crop-tile crop-tile-one" />
-          <span className="crop-tile crop-tile-two" />
-          <span className="mist-panel" />
+        <h1 className="sr-only">zhechun</h1>
+        <DraggableHeroSticker
+          className="hero-cat-sticker"
+          src={assetUrl('assets/cat-sticker-v2.png')}
+          label="移动猫咪贴纸"
+        />
+        <div className="hero-index hero-sticker-actions" aria-label="首页快捷操作">
+          <a href="#projects">
+            精选项目
+            <ArrowUpRight aria-hidden="true" />
+          </a>
+          <a href="mailto:2436528353@qq.com">
+            联系我
+            <ArrowUpRight aria-hidden="true" />
+          </a>
         </div>
-
+        <DraggableHeroSticker
+          className="hero-guitar-sticker"
+          src={assetUrl('assets/person-guitar-sticker-v2.png')}
+          label="移动人物吉他贴纸"
+        />
+        <DraggableGrapeSodaSticker />
+        <DraggableHeroSticker
+          className="hero-mint-guitar-sticker"
+          src={assetUrl('assets/mint-guitar-sticker.png')}
+          label="移动薄荷绿电吉他贴纸"
+        />
         <PageContinuation className="page-hint" href="#about" label="关于" />
         <VinylMusicButton />
       </div>
@@ -1034,7 +1642,7 @@ function PageContinuation({ className = '', href, label, isReturn = false }) {
       if (readyRef.current) return;
       readyRef.current = true;
       resetArming();
-      flushSync(() => setIsReady(true));
+      setIsReady(true);
     };
 
     const conceal = () => {
@@ -1386,131 +1994,323 @@ function PageContinuation({ className = '', href, label, isReturn = false }) {
   );
 }
 
-function InteractivePortrait() {
-  const [activeDirection, setActiveDirection] = useState(0);
-  const activeItem = profileDirections[activeDirection];
+function PortraitProfile() {
+  const [stage, setStage] = useState('idle');
+  const [isFlipped, setIsFlipped] = useState(false);
+  const audioContextRef = useRef(null);
+  const startTimerRef = useRef(0);
+  const finishTimerRef = useRef(0);
+  const jobDirection = '内容策划 · 账号运营 · 品牌表达';
 
-  const handlePointerMove = (event) => {
-    const target = event.currentTarget;
-    const bounds = target.getBoundingClientRect();
-    const offsetX = ((event.clientX - bounds.left) / bounds.width - 0.5) * 2;
-    const offsetY = ((event.clientY - bounds.top) / bounds.height - 0.5) * 2;
-    target.style.setProperty('--portrait-x', `${offsetX * 7}px`);
-    target.style.setProperty('--portrait-y', `${offsetY * 6}px`);
-    target.style.setProperty('--portrait-tilt-x', `${offsetY * -1.6}deg`);
-    target.style.setProperty('--portrait-tilt-y', `${offsetX * 1.8}deg`);
+  useEffect(() => () => {
+    window.clearTimeout(startTimerRef.current);
+    window.clearTimeout(finishTimerRef.current);
+    audioContextRef.current?.close().catch(() => {});
+  }, []);
+
+  const playInstantCameraSound = () => {
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextClass) return;
+
+    if (!audioContextRef.current || audioContextRef.current.state === 'closed') {
+      audioContextRef.current = new AudioContextClass();
+    }
+
+    const context = audioContextRef.current;
+    context.resume();
+    const now = context.currentTime;
+    const createShutterCurtain = (offset, duration, frequency, level, q) => {
+      const frameCount = Math.max(1, Math.floor(context.sampleRate * duration));
+      const buffer = context.createBuffer(1, frameCount, context.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let index = 0; index < frameCount; index += 1) {
+        const envelope = 1 - index / frameCount;
+        data[index] = (Math.random() * 2 - 1) * envelope * envelope;
+      }
+      const source = context.createBufferSource();
+      const filter = context.createBiquadFilter();
+      const gain = context.createGain();
+      source.buffer = buffer;
+      filter.type = 'bandpass';
+      filter.frequency.value = frequency;
+      filter.Q.value = q;
+      gain.gain.setValueAtTime(level, now + offset);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + offset + duration);
+      source.connect(filter).connect(gain).connect(context.destination);
+      source.start(now + offset);
+    };
+
+    // A camera shutter is a short high curtain snap followed by a lower body click.
+    createShutterCurtain(0, 0.018, 3100, 0.11, 2.8);
+    createShutterCurtain(0.034, 0.05, 960, 0.13, 0.72);
+
+    const bodyClick = context.createOscillator();
+    const bodyGain = context.createGain();
+    bodyClick.type = 'triangle';
+    bodyClick.frequency.setValueAtTime(188, now + 0.03);
+    bodyClick.frequency.exponentialRampToValueAtTime(78, now + 0.08);
+    bodyGain.gain.setValueAtTime(0.035, now + 0.03);
+    bodyGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.085);
+    bodyClick.connect(bodyGain).connect(context.destination);
+    bodyClick.start(now + 0.03);
+    bodyClick.stop(now + 0.09);
   };
 
-  const resetPointer = (event) => {
-    const target = event.currentTarget;
-    target.style.setProperty('--portrait-x', '0px');
-    target.style.setProperty('--portrait-y', '0px');
-    target.style.setProperty('--portrait-tilt-x', '0deg');
-    target.style.setProperty('--portrait-tilt-y', '0deg');
+  const ejectPhoto = () => {
+    if (stage !== 'idle') return;
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    playInstantCameraSound();
+    setIsFlipped(false);
+    setStage('shutter');
+    startTimerRef.current = window.setTimeout(() => {
+      setStage('printing');
+    }, reducedMotion ? 40 : 160);
+    finishTimerRef.current = window.setTimeout(() => {
+      setStage('ejected');
+    }, reducedMotion ? 120 : 3750);
   };
+
+  const togglePhoto = () => {
+    if (stage !== 'ejected') return;
+    setIsFlipped((current) => !current);
+  };
+
+  const statusText = stage === 'idle'
+    ? '点击奶油黄色拍立得，拍出我的照片'
+    : stage === 'shutter'
+      ? '咔嚓——照片即将从下方出片'
+      : '';
 
   return (
-    <figure className="portrait-panel reveal-on-scroll">
-      <div
-        className="portrait-visual"
-        onPointerMove={handlePointerMove}
-        onPointerLeave={resetPointer}
-      >
-        <img src={assetUrl('media/pdf-images/full_p02_i01_Im73.jpg')} alt="折椿个人照片" />
-        <span className="portrait-light" aria-hidden="true" />
-        <span className="portrait-count" aria-hidden="true">0{activeDirection + 1}</span>
-      </div>
-      <figcaption>
-        <p className="portrait-editorial-index" aria-hidden="true">Profile / 01</p>
-        <div className="portrait-heading-row">
-          <span className="portrait-label">求职方向</span>
-          <a className="portrait-email" href="mailto:2436528353@qq.com" aria-label="发送邮件至 2436528353@qq.com">
-            <Mail aria-hidden="true" />
-            <span>2436528353@qq.com</span>
-          </a>
-        </div>
-        <strong>运营、策划、产品类</strong>
-        <div className="portrait-tabs" role="tablist" aria-label="求职方向能力切换">
-          {profileDirections.map((item, index) => (
-            <button
-              type="button"
-              role="tab"
-              id={`profile-direction-tab-${index}`}
-              aria-controls="profile-direction-panel"
-              aria-selected={activeDirection === index}
-              tabIndex={activeDirection === index ? 0 : -1}
-              className={activeDirection === index ? 'is-active' : ''}
-              onClick={() => setActiveDirection(index)}
-              key={item.label}
-            >
-              {item.label}
-            </button>
-          ))}
-        </div>
-        <div
-          className="portrait-direction"
-          id="profile-direction-panel"
-          role="tabpanel"
-          aria-labelledby={`profile-direction-tab-${activeDirection}`}
-          aria-live="polite"
-          key={activeItem.label}
+    <figure
+      className={`portrait-panel instant-portrait${isFlipped ? ' is-flipped' : ''}`}
+      data-stage={stage}
+    >
+      <div className="instant-portrait-stage">
+        <button
+          className="instant-photo"
+          type="button"
+          onClick={togglePhoto}
+          aria-label={isFlipped ? '翻回照片正面' : '翻到照片背面查看求职方向'}
+          aria-pressed={isFlipped}
+          disabled={stage !== 'ejected'}
         >
-          <span>{activeItem.title}</span>
-          <p>{activeItem.text}</p>
-        </div>
+          <span className="instant-photo-inner">
+            <span className="instant-photo-face instant-photo-front">
+              <span className="instant-photo-image">
+                <img src={assetUrl('media/pdf-images/full_p02_i01_Im73.jpg')} alt="折椿个人照片" />
+              </span>
+            </span>
+            <span className="instant-photo-face instant-photo-back">
+              <span className="instant-photo-back-title">求职方向</span>
+              <strong className="instant-photo-back-copy">{jobDirection}</strong>
+              <small>Content · Social · Brand</small>
+            </span>
+          </span>
+        </button>
+
+        <button
+          className="instant-camera"
+          type="button"
+          onClick={ejectPhoto}
+          aria-label="点击奶油黄色 Mini 8 拍立得拍出个人照片"
+          disabled={stage !== 'idle'}
+        >
+          <img
+            src={assetUrl('assets/instax-mini8-butter-yellow-v4.png')}
+            alt="奶油黄色 Mini 8 拍立得"
+          />
+          <span className="instant-camera-flash" aria-hidden="true" />
+        </button>
+      </div>
+      <figcaption className="instant-portrait-status" aria-live="polite">
+        {statusText}
       </figcaption>
     </figure>
   );
 }
 
 function About() {
+  const [isExperienceArchiveOpen, setIsExperienceArchiveOpen] = useState(false);
+
   return (
     <section className="section about-section" id="about">
-      <div className="section-heading editorial-page-heading reveal-on-scroll" data-watermark="ABOUT">
-        <p className="eyebrow">关于与经历</p>
-        <h2 className="about-editorial-title">
-          <span>偏内容创意型的</span>
-          <span>新媒体运营。</span>
-        </h2>
-        <p>
-          我关注内容在不同平台里的角色分工：小红书负责种草触达与心智渗透，公众号承接深度表达与信任建立，评论区和私信用于沉淀互动反馈和转化线索。
-        </p>
-      </div>
       <div className="about-grid">
-        <InteractivePortrait />
-        <div className="about-body">
-          <div className="about-timeline-heading">
-            <p className="eyebrow">Career Archive</p>
-            <h2>职业履历</h2>
-            <span>沿时间向下阅读，每一段经历保留最关键的职责与成果。</span>
-          </div>
-          <div className="timeline">
+        <AboutPostcard />
+        <PortraitProfile />
+        <ExperienceUmbrella experiences={experience} />
+        <section className={`about-experience-archive${isExperienceArchiveOpen ? ' is-open' : ''}`} aria-labelledby="about-experience-archive-title">
+          <button
+            className="about-projects-index"
+            type="button"
+            onClick={() => setIsExperienceArchiveOpen((current) => !current)}
+            aria-expanded={isExperienceArchiveOpen}
+            aria-controls="about-experience-archive-list"
+          >
+            <strong id="about-experience-archive-title">
+              查看全部 7 段经历
+            </strong>
+            <span className="about-projects-index-icon" aria-hidden="true">
+              <ChevronDown />
+            </span>
+          </button>
+          <div
+            className="about-experience-archive-list"
+            id="about-experience-archive-list"
+            hidden={!isExperienceArchiveOpen}
+          >
             {experience.map((item, index) => (
-              <article className="timeline-item reveal-on-scroll" key={`${item.company}-${item.time}`}>
-                <div className="timeline-meta">
-                  <span className="experience-index" aria-hidden="true">
-                    {String(index + 1).padStart(2, '0')}
-                  </span>
+              <article className="about-experience-archive-item" key={`${item.company}-${item.time}`}>
+                <span className="about-experience-archive-number">{String(index + 1).padStart(2, '0')}</span>
+                <div className="about-experience-archive-role">
                   <time>{item.time}</time>
+                  <h3>{item.role}</h3>
+                  <p>{item.company}</p>
                 </div>
-                <div className="timeline-content">
-                  <div className="timeline-title">
-                    <h3>{item.role}</h3>
-                    <span className="experience-type">{item.type}</span>
-                  </div>
-                  <p className="company">{item.company}</p>
-                  <div className="career-summary">
-                    <span className="career-summary-label">{item.summaryLabel}</span>
-                    <span className="career-summary-text">{item.text}</span>
-                  </div>
+                <div className="about-experience-archive-result">
+                  <p><span>职责</span>{item.responsibility}</p>
+                  <p><span>成果</span>{item.achievement}</p>
                 </div>
               </article>
             ))}
           </div>
-        </div>
+        </section>
       </div>
-      <PageContinuation href="#projects" label="经历" />
+      {!isExperienceArchiveOpen && <PageContinuation href="#projects" label="经历" />}
     </section>
+  );
+}
+
+function AboutPostcard() {
+  const [isFlipped, setIsFlipped] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
+  const closeTimerRef = useRef(null);
+  const closingRef = useRef(false);
+  const competency = '我擅长从产品卖点与用户情绪中提炼内容切口，并按平台角色组织小红书种草、公众号深度表达与评论区、私信互动承接，让选题、内容生产、反馈沉淀和转化线索形成一条可执行、可复盘的传播链路。';
+  const competencyLines = competency.match(/.{1,18}/gu) ?? [competency];
+
+  const closeExpandedPostcard = useCallback(() => {
+    if (!isExpanded || closingRef.current) return;
+    closingRef.current = true;
+    setIsClosing(true);
+    closeTimerRef.current = window.setTimeout(() => {
+      setIsExpanded(false);
+      setIsClosing(false);
+      setIsFlipped(false);
+      closingRef.current = false;
+    }, 420);
+  }, [isExpanded]);
+
+  useEffect(() => {
+    if (!isExpanded) return undefined;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    document.body.classList.add('postcard-reading');
+    const onKeyDown = (event) => {
+      if (event.key === 'Escape') closeExpandedPostcard();
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => {
+      window.clearTimeout(closeTimerRef.current);
+      window.removeEventListener('keydown', onKeyDown);
+      document.body.style.overflow = previousOverflow;
+      document.body.classList.remove('postcard-reading');
+    };
+  }, [closeExpandedPostcard, isExpanded]);
+
+  const openPostcard = () => {
+    if (isExpanded) {
+      closeExpandedPostcard();
+      return;
+    }
+    setIsFlipped(true);
+    setIsExpanded(true);
+  };
+
+  const renderPostcardFaces = () => (
+    <span className="about-postcard-inner">
+      <span className="about-postcard-face about-postcard-front" aria-hidden={isFlipped}>
+        <img
+          src={assetUrl('assets/about-postcard-front.png')}
+          alt="浅蓝色章鱼与大象异形明信片正面"
+        />
+      </span>
+      <span className="about-postcard-face about-postcard-back" aria-hidden={!isFlipped}>
+        <img
+          src={assetUrl('assets/about-postcard-back.png')}
+          alt="带邮票框、地址线和书写横线的明信片背面"
+        />
+        <span className="about-postcard-stamp" aria-hidden="true">
+          <svg viewBox="0 0 100 76" role="presentation">
+            <path d="M32 49c-8 1-15-4-15-11 0-5 4-9 10-10-1-9 6-16 15-16 6 0 11 3 14 8 3-3 7-5 12-5 8 0 15 6 15 14 0 9-8 16-17 15-3 9-11 16-21 16-8 0-15-4-18-10l-7 5c-4 3-10-2-6-6l8-10Z" />
+            <circle cx="43" cy="31" r="2.5" />
+            <circle cx="63" cy="31" r="2.5" />
+            <path className="stamp-smile" d="M45 40c5 4 10 4 15 0" />
+          </svg>
+          <span>POSTCARD<br />ZHECHUN</span>
+        </span>
+        <span className="about-postcard-postmark" aria-hidden="true"><i /><i /><i /></span>
+        <span className="about-postcard-handwriting" aria-label={competency}>
+          {competencyLines.map((line, index) => (
+            <span className={`about-postcard-line-${index + 1}`} key={line}>{line}</span>
+          ))}
+        </span>
+        <span className="about-postcard-address" aria-label="明信片收寄信息：寄给内容团队，主题为作品与经历，内页包含七段履历，寄件人折椿">
+          <span>TO · CONTENT TEAM</span>
+          <span>主题 · 作品与经历</span>
+          <span>内页 · 七段履历</span>
+          <span>FROM · ZHECHUN</span>
+        </span>
+      </span>
+    </span>
+  );
+
+  return (
+    <div className={`about-postcard-scene${isExpanded ? ' is-expanded' : ''}${isClosing ? ' is-closing' : ''}`}>
+      <button
+        className={`about-postcard${isFlipped ? ' is-flipped' : ''}`}
+        type="button"
+        onClick={openPostcard}
+        onMouseDown={(event) => event.preventDefault()}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            openPostcard();
+          }
+        }}
+        aria-label={isExpanded ? '收起放大的明信片' : '翻到明信片背面并放大阅读'}
+        aria-pressed={isFlipped}
+        aria-expanded={isExpanded}
+        aria-hidden={isExpanded}
+        tabIndex={isExpanded ? -1 : 0}
+      >
+        {renderPostcardFaces()}
+      </button>
+      <p className="about-postcard-hint" aria-live="polite">
+        {isExpanded ? '点击卡片或背景，回到页面' : '点击明信片，放大阅读背面的留言'}
+      </p>
+      {isExpanded && createPortal(
+        <div className={`about-postcard-reader about-section${isClosing ? ' is-closing' : ''}`} role="dialog" aria-modal="true" aria-label="明信片背面留言">
+          <button
+            className="about-postcard-backdrop"
+            type="button"
+            onClick={closeExpandedPostcard}
+            aria-label="收起放大的明信片"
+          />
+          <button
+            className="about-postcard about-postcard-reader-card is-flipped"
+            type="button"
+            onClick={closeExpandedPostcard}
+            onMouseDown={(event) => event.preventDefault()}
+            aria-label="收起放大的明信片"
+          >
+            {renderPostcardFaces()}
+          </button>
+        </div>,
+        document.body,
+      )}
+    </div>
   );
 }
 
@@ -1929,6 +2729,48 @@ function AiDesignShowcase({ content }) {
   );
 }
 
+function ProjectRationale({ project }) {
+  const content = project.rationale;
+
+  if (!content) {
+    return null;
+  }
+
+  return (
+    <section className="project-rationale" aria-labelledby={`project-rationale-${project.title}`}>
+      <header className="project-rationale-header">
+        <span>PROJECT THINKING</span>
+        <h4 id={`project-rationale-${project.title}`}>我为什么做这件事</h4>
+      </header>
+      <div className="project-rationale-columns">
+        <article className="project-rationale-section">
+          <div className="project-rationale-label">
+            <span>01</span>
+            <h5>为什么做</h5>
+          </div>
+          <p>{content.motivation}</p>
+        </article>
+        <article className="project-rationale-section">
+          <div className="project-rationale-label">
+            <span>02</span>
+            <h5>案例与思考</h5>
+          </div>
+          <p>{content.evidence}</p>
+        </article>
+      </div>
+      <div className="project-rationale-capabilities" aria-label="沉淀能力">
+        <div className="project-rationale-label">
+          <span>03</span>
+          <h5>沉淀能力</h5>
+        </div>
+        <ul>
+          {content.capabilities.map((capability) => <li key={capability}>{capability}</li>)}
+        </ul>
+      </div>
+    </section>
+  );
+}
+
 function AiProductCase({ images, project }) {
   const content = project.aiProduct;
 
@@ -1988,6 +2830,7 @@ function AiProductCase({ images, project }) {
           </ul>
         </div>
       </section>
+      <ProjectRationale project={project} />
     </div>
   );
 }
@@ -2108,7 +2951,8 @@ function ProjectDetailModal({ index, onClose, project, returnFocusElement }) {
                 ))}
               </dl>
             </div>
-          </div>
+           </div>
+          <ProjectRationale project={project} />
           <ProjectSourceLinks links={project.links} title={project.title} />
           {hasSupplementalMaterial && (
             <details className="project-modal-secondary">
@@ -2136,12 +2980,58 @@ function Projects() {
     const historyIndex = window.history.state?.portfolioProject;
     return Number.isInteger(historyIndex) ? historyIndex : null;
   });
+  const [isCcdAwake, setIsCcdAwake] = useState(false);
+  const [isProjectSummaryOpen, setIsProjectSummaryOpen] = useState(false);
+  const ccdAudioRef = useRef(null);
   const projectButtonRefs = useRef([]);
   const selectedProject = selectedIndex === null ? null : projects[selectedIndex];
-  const featuredProjects = projects.slice(0, 3);
-  const catalogProjects = projects.slice(3);
 
-  const openProject = (index) => {
+  useEffect(() => () => {
+    ccdAudioRef.current?.close().catch(() => {});
+  }, []);
+
+  const playCcdShutterSound = () => {
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextClass) return;
+    if (!ccdAudioRef.current || ccdAudioRef.current.state === 'closed') {
+      ccdAudioRef.current = new AudioContextClass();
+    }
+
+    const context = ccdAudioRef.current;
+    context.resume();
+    const now = context.currentTime;
+    const noise = context.createBuffer(1, Math.floor(context.sampleRate * 0.09), context.sampleRate);
+    const noiseData = noise.getChannelData(0);
+    for (let index = 0; index < noiseData.length; index += 1) {
+      const envelope = 1 - index / noiseData.length;
+      noiseData[index] = (Math.random() * 2 - 1) * envelope * envelope;
+    }
+    const source = context.createBufferSource();
+    const filter = context.createBiquadFilter();
+    const gain = context.createGain();
+    source.buffer = noise;
+    filter.type = 'bandpass';
+    filter.frequency.value = 2500;
+    filter.Q.value = 1.6;
+    gain.gain.setValueAtTime(0.16, now);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.09);
+    source.connect(filter).connect(gain).connect(context.destination);
+    source.start(now);
+
+    const click = context.createOscillator();
+    const clickGain = context.createGain();
+    click.type = 'triangle';
+    click.frequency.setValueAtTime(180, now + 0.035);
+    click.frequency.exponentialRampToValueAtTime(72, now + 0.12);
+    clickGain.gain.setValueAtTime(0.05, now + 0.035);
+    clickGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
+    click.connect(clickGain).connect(context.destination);
+    click.start(now + 0.035);
+    click.stop(now + 0.13);
+  };
+
+  const openProject = (index, triggerElement = null) => {
+    if (triggerElement) projectButtonRefs.current[index] = triggerElement;
     window.history.pushState(
       { ...window.history.state, portfolioProject: index },
       '',
@@ -2166,81 +3056,73 @@ function Projects() {
 
   return (
     <section className="section projects-section" id="projects">
-      <div className="section-heading editorial-page-heading projects-heading reveal-on-scroll" data-watermark="PROJECTS">
-        <p className="eyebrow">Selected Work</p>
-        <h2>项目经历</h2>
-        <p>从内容策划、平台运营到转化承接，以代表项目呈现执行过程与结果。</p>
+      <div className="section-heading projects-heading projects-ccd-heading reveal-on-scroll">
+        <img
+          className="projects-ccd-frame"
+          src={assetUrl('assets/projects-ccd-frame-silver.png')}
+          alt="Selected Work，项目经历：从内容策划、平台运营到转化承接，以代表项目呈现执行过程与结果。"
+        />
+        <span
+          className={`projects-ccd-screen-cover${isCcdAwake ? ' is-awake' : ''}`}
+          aria-hidden="true"
+        />
+        <button
+          className={`projects-ccd-power-button${isCcdAwake ? ' is-awake' : ''}`}
+          type="button"
+          aria-label={isCcdAwake ? 'CCD 屏幕已打开' : '点击模式转盘打开 CCD 屏幕'}
+          aria-pressed={isCcdAwake}
+          onClick={() => {
+            if (isCcdAwake) return;
+            playCcdShutterSound();
+            setIsCcdAwake(true);
+          }}
+        />
+        <p className={`projects-ccd-hint${isCcdAwake ? ' is-awake' : ''}`} aria-live="polite">
+          {isCcdAwake ? 'CCD 已打开' : '点击模式转盘，打开 CCD 屏幕'}
+        </p>
       </div>
       <div className="experience-overview-panel">
-        <section className="featured-projects" aria-labelledby="featured-projects-title">
-          <div className="project-group-heading">
-            <div>
-              <p className="eyebrow">Featured Projects</p>
-              <h3 id="featured-projects-title">精选项目</h3>
-            </div>
-            <span>01 — 03</span>
-          </div>
-          <div className="featured-project-grid">
-            {featuredProjects.map((project, index) => (
-              <button
-                className="featured-project reveal-on-scroll"
-                type="button"
-                onClick={() => openProject(index)}
-                ref={(node) => { projectButtonRefs.current[index] = node; }}
-                key={project.title}
-              >
-                <span className="featured-project-visual">
-                  <img src={project.image} alt="" loading={index === 0 ? 'eager' : 'lazy'} />
-                </span>
-                <span className="featured-project-meta">
-                  <span className="featured-project-number">{romanProjectNumbers[index]}</span>
-                  <span className="featured-project-copy">
-                    <strong>{project.title}</strong>
-                    <span>{project.subtitle}</span>
-                  </span>
-                  <ArrowUpRight aria-hidden="true" />
-                </span>
-                <span className="featured-project-result">{project.stats[0].value} · {project.stats[0].label}</span>
-              </button>
-            ))}
-          </div>
+        <section className="project-field" aria-label="项目胶卷总览">
+          <DraggableProjectGrid
+            projects={projects}
+            onProjectOpen={openProject}
+          />
         </section>
 
-        <section className="project-catalog" aria-labelledby="project-catalog-title">
-          <div className="project-group-heading">
-            <div>
-              <p className="eyebrow">Project Index</p>
-              <h3 id="project-catalog-title">项目编目</h3>
-            </div>
-            <span>04 — {String(projects.length).padStart(2, '0')}</span>
-          </div>
-          <div className="project-catalog-list">
-          {catalogProjects.map((project, catalogIndex) => {
-            const index = catalogIndex + featuredProjects.length;
-            return (
+        <section className={`project-summary${isProjectSummaryOpen ? ' is-open' : ''}`} aria-labelledby="project-summary-title">
+          <button
+            className="project-summary-toggle"
+            type="button"
+            onClick={() => setIsProjectSummaryOpen((current) => !current)}
+            aria-expanded={isProjectSummaryOpen}
+            aria-controls="project-summary-list"
+          >
+            <strong id="project-summary-title">查看全部项目汇总</strong>
+            <span>{projects.length} 个项目 · 内容策划、平台运营、转化承接与产品实践</span>
+            <span className="project-summary-toggle-icon" aria-hidden="true"><ChevronDown /></span>
+          </button>
+          <div className="project-summary-list" id="project-summary-list" hidden={!isProjectSummaryOpen}>
+            {projects.map((project, index) => (
             <button
-              className="project-catalog-row reveal-on-scroll"
+              className="project-summary-row"
               type="button"
-              onClick={() => openProject(index)}
-              ref={(node) => { projectButtonRefs.current[index] = node; }}
+              onClick={(event) => openProject(index, event.currentTarget)}
               key={project.title}
             >
-              <span className="project-catalog-number">{romanProjectNumbers[index]}</span>
-              <span className="project-catalog-copy">
+              <span className="project-summary-number">{String(index + 1).padStart(2, '0')}</span>
+              <span className="project-summary-copy">
                 <strong>{project.title}</strong>
-                <span>{project.summary}</span>
+                <span>{project.subtitle}</span>
               </span>
-              <span className="project-catalog-type">
-                <span>{project.aiProduct ? '独立产品实践 · AI 应用' : project.subtitle}</span>
-                <span>阅读案例</span>
+              <span className="project-summary-result">
+                {project.stats[0].value} · {project.stats[0].label}
               </span>
               <ArrowUpRight aria-hidden="true" />
             </button>
-            );
-          })}
+            ))}
           </div>
         </section>
-        </div>
+      </div>
       <PageContinuation href="#strengths" label="优势" />
       {selectedProject && (
         <ProjectDetailModal
