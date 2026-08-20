@@ -18,10 +18,11 @@ import {
   Sparkles,
   X,
 } from 'lucide-react';
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal, flushSync } from 'react-dom';
 import DraggableProjectGrid from './DraggableProjectGrid';
-import ExperienceUmbrella from './ExperienceUmbrella';
+
+const ExperienceUmbrella = lazy(() => import('./ExperienceUmbrella'));
 
 const assetUrl = (path) => `${import.meta.env.BASE_URL}${path}`;
 const chapterNavigateEvent = 'portfolio:chapter-navigate';
@@ -71,7 +72,7 @@ const projectImages = {
     pdfImage('full_p10_i02_Im784.jpg', '旅游攻略封面与互动'),
     pdfImage('full_p10_i03_Im786.jpg', '旅游内容数据表'),
     pdfImage('full_p10_i04_Im788.jpg', '旅游内容数据补充'),
-    pdfImage('related_p01_i03_X41.png', '旅游项目排名截图'),
+    pdfImage('related_p01_i03_X41.webp', '旅游项目排名截图'),
   ],
   official: [
     pdfImage('full_p11_i01_Im856.jpg', '热点内容与官方账号案例'),
@@ -84,18 +85,18 @@ const projectImages = {
     pdfImage('full_p12_i06_Im920.jpg', '松子文案馆账号资料'),
     pdfImage('full_p12_i07_Im922.jpg', '个人账号爆款内容截图'),
     pdfImage('full_p12_i08_Im924.jpg', '个人账号内容数据截图'),
-    pdfImage('related_p07_i01_X89.png', '个人账号主页截图'),
-    pdfImage('related_p07_i02_X90.png', '个人账号内容数据截图'),
+    pdfImage('related_p07_i01_X89.webp', '个人账号主页截图'),
+    pdfImage('related_p07_i02_X90.webp', '个人账号内容数据截图'),
   ],
   writing: [
-    pdfImage('related_p03_i01_X59.png', '小说作品二维码页'),
-    pdfImage('related_p03_i02_X60.png', '小说作品分享页'),
-    pdfImage('related_p04_i01_X67.png', '公众号文章页面'),
-    pdfImage('related_p04_i02_X68.png', '小红书旅游稿件截图'),
-    pdfImage('related_p05_i01_X75.png', '公众号文章截图'),
-    pdfImage('related_p05_i02_X76.png', '个人公众号主页'),
-    pdfImage('related_p06_i01_X79.png', '公众号文章列表'),
-    pdfImage('related_p06_i02_X80.png', '图文作品合集'),
+    pdfImage('related_p03_i01_X59.webp', '小说作品二维码页'),
+    pdfImage('related_p03_i02_X60.webp', '小说作品分享页'),
+    pdfImage('related_p04_i01_X67.webp', '公众号文章页面'),
+    pdfImage('related_p04_i02_X68.webp', '小红书旅游稿件截图'),
+    pdfImage('related_p05_i01_X75.webp', '公众号文章截图'),
+    pdfImage('related_p05_i02_X76.webp', '个人公众号主页'),
+    pdfImage('related_p06_i01_X79.webp', '公众号文章列表'),
+    pdfImage('related_p06_i02_X80.webp', '图文作品合集'),
   ],
 };
 
@@ -481,7 +482,7 @@ const aiSkillProjects = [
     title: 'Prepare and Review Interviews',
     subtitle: '面试前后证据链 Skill',
     tag: '公司研究 / JD 拆解 / 证据匹配 / 面后复盘',
-    image: assetUrl('assets/skill-interview-evidence-map.png'),
+    image: assetUrl('assets/skill-interview-evidence-map.webp'),
     gallery: [],
     stats: [
       { value: '面前+面后', label: '双阶段工作流' },
@@ -504,13 +505,13 @@ const aiSkillProjects = [
     title: 'Make Transparent Sticker',
     subtitle: '透明贴纸标准化 Skill',
     tag: '透明抠图 / 视觉规范 / 资产复用 / 输出质检',
-    image: assetUrl('assets/person-guitar-sticker-v2.png'),
+    image: assetUrl('assets/person-guitar-sticker-v2.webp'),
     gallery: [
-      { src: assetUrl('assets/person-guitar-sticker-v2.png'), label: '人物弹唱透明贴纸' },
-      { src: assetUrl('assets/cat-sticker-v2.png'), label: '橘白猫咪透明贴纸' },
-      { src: assetUrl('assets/green-grape-soda-sticker.png'), label: '青提气泡饮透明贴纸' },
-      { src: assetUrl('assets/mint-guitar-sticker.png'), label: '薄荷吉他透明贴纸' },
-      { src: assetUrl('assets/guitar-sticker.png'), label: '吉他透明贴纸' },
+      { src: assetUrl('assets/person-guitar-sticker-v2.webp'), label: '人物弹唱透明贴纸' },
+      { src: assetUrl('assets/cat-sticker-v2.webp'), label: '橘白猫咪透明贴纸' },
+      { src: assetUrl('assets/green-grape-soda-sticker.webp'), label: '青提气泡饮透明贴纸' },
+      { src: assetUrl('assets/mint-guitar-sticker.webp'), label: '薄荷吉他透明贴纸' },
+      { src: assetUrl('assets/guitar-sticker.webp'), label: '吉他透明贴纸' },
     ],
     stats: [
       { value: '5', label: '类页面贴纸' },
@@ -1221,7 +1222,7 @@ function VinylMusicButton() {
         <div className="turntable-deck">
           <img
             className="turntable-shell"
-            src={assetUrl('assets/turntable-player-sage-reference.png')}
+            src={assetUrl('assets/turntable-player-sage-reference.webp')}
             alt=""
             aria-hidden="true"
             decoding="async"
@@ -1450,7 +1451,7 @@ function DraggableGrapeSodaSticker() {
         ))}
       </span>
       <img
-        src={assetUrl('assets/green-grape-soda-sticker.png')}
+        src={assetUrl('assets/green-grape-soda-sticker.webp')}
         alt=""
         aria-hidden="true"
         decoding="async"
@@ -1601,7 +1602,7 @@ function HeroPhone() {
         onClick={handlePhoneClick}
       >
         <img
-          src={assetUrl('assets/rotary-phone.png')}
+          src={assetUrl('assets/rotary-phone.webp')}
           alt="薄荷蓝复古转盘电话"
           draggable="false"
         />
@@ -1630,7 +1631,7 @@ function Hero() {
         <h1 className="sr-only">zhechun</h1>
         <DraggableHeroSticker
           className="hero-cat-sticker"
-          src={assetUrl('assets/cat-sticker-v2.png')}
+          src={assetUrl('assets/cat-sticker-v2.webp')}
           label="移动猫咪贴纸"
         />
         <div className="hero-index hero-sticker-actions" aria-label="首页快捷操作">
@@ -1645,13 +1646,13 @@ function Hero() {
         </div>
         <DraggableHeroSticker
           className="hero-guitar-sticker"
-          src={assetUrl('assets/person-guitar-sticker-v2.png')}
+          src={assetUrl('assets/person-guitar-sticker-v2.webp')}
           label="移动人物吉他贴纸"
         />
         <DraggableGrapeSodaSticker />
         <DraggableHeroSticker
           className="hero-mint-guitar-sticker"
-          src={assetUrl('assets/mint-guitar-sticker.png')}
+          src={assetUrl('assets/mint-guitar-sticker.webp')}
           label="移动薄荷绿电吉他贴纸"
         />
         <PageContinuation className="page-hint" href="#about" label="关于" />
@@ -2202,7 +2203,7 @@ function PortraitProfile() {
           disabled={stage !== 'idle'}
         >
           <img
-            src={assetUrl('assets/instax-mini8-butter-yellow-v4.png')}
+            src={assetUrl('assets/instax-mini8-butter-yellow-v4.webp')}
             alt="奶油黄色 Mini 8 拍立得"
           />
           <span className="instant-camera-flash" aria-hidden="true" />
@@ -2223,7 +2224,17 @@ function About() {
       <div className="about-grid">
         <AboutPostcard />
         <PortraitProfile />
-        <ExperienceUmbrella experiences={experience} />
+        <Suspense
+          fallback={(
+            <section className="experience-umbrella experience-umbrella-suspense" aria-busy="true" aria-label="正在加载三维职业履历雨伞">
+              <div className="experience-umbrella-stage">
+                <span className="experience-umbrella-suspense-status" role="status">正在加载三维雨伞...</span>
+              </div>
+            </section>
+          )}
+        >
+          <ExperienceUmbrella experiences={experience} />
+        </Suspense>
         <section className={`about-experience-archive${isExperienceArchiveOpen ? ' is-open' : ''}`} aria-labelledby="about-experience-archive-title">
           <button
             className="about-projects-index"
@@ -2323,13 +2334,13 @@ function AboutPostcard() {
     <span className="about-postcard-inner">
       <span className="about-postcard-face about-postcard-front" aria-hidden={isFlipped}>
         <img
-          src={assetUrl('assets/about-postcard-front.png')}
+          src={assetUrl('assets/about-postcard-front.webp')}
           alt="浅蓝色章鱼与大象异形明信片正面"
         />
       </span>
       <span className="about-postcard-face about-postcard-back" aria-hidden={!isFlipped}>
         <img
-          src={assetUrl('assets/about-postcard-back.png')}
+          src={assetUrl('assets/about-postcard-back.webp')}
           alt="带邮票框、地址线和书写横线的明信片背面"
         />
         <span className="about-postcard-stamp" aria-hidden="true">
@@ -3217,7 +3228,7 @@ function Projects() {
       <div className="section-heading projects-heading projects-ccd-heading reveal-on-scroll">
         <img
           className="projects-ccd-frame"
-          src={assetUrl('assets/projects-ccd-frame-silver.png')}
+          src={assetUrl('assets/projects-ccd-frame-silver.webp')}
           alt="Selected Work，项目经历：从内容策划、平台运营到转化承接，以代表项目呈现执行过程与结果。"
         />
         <span
@@ -3363,7 +3374,7 @@ function Contact() {
     <section className="contact-section" id="contact">
       <img
         className="contact-background"
-        src={assetUrl('assets/contact-green-light.png')}
+        src={assetUrl('assets/contact-green-light.webp')}
         alt=""
         aria-hidden="true"
       />
