@@ -654,11 +654,18 @@ function UmbrellaThreeScene({ experiences, isOpen, isRotating, fallingIndex, onT
             const breeze = 0.012
               + Math.sin(elapsed * 0.43 + record.phase) * 0.007
               + Math.sin(elapsed * 0.19 + record.phase * 1.7) * 0.004;
-            const localWindStrength = breeze + gustEnvelope * wind.strength;
+            const turbulence = Math.sin(elapsed * 0.86 + record.phase) * 0.64
+              + Math.sin(elapsed * 1.37 + record.phase * 1.9) * 0.36;
+            const leeSide = (1 - windFacing) * 0.5;
+            const localWindDirection = wind.currentDirection
+              + turbulence * (0.1 + leeSide * 0.13);
+            const localWindFacing = Math.cos(worldAngle - localWindDirection);
+            const localWindStrength = (breeze + gustEnvelope * wind.strength)
+              * (1 + turbulence * (0.06 + leeSide * 0.06));
             const windScale = THREE.MathUtils.lerp(0.42, 1, openProgress);
-            const windOutward = -localWindStrength * windFacing * 1.08 * windScale;
+            const windOutward = -localWindStrength * localWindFacing * 1.08 * windScale;
             const windTangential = localWindStrength
-              * Math.sin(wind.currentDirection - worldAngle)
+              * Math.sin(localWindDirection - worldAngle)
               * 1.08
               * windScale;
             const outwardTarget = THREE.MathUtils.lerp(closedOutwardTarget, rotatingOutwardTarget, openProgress)
