@@ -6,18 +6,20 @@ import {
   FileText,
   Leaf,
   Mail,
-  Map,
+  Map as MapIcon,
   Maximize2,
   MessageCircle,
   Pause,
   Play,
   RotateCw,
   Search,
+  Send,
   SkipBack,
   SkipForward,
   Sparkles,
   X,
 } from 'lucide-react';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { lazy, Suspense, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal, flushSync } from 'react-dom';
 import DraggableProjectGrid from './DraggableProjectGrid';
@@ -134,7 +136,7 @@ const experience = [
     role: '小红书运营',
     company: '网易网络有限公司',
     responsibility: '从 0 到 1 搭建教育类小红书账号矩阵，持续测试标题、封面和正文结构，通过评论区与私信承接咨询。',
-    achievement: '稳定产出每周 2–3 个爆款，累计承接 200+ 后台咨询，月留资 100+。',
+    achievement: '完成矩阵账号搭建与持续内容测试，并在自然流量波动时尝试本地化账号方向。',
   },
   {
     time: '2024.06 - 2024.09',
@@ -166,7 +168,7 @@ const experience = [
     role: '官方账号内容运营',
     company: '北京世纪好未来教育科技有限公司（学而思）',
     responsibility: '收集并整理全国分校的本地化信息，形成可复用内容素材，支持官方账号持续发布。',
-    achievement: '完成 37 个城市素材整理，相关官方账号内容曝光 100W+。',
+    achievement: '完成 37 个城市分校信息整理，代表内容单篇曝光 1W+。',
   },
   {
     time: '阶段性项目',
@@ -231,7 +233,7 @@ const projectCatalog = [
     stats: [
       { value: '50+', label: '原创推文' },
       { value: '10W+', label: '短视频阅读' },
-      { value: '7000W+', label: '销售额突破' },
+      { value: '60+', label: '小红书原创' },
     ],
     links: [
       { group: '品牌小红书', label: '华大小鹿账号主页', url: 'https://xhslink.com/m/l38Tqj6Ryg' },
@@ -249,7 +251,7 @@ const projectCatalog = [
       { group: '品牌抖音', label: '鹿茸护肤', url: 'https://v.douyin.com/uTgmPvJ4SBo/' },
     ],
     summary:
-      '通过公众号、小红书和短视频共同放大品牌声量，结合电商节点、粉丝互动和百科词条搭建，完成从内容触达到信任承接的运营闭环。',
+      '参与公众号、小红书、短视频与百科词条等多平台内容运营，并结合电商节点和粉丝互动，推进品牌内容触达与信任承接。',
     rationale: {
       motivation:
         '我做品牌自媒体，不只是为了增加发布频次，而是想解决科技品牌最难的两个距离：专业技术与普通用户之间的认知距离，以及品牌机构与真实用户之间的情感距离。华大小鹿背后有鹿茸活性成分、人体功效测试等科研依据，但数据本身不会自动转化成信任；只讲成分，用户觉得难懂，只追热点，品牌又会失去专业性。因此，我希望让不同平台各自承担角色：公众号解释“为什么可信”，小红书回答“和我的生活有什么关系”，短视频与 IP 内容让品牌变得可感知、可记忆。',
@@ -260,8 +262,8 @@ const projectCatalog = [
   },
   {
     title: '小红书种草协同',
-    subtitle: '达人内容铺量与复盘',
-    tag: '博主筛选 / 稿件审核 / 第三方对接',
+    subtitle: '产品、用户与博主三端协同',
+    tag: '达人筛选 / 成本判断 / 置换合作 / 资源拓展',
     image: projectImages.seeding[0].src,
     gallery: projectImages.seeding,
     stats: [
@@ -275,25 +277,25 @@ const projectCatalog = [
       { group: '小红书种草笔记', label: '垮脸修复', url: 'http://xhslink.com/o/1aY38N2uqf3' },
     ],
     summary:
-      '对接第三方与达人资源，跟进发布节奏、内容方向和数据表现，复盘高赞内容共性，提升品牌在小红书场景里的可信度。',
+      '结合品牌方执行与个人博主经验，从产品卖点、用户互动和创作者成本三端判断合作价值；在 84 篇种草内容协同之外，通过产品置换与博主转介绍完成 2 次合作，并持续沉淀外部资源。',
     rationale: {
       motivation:
-        '我参与种草协同，是因为品牌自述只能说明“我是谁”，却很难独立回答“为什么用户要相信”。第三方内容真正的价值也不只是借达人流量，而是把产品放进不同人的真实生活语境，替用户完成一次使用想象：它在什么情况下有用、适合什么样的人、为什么值得尝试。因此，我想验证的不是“发多少篇”，而是同一个产品进入哪些人群、场景和表达方式后，才能形成可信而不重复的传播。',
+        '自己做过博主，也与商家和官方账号合作过，让我意识到：粉丝量只是判断合作成本的起点。同一量级的账号，真实互动、内容类型、受众匹配和交付投入不同，能为品牌创造的价值也不同。站到品牌侧后，我还需要同时考虑产品卖点、合规边界和预算。因此，我做种草协同的核心，不是寻找粉丝更多的账号，而是在产品、用户与博主三方之间找到合适的匹配：让产品进入真实使用场景，让用户愿意相信，也让博主有合理的创作与合作空间。',
       evidence:
-        '同一款精华，我跟进的内容没有套用同一个模板：“西藏好物分享”借高原干燥、日晒和出行便携建立使用必要性；“i 人 Vlog”把产品放进低压力的日常生活；“垮脸修复”则从明确困扰和期待状态切入。在复核 84 篇稿件时，我还发现“小鹿精华”与“华大小鹿精华”标签混用会分散搜索资产，因此推动后续合作统一标签。',
-      capabilities: ['达人与场景匹配', '卖点多语境转译', '内容审核与节奏管理', '搜索资产统一', '数据复盘'],
+        '同一款精华，我跟进的内容没有套用同一个模板：“西藏好物分享”借高原干燥、日晒和出行便携建立使用必要性；“i 人 Vlog”把产品放进低压力的日常生活；“垮脸修复”则从明确困扰和期待状态切入。筛选与复核内容时，我不只看粉丝量，也结合互动是否真实、内容形式是否匹配受众、报价是否符合创作投入来判断合作价值。在常规种草合作之外，我又推动了 2 次中尾部博主产品置换。其中一位博主在体验后提供了真实使用反馈，帮助产品侧了解可优化之处，并主动转介绍另一位博主，形成第二次合作。这让我用产品置换撬动了内容、反馈和新资源，减少现金投入与重复寻找博主的成本。合作结束后，我继续通过社交媒体拓展外部资源；在复核 84 篇稿件时发现标签混用的问题，也推动后续合作统一使用“华大小鹿精华”，避免品牌搜索资产分散。',
+      capabilities: ['产品—用户—博主匹配', '博主价值与成本判断', '内容真实性与场景审核', '置换合作与资源拓展', '搜索资产与数据复盘'],
     },
   },
   {
     title: '教育类小红书获客',
-    subtitle: '内容带来咨询与留资',
-    tag: '账号矩阵 / 爆款测试 / 线索沉淀',
+    subtitle: '矩阵搭建与内容测试',
+    tag: '账号矩阵 / 选题测试 / 本地化探索',
     image: projectImages.education[0].src,
     gallery: projectImages.education,
     stats: [
-      { value: '2-3', label: '个周爆款' },
-      { value: '200+', label: '后台咨询' },
-      { value: '100+', label: '月留资' },
+      { value: '2', label: '个代表账号' },
+      { value: '6', label: '件原始作品' },
+      { value: '1', label: '次本地化探索' },
     ],
     links: [
       { group: '硕硕妈和北大娃', label: '账号主页', url: 'https://xhslink.com/m/8V70KNogKFe' },
@@ -304,13 +306,13 @@ const projectCatalog = [
       { group: '北京晨晨妈妈聊学习', label: '中考倒计时布局', url: 'http://xhslink.com/o/2vR7zihzioL' },
     ],
     summary:
-      '快速搭建矩阵账号，持续测试笔记标题、封面和正文结构，通过评论区与私信承接咨询，推动自然流量转化为有效线索。',
+      '从 0 到 1 搭建教育类矩阵账号，持续测试标题、封面和正文结构，并在自然流量波动时尝试本地化账号方向。',
     rationale: {
       motivation:
-        '我做教育类小红书获客，是因为家长真正缺少的往往不是更多课程介绍，而是一个能够判断“孩子现在处于什么位置、接下来该做什么”的坐标。教育决策周期长、信任门槛高，泛泛制造焦虑只会带来短暂流量；真正能触发咨询的内容，要把模糊焦虑拆成具体问题：孩子在哪个年级、离关键节点还有多久、哪门学科在掉队、下一阶段该怎样安排。内容先帮助家长把问题说清楚，课程咨询才会成为自然的下一步。',
+        '我做教育类小红书内容，是因为家长真正缺少的往往不是更多课程介绍，而是一个能够判断“孩子现在处于什么位置、接下来该做什么”的坐标。教育决策周期长、信任门槛高，泛泛制造焦虑只会带来短暂流量；有效内容需要把模糊焦虑拆成具体问题：孩子在哪个年级、离关键节点还有多久、哪门学科在掉队、下一阶段该怎样安排。内容先帮助家长把问题说清楚，再为后续咨询提供自然入口。',
       evidence:
         '在项目既有的“陪读妈妈”账号人设下，我把内容做得高度阶段化：“不要让孩子毁了自己的高一”从第一次月考波动切入，再分别给出数学、英语、物理的动作；“高三那年的一月”把 507 分到 687 分的变化落到各学科安排；“中考倒计时 154 天”则直接用剩余时间组织学习布局。内容由人设入口、阶段痛点、可执行方案，再走向资料或私信承接。',
-      capabilities: ['用户阶段分层', '账号矩阵测试', '内容漏斗设计', '评论私信承接', '线索交接与增长探索'],
+      capabilities: ['用户阶段分层', '账号矩阵测试', '标题与封面测试', '评论私信承接', '本地化增长探索'],
     },
   },
   {
@@ -452,21 +454,18 @@ const aiSkillProjects = [
     title: 'Hatch Wheel Pet',
     subtitle: '转盘动态宠物制作 Skill',
     tag: '角色设计 / 四状态动画 / 资产校验 / 页面接入',
-    image: assetUrl('assets/skill-wheel-pet-idle.webp'),
+    image: assetUrl('assets/skill-wheel-girl-idle.webp'),
     gallery: [
-      { src: assetUrl('assets/skill-wheel-pet-idle.webp'), label: '包仔小厨待机状态' },
-      { src: assetUrl('assets/skill-wheel-pet-run-right.webp'), label: '包仔小厨向右奔跑状态' },
-      { src: assetUrl('assets/skill-wheel-pet-run-left.webp'), label: '包仔小厨向左奔跑状态' },
-      { src: assetUrl('assets/skill-wheel-pet-done.webp'), label: '包仔小厨完成反馈状态' },
+      { src: assetUrl('assets/skill-wheel-girl-run-right.webp'), label: '草莓甜心小厨向右奔跑状态' },
+      { src: assetUrl('assets/skill-wheel-girl-run-left.webp'), label: '草莓甜心小厨向左奔跑状态' },
+      { src: assetUrl('assets/skill-wheel-girl-done.webp'), label: '草莓甜心小厨完成反馈状态' },
     ],
     stats: [
       { value: '5', label: '套已接入宠物' },
       { value: '4', label: '种交互状态' },
       { value: '1', label: '套资产工作流' },
     ],
-    links: [
-      { group: '不牛马厨房 · 在线体验', label: '查看转盘宠物实际交互', url: 'https://freebite.zhechun.space' },
-    ],
+    links: [],
     summary:
       '把用户的角色设想转化为可直接接入网页的四状态动态宠物，让点菜工具不仅替用户完成选择，也通过角色反馈建立轻量的陪伴感。',
     rationale: {
@@ -507,14 +506,12 @@ const aiSkillProjects = [
     tag: '透明抠图 / 视觉规范 / 资产复用 / 输出质检',
     image: assetUrl('assets/person-guitar-sticker-v2.webp'),
     gallery: [
-      { src: assetUrl('assets/person-guitar-sticker-v2.webp'), label: '人物弹唱透明贴纸' },
       { src: assetUrl('assets/cat-sticker-v2.webp'), label: '橘白猫咪透明贴纸' },
       { src: assetUrl('assets/green-grape-soda-sticker.webp'), label: '青提气泡饮透明贴纸' },
       { src: assetUrl('assets/mint-guitar-sticker.webp'), label: '薄荷吉他透明贴纸' },
-      { src: assetUrl('assets/guitar-sticker.webp'), label: '吉他透明贴纸' },
     ],
     stats: [
-      { value: '5', label: '类页面贴纸' },
+      { value: '4', label: '类页面贴纸' },
       { value: '透明', label: 'PNG 资产' },
       { value: '1', label: '套制作规范' },
     ],
@@ -534,31 +531,119 @@ const aiSkillProjects = [
 
 const projects = [...projectCatalog.slice(1), projectCatalog[0], ...aiSkillProjects];
 
+const strengthTarotAssets = Array.from({ length: 5 }, (_, index) => {
+  const number = String(index + 1).padStart(2, '0');
+  return {
+    back: assetUrl(`assets/strengths-tarot/tarot-${number}-back.webp`),
+    front: assetUrl(`assets/strengths-tarot/tarot-${number}-front.webp`),
+  };
+});
+
+const strengthStampAssets = {
+  back: assetUrl('assets/strengths-stamp-westie-back.png'),
+  front: assetUrl('assets/strengths-stamp-westie-front.png'),
+};
+
+const sectionPreloadAssets = {
+  home: [
+    'assets/entry-butterfly-flock.png',
+    'assets/entry-walking-cat-animated.webp',
+    'assets/entry-walking-cat.webp',
+    'assets/rotary-phone.webp',
+    'assets/turntable-player-sage-reference.webp',
+    'assets/person-guitar-sticker-v2.webp',
+    'assets/green-grape-soda-sticker.webp',
+    'assets/mint-guitar-sticker.webp',
+    'assets/cat-sticker-v2.webp',
+  ],
+  about: [
+    'assets/about-postcard-front.webp',
+    'assets/about-postcard-back.webp',
+    'assets/instax-mini8-butter-yellow-v4.webp',
+    'media/pdf-images/full_p02_i01_Im73.jpg',
+  ],
+  projects: [
+    'assets/projects-ccd-frame-silver.webp',
+    'assets/projects-film-canister-superia-200-cutout.webp',
+    'assets/projects-film-canister-superia-200-horizontal.webp',
+    'assets/projects-film-canister-superia-200-powder-blue.webp',
+    'assets/projects-paper-plane-realistic.png',
+    ...projects.map((project) => project.image.replace(import.meta.env.BASE_URL, '')),
+  ],
+  strengths: [
+    'assets/strengths-clipboard-panel.webp',
+    'assets/strengths-piano-keyboard-v2.png',
+    'assets/strengths-stamp-westie-back.png',
+    'assets/strengths-stamp-westie-front.png',
+    ...strengthTarotAssets.flatMap(({ back, front }) => [back, front].map((path) => path.replace(import.meta.env.BASE_URL, ''))),
+  ],
+  contact: [
+    'assets/contact-window-cat-and-fish.webp',
+    'assets/contact-goldfish-transparent.png',
+  ],
+};
+
+const sectionPreloadCache = new globalThis.Map();
+
+function preloadImage(path) {
+  return new Promise((resolve) => {
+    const image = new Image();
+    image.decoding = 'async';
+    image.onload = async () => {
+      try {
+        await image.decode();
+      } catch {
+        // A loaded image remains usable when explicit decoding is unavailable.
+      }
+      resolve();
+    };
+    image.onerror = resolve;
+    image.src = assetUrl(path);
+  });
+}
+
+function waitForPaint() {
+  return new Promise((resolve) => {
+    window.requestAnimationFrame(() => window.requestAnimationFrame(resolve));
+  });
+}
+
+function preloadSectionAssets(section) {
+  if (sectionPreloadCache.has(section)) return sectionPreloadCache.get(section);
+
+  const tasks = (sectionPreloadAssets[section] ?? []).map(preloadImage);
+  if (section === 'about') tasks.push(import('./ExperienceUmbrella'));
+  if (section === 'home' && document.fonts?.ready) tasks.push(document.fonts.ready);
+
+  const preloadPromise = Promise.all(tasks).then(waitForPaint);
+  sectionPreloadCache.set(section, preloadPromise);
+  return preloadPromise;
+}
+
+function preloadEntryAssets() {
+  return preloadSectionAssets('home');
+}
+
 const strengths = [
   {
     icon: <FileText aria-hidden="true" />,
-    title: '内容策略梳理',
-    text: '能把产品卖点拆成用户愿意点开、收藏和互动的选题，并根据平台语境调整表达方式。',
+    title: '复杂产品的平台化表达',
+    text: '横跨科研护肤、财务软件和教育产品，能把专业卖点转化为用户看得懂、愿意互动的内容。',
   },
   {
     icon: <MessageCircle aria-hidden="true" />,
-    title: '互动与转化承接',
-    text: '熟悉评论区、私信、活动榜单和抽奖机制，用轻量互动沉淀反馈、信任和线索。',
-  },
-  {
-    icon: <Map aria-hidden="true" />,
-    title: '多平台运营节奏',
-    text: '覆盖公众号、小红书、视频号、抖音、微博、今日头条等内容场景，能保持稳定产出。',
+    title: '从内容测试到线索承接',
+    text: '能持续测试选题、标题、封面与正文，并通过评论、私信和销售协同承接咨询与线索。',
   },
   {
     icon: <CheckCircle2 aria-hidden="true" />,
-    title: '项目协同推进',
-    text: '参与过达人筛选、稿件审核、第三方沟通、结案报告和复盘优化，能把执行链路推进到底。',
+    title: '品牌、用户与创作者三端协同',
+    text: '兼具品牌方与个人博主经验，能结合受众匹配、互动真实性、创作投入和交付质量判断合作价值。',
   },
   {
-    icon: <Play aria-hidden="true" />,
-    title: '基础视觉与剪辑',
-    text: '熟悉 Canva、稿定设计、PS、醒图、剪映等工具，可完成基础海报、封面和短视频剪辑。',
+    icon: <MapIcon aria-hidden="true" />,
+    title: '资源受限下的快速验证',
+    text: '能根据预算、素材和出镜限制调整内容形式，通过持续测试找到可执行的选题与增长切口。',
   },
 ];
 
@@ -581,12 +666,23 @@ const profileDirections = [
 ];
 
 const workflowSteps = [
+  { number: '', title: '工作方法', detail: '一条完整的内容运营链路' },
   { number: '01', title: '内容判断', detail: '目标 · 用户 · 场景' },
   { number: '02', title: '选题策划', detail: '卖点 · 平台 · 切口' },
   { number: '03', title: '内容制作', detail: '文案 · 视觉 · 视频' },
   { number: '04', title: '发布运营', detail: '节奏 · 分发 · 协同' },
   { number: '05', title: '互动承接', detail: '评论 · 私信 · 线索' },
   { number: '06', title: '数据复盘', detail: '表现 · 问题 · 迭代' },
+];
+
+const workflowNotes = [
+  { label: 'Do', frequency: 261.63, glyph: '♩' },
+  { label: 'Re', frequency: 293.66, glyph: '♪' },
+  { label: 'Mi', frequency: 329.63, glyph: '♫' },
+  { label: 'Fa', frequency: 349.23, glyph: '♬' },
+  { label: 'Sol', frequency: 392, glyph: '♩' },
+  { label: 'La', frequency: 440, glyph: '♪' },
+  { label: 'Xi', frequency: 493.88, glyph: '♫' },
 ];
 
 function getSectionFromHash() {
@@ -602,6 +698,22 @@ function usePageInteractions() {
     transitionPhase: 'idle',
   });
   const transitionLockRef = useRef(false);
+  const navigationRequestRef = useRef(0);
+
+  useEffect(() => {
+    const activeIndex = navItems.findIndex((item) => item.href === `#${pageState.activeSection}`);
+    const nextSection = navItems[(activeIndex + 1) % navItems.length]?.href.slice(1);
+    if (!nextSection) return undefined;
+
+    const startPreload = () => preloadSectionAssets(nextSection);
+    if ('requestIdleCallback' in window) {
+      const idleId = window.requestIdleCallback(startPreload, { timeout: 1200 });
+      return () => window.cancelIdleCallback(idleId);
+    }
+
+    const timerId = window.setTimeout(startPreload, 180);
+    return () => window.clearTimeout(timerId);
+  }, [pageState.activeSection]);
 
   useEffect(() => {
     let frameId = 0;
@@ -666,11 +778,15 @@ function usePageInteractions() {
       resetScrollInstantly();
     };
 
-    const handleHashChange = () => {
-      showSection(getSectionFromHash());
+    const handleHashChange = async () => {
+      const targetSection = getSectionFromHash();
+      const requestId = ++navigationRequestRef.current;
+      await preloadSectionAssets(targetSection);
+      if (requestId !== navigationRequestRef.current || targetSection !== getSectionFromHash()) return;
+      showSection(targetSection);
     };
 
-    const handleChapterNavigate = (event) => {
+    const handleChapterNavigate = async (event) => {
       const href = event.detail?.href;
       const targetSection = href?.replace(/^#/, '');
       const projectIndex = Number.isInteger(event.detail?.projectIndex)
@@ -691,6 +807,12 @@ function usePageInteractions() {
       }
 
       transitionLockRef.current = true;
+      const requestId = ++navigationRequestRef.current;
+      await preloadSectionAssets(targetSection);
+      if (requestId !== navigationRequestRef.current) {
+        transitionLockRef.current = false;
+        return;
+      }
       resetScrollInstantly();
       window.history.pushState(
         { ...window.history.state, portfolioProject: projectIndex ?? undefined },
@@ -912,12 +1034,16 @@ function PortfolioSearch({
 
 function VinylMusicButton() {
   const [active, setActive] = useState(false);
+  const [playbackStatus, setPlaybackStatus] = useState('idle');
   const [trackIndex, setTrackIndex] = useState(0);
   const [playerOffset, setPlayerOffset] = useState({ x: 0, y: 0 });
   const [isPlayerDragging, setIsPlayerDragging] = useState(false);
   const contextRef = useRef(null);
   const vinylSourceRef = useRef(null);
   const masterGainRef = useRef(null);
+  const compressorRef = useRef(null);
+  const audioElementRef = useRef(null);
+  const playAttemptRef = useRef(0);
   const chordTimerRef = useRef(null);
   const noteTimerRef = useRef(null);
   const chordIndexRef = useRef(0);
@@ -925,6 +1051,11 @@ function VinylMusicButton() {
   const playerDragRef = useRef(null);
 
   const tracks = [
+    {
+      title: '继续走',
+      credit: 'Michael Ramir C.',
+      src: assetUrl('audio/just-keep-walking-michael-ramir-c.mp3'),
+    },
     {
       title: '森林雨幕',
       chords: [[220, 261.63, 329.63], [196, 246.94, 293.66], [174.61, 220, 261.63], [196, 233.08, 293.66]],
@@ -979,7 +1110,7 @@ function VinylMusicButton() {
       oscillator.frequency.setValueAtTime(frequency, now);
       oscillator.detune.setValueAtTime(index === 2 ? 4 : -3, now);
       gain.gain.setValueAtTime(0.0001, now);
-      gain.gain.exponentialRampToValueAtTime(0.026 / (index + 1), now + 1.2);
+      gain.gain.exponentialRampToValueAtTime(0.045 / (index + 1), now + 1.2);
       gain.gain.exponentialRampToValueAtTime(0.0001, now + 5.6);
       oscillator.connect(gain);
       gain.connect(destination);
@@ -1000,7 +1131,7 @@ function VinylMusicButton() {
     filter.type = 'lowpass';
     filter.frequency.setValueAtTime(1800, now);
     gain.gain.setValueAtTime(0.0001, now);
-    gain.gain.exponentialRampToValueAtTime(0.018, now + 0.08);
+    gain.gain.exponentialRampToValueAtTime(0.05, now + 0.08);
     gain.gain.exponentialRampToValueAtTime(0.0001, now + 1.7);
     oscillator.connect(filter);
     filter.connect(gain);
@@ -1011,6 +1142,7 @@ function VinylMusicButton() {
 
   const startVinylMusic = (context, track) => {
     const masterGain = context.createGain();
+    const compressor = context.createDynamicsCompressor();
     const vinylGain = context.createGain();
     const lowpass = context.createBiquadFilter();
     const highpass = context.createBiquadFilter();
@@ -1030,19 +1162,26 @@ function VinylMusicButton() {
     highpass.frequency.setValueAtTime(120, context.currentTime);
     lowpass.type = 'lowpass';
     lowpass.frequency.setValueAtTime(track.lowpass, context.currentTime);
-    vinylGain.gain.setValueAtTime(track.noiseGain, context.currentTime);
+    vinylGain.gain.setValueAtTime(track.noiseGain * 1.35, context.currentTime);
     masterGain.gain.setValueAtTime(0.0001, context.currentTime);
-    masterGain.gain.exponentialRampToValueAtTime(0.9, context.currentTime + 0.8);
+    masterGain.gain.exponentialRampToValueAtTime(0.95, context.currentTime + 0.55);
+    compressor.threshold.setValueAtTime(-20, context.currentTime);
+    compressor.knee.setValueAtTime(16, context.currentTime);
+    compressor.ratio.setValueAtTime(4, context.currentTime);
+    compressor.attack.setValueAtTime(0.008, context.currentTime);
+    compressor.release.setValueAtTime(0.24, context.currentTime);
 
     source.connect(highpass);
     highpass.connect(lowpass);
     lowpass.connect(vinylGain);
     vinylGain.connect(masterGain);
-    masterGain.connect(context.destination);
+    masterGain.connect(compressor);
+    compressor.connect(context.destination);
     source.start();
 
     vinylSourceRef.current = source;
     masterGainRef.current = masterGain;
+    compressorRef.current = compressor;
     chordIndexRef.current = 0;
     playChord(context, masterGain, track);
     playVinylNote(context, masterGain, track);
@@ -1067,8 +1206,10 @@ function VinylMusicButton() {
     }
     const source = vinylSourceRef.current;
     const masterGain = masterGainRef.current;
+    const compressor = compressorRef.current;
     vinylSourceRef.current = null;
     masterGainRef.current = null;
+    compressorRef.current = null;
     window.setTimeout(() => {
       try {
         source?.stop();
@@ -1077,28 +1218,121 @@ function VinylMusicButton() {
       }
       source?.disconnect();
       masterGain?.disconnect();
+      compressor?.disconnect();
     }, Math.ceil((fadeDuration + 0.04) * 1000));
   };
 
+  const stopAudioFile = ({ reset = false } = {}) => {
+    const audio = audioElementRef.current;
+    if (!audio) return;
+    audio.pause();
+    if (!reset) return;
+    audio.currentTime = 0;
+    audio.onerror = null;
+    audioElementRef.current = null;
+  };
+
+  const getAudioContext = () => {
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextClass) return null;
+    if (!contextRef.current || contextRef.current.state === 'closed') {
+      contextRef.current = new AudioContextClass();
+    }
+    return contextRef.current;
+  };
+
+  const primeAudioContext = () => {
+    const context = getAudioContext();
+    if (!context) return;
+
+    const silentSource = context.createBufferSource();
+    const silentGain = context.createGain();
+    silentGain.gain.value = 0.0001;
+    silentSource.buffer = context.createBuffer(1, 1, context.sampleRate);
+    silentSource.connect(silentGain).connect(context.destination);
+    silentSource.onended = () => {
+      silentSource.disconnect();
+      silentGain.disconnect();
+    };
+    silentSource.start();
+    silentSource.stop(context.currentTime + 0.01);
+    void context.resume().catch(() => {});
+  };
+
   const startTrack = async (index) => {
-    const AudioContext = window.AudioContext || window.webkitAudioContext;
-    if (!AudioContext) {
+    const track = tracks[index];
+    const attempt = playAttemptRef.current + 1;
+    playAttemptRef.current = attempt;
+    setPlaybackStatus('loading');
+    setTrackIndex(index);
+
+    if (track.src) {
+      if (masterGainRef.current) stopMusic(0.14);
+      let audio = audioElementRef.current;
+      if (!audio || audio.dataset.trackSrc !== track.src) {
+        stopAudioFile({ reset: true });
+        audio = new Audio(track.src);
+        audio.dataset.trackSrc = track.src;
+        audio.preload = 'auto';
+        audio.loop = true;
+        audio.volume = 0.58;
+        audioElementRef.current = audio;
+      }
+      try {
+        await audio.play();
+        if (playAttemptRef.current !== attempt) {
+          audio.pause();
+          return;
+        }
+        setActive(true);
+        setPlaybackStatus('playing');
+      } catch {
+        if (playAttemptRef.current !== attempt) return;
+        stopAudioFile({ reset: true });
+        setActive(false);
+        setPlaybackStatus('error');
+      }
       return;
     }
 
-    const context = contextRef.current || new AudioContext();
-    contextRef.current = context;
-    await context.resume();
+    stopAudioFile({ reset: true });
+    const context = getAudioContext();
+    if (!context) {
+      setActive(false);
+      setPlaybackStatus('error');
+      return;
+    }
     if (masterGainRef.current) stopMusic(0.14);
-    startVinylMusic(context, tracks[index]);
-    setTrackIndex(index);
+    startVinylMusic(context, track);
+    try {
+      await context.resume();
+    } catch {
+      stopMusic(0);
+      setActive(false);
+      setPlaybackStatus('error');
+      return;
+    }
+    if (context.state !== 'running') {
+      stopMusic(0);
+      setActive(false);
+      setPlaybackStatus('error');
+      return;
+    }
     setActive(true);
+    setPlaybackStatus('playing');
   };
 
   const togglePlayback = async () => {
+    if (playbackStatus === 'loading') return;
     if (active) {
-      stopMusic();
+      playAttemptRef.current += 1;
+      if (tracks[trackIndex].src) {
+        stopAudioFile();
+      } else {
+        stopMusic();
+      }
       setActive(false);
+      setPlaybackStatus('idle');
       return;
     }
     await startTrack(trackIndex);
@@ -1110,6 +1344,9 @@ function VinylMusicButton() {
       await startTrack(nextIndex);
       return;
     }
+    playAttemptRef.current += 1;
+    stopAudioFile({ reset: true });
+    setPlaybackStatus('idle');
     setTrackIndex(nextIndex);
   };
 
@@ -1187,8 +1424,10 @@ function VinylMusicButton() {
 
   useEffect(() => {
     return () => {
+      playAttemptRef.current += 1;
       window.clearInterval(chordTimerRef.current);
       window.clearInterval(noteTimerRef.current);
+      stopAudioFile({ reset: true });
       try {
         vinylSourceRef.current?.stop();
       } catch {
@@ -1198,12 +1437,21 @@ function VinylMusicButton() {
     };
   }, []);
 
+  const currentTrack = tracks[trackIndex];
+  const statusText = playbackStatus === 'loading'
+    ? '正在加载'
+    : playbackStatus === 'error'
+      ? '加载失败'
+      : active
+        ? '正在播放'
+        : '准备播放';
+
   return (
     <div
       ref={playerRef}
       className={`vinyl-switcher turntable-switcher${isPlayerDragging ? ' is-dragging' : ''}`}
       role="group"
-      aria-label={`可移动唱片机，当前曲目${tracks[trackIndex].title}`}
+      aria-label={`可移动唱片机，当前曲目${currentTrack.title}`}
       aria-keyshortcuts="ArrowUp ArrowDown ArrowLeft ArrowRight Home"
       tabIndex={0}
       title="拖动唱片机移动，双击或按 Home 复位"
@@ -1239,18 +1487,28 @@ function VinylMusicButton() {
           <span className="turntable-power-light" />
           <div className="turntable-footer">
             <span className="turntable-track" aria-live="polite">
-              <strong>{tracks[trackIndex].title}</strong>
-              <small>{active ? '正在播放' : '准备播放'}</small>
+              <strong>{currentTrack.title}</strong>
+              <small>{currentTrack.credit ? `${currentTrack.credit} · ${statusText}` : statusText}</small>
             </span>
-            <div className="turntable-controls" role="group" aria-label="音乐播放控制">
+            <div
+              className="turntable-controls"
+              role="group"
+              aria-label="音乐播放控制"
+              onPointerDown={primeAudioContext}
+            >
               <button type="button" aria-label="播放上一首" onClick={() => changeTrack(-1)}>
                 <SkipBack aria-hidden="true" />
               </button>
               <button
                 className="turntable-play-toggle"
                 type="button"
-                aria-label={active ? `暂停${tracks[trackIndex].title}` : `播放${tracks[trackIndex].title}`}
+                aria-label={playbackStatus === 'loading'
+                  ? `正在加载${currentTrack.title}`
+                  : active
+                    ? `暂停${currentTrack.title}`
+                    : `播放${currentTrack.title}`}
                 aria-pressed={active}
+                disabled={playbackStatus === 'loading'}
                 onClick={togglePlayback}
               >
                 {active ? <Pause aria-hidden="true" /> : <Play aria-hidden="true" />}
@@ -1475,6 +1733,33 @@ function DraggableGrapeSodaSticker() {
   );
 }
 
+function DraggableCatGuitarStickerPair() {
+  return (
+    <DraggableHeroElement
+      as="div"
+      className="hero-sticker-pair"
+      label="移动薄荷绿电吉他与猫咪贴纸组合"
+    >
+      <img
+        className="hero-sticker-pair-guitar"
+        src={assetUrl('assets/mint-guitar-sticker.webp')}
+        alt=""
+        aria-hidden="true"
+        decoding="async"
+        draggable="false"
+      />
+      <img
+        className="hero-sticker-pair-cat"
+        src={assetUrl('assets/cat-sticker-v2.webp')}
+        alt=""
+        aria-hidden="true"
+        decoding="async"
+        draggable="false"
+      />
+    </DraggableHeroElement>
+  );
+}
+
 const phoneMessage = '用审美判断、内容组织和平台语感，完成从选题到传播反馈的运营表达。';
 
 function HeroPhone() {
@@ -1619,21 +1904,18 @@ function Hero() {
         className="magazine-poster"
         aria-label="折椿新媒体运营作品集封面"
       >
+        <div className="hero-home-intro" aria-label="作品集方向">
+          <p>内容运营 · 新媒体运营</p>
+          <p>
+            <span className="hero-copy-desktop">把复杂产品转化为平台内容，并推动咨询、线索与项目协同</span>
+            <span className="hero-copy-mobile">产品转译 · 内容测试<br />线索承接 · 项目协同</span>
+          </p>
+        </div>
         <div className="magazine-copy">
           <HeroPhone />
         </div>
 
-        <div className="hero-intro" aria-label="作品集方向">
-          <p className="hero-kicker">内容策划 / 账号运营 / 品牌表达</p>
-          <p className="hero-subtitle">Editorial Content Portfolio</p>
-        </div>
-
-        <h1 className="sr-only">zhechun</h1>
-        <DraggableHeroSticker
-          className="hero-cat-sticker"
-          src={assetUrl('assets/cat-sticker-v2.webp')}
-          label="移动猫咪贴纸"
-        />
+        <h1 className="sr-only">折椿内容运营作品集</h1>
         <div className="hero-index hero-sticker-actions" aria-label="首页快捷操作">
           <a href="#projects">
             精选项目
@@ -1650,13 +1932,8 @@ function Hero() {
           label="移动人物吉他贴纸"
         />
         <DraggableGrapeSodaSticker />
-        <DraggableHeroSticker
-          className="hero-mint-guitar-sticker"
-          src={assetUrl('assets/mint-guitar-sticker.webp')}
-          label="移动薄荷绿电吉他贴纸"
-        />
+        <DraggableCatGuitarStickerPair />
         <PageContinuation className="page-hint" href="#about" label="关于" />
-        <VinylMusicButton />
       </div>
     </section>
   );
@@ -2086,7 +2363,7 @@ function PortraitProfile() {
   const audioContextRef = useRef(null);
   const startTimerRef = useRef(0);
   const finishTimerRef = useRef(0);
-  const jobDirection = '内容策划 · 账号运营 · 品牌表达';
+  const jobDirection = '内容运营 · 新媒体运营 · 品牌内容';
 
   useEffect(() => () => {
     window.clearTimeout(startTimerRef.current);
@@ -2189,8 +2466,8 @@ function PortraitProfile() {
             </span>
             <span className="instant-photo-face instant-photo-back">
               <span className="instant-photo-back-title">求职方向</span>
-              <strong className="instant-photo-back-copy">{jobDirection}</strong>
-              <small>Content · Social · Brand</small>
+              <span className="instant-photo-back-copy">{jobDirection}</span>
+              <small>Content · Social Media · Brand</small>
             </span>
           </span>
         </button>
@@ -2283,13 +2560,12 @@ function AboutPostcard() {
   const [isClosing, setIsClosing] = useState(false);
   const closeTimerRef = useRef(null);
   const closingRef = useRef(false);
-  const competency = '我擅长从产品卖点与用户情绪中提炼内容切口，并按平台角色组织小红书种草、公众号深度表达与评论区、私信互动承接，让选题、内容生产、反馈沉淀和转化线索形成一条可执行、可复盘的传播链路。';
+  const competency = '我擅长把复杂产品卖点转化为符合平台语境的内容，并通过选题测试、互动承接与跨方协同，让内容从被看见继续走向咨询、线索和业务反馈。';
   const competencyLines = [
-    '我擅长从产品卖点与用户情绪中提炼内容切',
-    '口，并按平台角色组织小红书种草、公众号',
-    '深度表达与评论区、私信互动承接，让选题',
-    '内容生产、反馈沉淀和转化线索形成一条可',
-    '执行、可复盘的传播链路。',
+    '我擅长把复杂产品卖点转化为符合平台语境',
+    '的内容，并通过选题测试、互动承接与跨方',
+    '协同，让内容从被看见继续走向咨询、线索',
+    '和业务反馈。',
   ];
 
   const closeExpandedPostcard = useCallback(() => {
@@ -2509,8 +2785,31 @@ function ImageLightbox({ activeIndex, images, onClose, onMove, title }) {
   );
 }
 
-function ProjectCarousel({ images, title }) {
+const carouselSlideVariants = {
+  enter: ({ direction, reduceMotion }) => reduceMotion
+    ? { opacity: 1, scale: 1, x: 0 }
+    : { opacity: 0, scale: 0.985, x: `${direction * 42}%` },
+  center: ({ reduceMotion }) => ({
+    opacity: 1,
+    scale: 1,
+    x: 0,
+    transition: reduceMotion
+      ? { duration: 0 }
+      : { duration: 0.46, ease: [0.22, 1, 0.36, 1] },
+  }),
+  exit: ({ direction, reduceMotion }) => ({
+    opacity: reduceMotion ? 1 : 0,
+    scale: reduceMotion ? 1 : 0.985,
+    x: reduceMotion ? 0 : `${direction * -42}%`,
+    transition: reduceMotion
+      ? { duration: 0 }
+      : { duration: 0.32, ease: [0.4, 0, 1, 1] },
+  }),
+};
+
+function ProjectCarousel({ images, title, skillName }) {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [slideDirection, setSlideDirection] = useState(1);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [autoplayStopped, setAutoplayStopped] = useState(false);
   const [isInView, setIsInView] = useState(false);
@@ -2520,9 +2819,11 @@ function ProjectCarousel({ images, title }) {
   const swipeRef = useRef(null);
   const suppressImageClickRef = useRef(false);
   const imageCount = images.length;
+  const reduceMotion = useReducedMotion();
 
   const stopAutoplay = useCallback(() => setAutoplayStopped(true), []);
   const move = useCallback((step) => {
+    setSlideDirection(step >= 0 ? 1 : -1);
     setActiveIndex((index) => (index + step + imageCount) % imageCount);
   }, [imageCount]);
   const closeLightbox = useCallback(() => setLightboxOpen(false), []);
@@ -2604,11 +2905,11 @@ function ProjectCarousel({ images, title }) {
     }
 
     const timerId = window.setInterval(() => {
-      setActiveIndex((index) => (index + 1) % imageCount);
+      move(1);
     }, 2800);
 
     return () => window.clearInterval(timerId);
-  }, [autoplayStopped, imageCount, isInView]);
+  }, [autoplayStopped, imageCount, isInView, move]);
 
   useEffect(() => {
     const thumbs = thumbsRef.current;
@@ -2650,6 +2951,12 @@ function ProjectCarousel({ images, title }) {
           width="941"
           height="1672"
         />
+        {skillName && (
+          <figcaption className="skill-showcase-label">
+            <span>SKILL</span>
+            <strong>{skillName}</strong>
+          </figcaption>
+        )}
       </figure>
     );
   }
@@ -2665,6 +2972,7 @@ function ProjectCarousel({ images, title }) {
     >
       <div
         className="carousel-stage"
+        data-slide-direction={slideDirection > 0 ? 'next' : 'previous'}
         onPointerDown={handleSwipePointerDown}
         onPointerMove={handleSwipePointerMove}
         onPointerUp={finishSwipe}
@@ -2702,13 +3010,23 @@ function ProjectCarousel({ images, title }) {
             setLightboxOpen(true);
           }}
         >
-          <img
-            className="carousel-image carousel-image-current"
-            src={currentImage.src}
-            alt={`${title}当前截图：${currentImage.label}`}
-            loading="lazy"
-            key={`${title}-${activeIndex}-${currentImage.src}`}
-          />
+          <AnimatePresence
+            initial={false}
+            custom={{ direction: slideDirection, reduceMotion }}
+          >
+            <motion.img
+              className="carousel-image carousel-image-current"
+              src={currentImage.src}
+              alt={`${title}当前截图：${currentImage.label}`}
+              loading="lazy"
+              custom={{ direction: slideDirection, reduceMotion }}
+              variants={carouselSlideVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              key={`${title}-${activeIndex}-${currentImage.src}`}
+            />
+          </AnimatePresence>
           <span className="carousel-zoom-icon" aria-hidden="true">
             <Maximize2 />
           </span>
@@ -2744,6 +3062,12 @@ function ProjectCarousel({ images, title }) {
           </>
         )}
       </div>
+      {skillName && (
+        <figcaption className="skill-showcase-label">
+          <span>SKILL</span>
+          <strong>{skillName}</strong>
+        </figcaption>
+      )}
       <div className="project-gallery-strip carousel-thumbs" aria-label={`${title}作品缩略图`} ref={thumbsRef}>
         {images.map((image, index) => (
           <button
@@ -2753,6 +3077,8 @@ function ProjectCarousel({ images, title }) {
             aria-current={index === activeIndex ? 'true' : undefined}
             onClick={() => {
               stopAutoplay();
+              if (index === activeIndex) return;
+              setSlideDirection(index > activeIndex ? 1 : -1);
               setActiveIndex(index);
             }}
             ref={(node) => {
@@ -3105,7 +3431,12 @@ function ProjectDetailModal({ index, onClose, project, returnFocusElement }) {
             </div>
           </div>
           <div className="experience-detail-content">
-            <ProjectCarousel images={carouselImages} title={project.title} key={project.title} />
+            <ProjectCarousel
+              images={carouselImages}
+              title={project.title}
+              skillName={project.aiSkill ? project.title : undefined}
+              key={project.title}
+            />
             <div className="experience-detail-copy">
               <div className="project-summary-block">
                 <span>项目概述</span>
@@ -3229,8 +3560,16 @@ function Projects() {
         <img
           className="projects-ccd-frame"
           src={assetUrl('assets/projects-ccd-frame-silver.webp')}
-          alt="Selected Work，项目经历：从内容策划、平台运营到转化承接，以代表项目呈现执行过程与结果。"
+          alt="Selected Work，项目经历：8 个运营案例呈现内容与业务实践，4 个 AI 项目展示数字作品能力。"
         />
+        <span className="projects-ccd-screen-content" aria-hidden="true">
+          <span className="projects-ccd-screen-eyebrow">SELECTED WORK</span>
+          <strong>项目经历</strong>
+          <span className="projects-ccd-screen-copy">
+            <span>8 个运营案例呈现内容与业务实践，</span>
+            <span>4 个 AI 项目展示数字作品能力。</span>
+          </span>
+        </span>
         <span
           className={`projects-ccd-screen-cover${isCcdAwake ? ' is-awake' : ''}`}
           aria-hidden="true"
@@ -3250,6 +3589,7 @@ function Projects() {
           {isCcdAwake ? 'CCD 已打开' : '点击模式转盘，打开 CCD 屏幕'}
         </p>
       </div>
+      <ProjectPaperPlane />
       <div className="experience-overview-panel">
         <section className="project-field" aria-label="项目胶卷总览">
           <DraggableProjectGrid
@@ -3266,8 +3606,8 @@ function Projects() {
             aria-expanded={isProjectSummaryOpen}
             aria-controls="project-summary-list"
           >
-            <strong id="project-summary-title">查看全部项目汇总</strong>
-            <span>{projects.length} 个项目 · 内容策划、平台运营、转化承接与产品实践</span>
+            <strong id="project-summary-title">查看运营核心案例与 AI 实验室</strong>
+            <span>8 个运营案例 · 4 个 AI 数字作品</span>
             <span className="project-summary-toggle-icon" aria-hidden="true"><ChevronDown /></span>
           </button>
           <div className="project-summary-list" id="project-summary-list" hidden={!isProjectSummaryOpen}>
@@ -3305,63 +3645,587 @@ function Projects() {
   );
 }
 
+function ProjectPaperPlane() {
+  const runwayRef = useRef(null);
+  const planeRef = useRef(null);
+  const animationRef = useRef(null);
+  const shouldReduceMotion = useReducedMotion();
+  const [flightState, setFlightState] = useState('ready');
+
+  const setFlightPath = useCallback((atDestination = false) => {
+    const runway = runwayRef.current;
+    const plane = planeRef.current;
+    if (!runway || !plane) return;
+
+    const width = runway.clientWidth;
+    const height = runway.clientHeight;
+    const startX = Math.max(86, width * 0.085);
+    const startY = height * 0.76;
+    const path = [
+      `M ${startX} ${startY}`,
+      `C ${width * 0.14} ${height * 0.73}, ${width * 0.2} ${height * 0.46}, ${width * 0.3} ${height * 0.46}`,
+      `C ${width * 0.4} ${height * 0.46}, ${width * 0.48} ${height * 0.64}, ${width * 0.62} ${height * 0.64}`,
+      `C ${width * 0.73} ${height * 0.64}, ${width * 0.8} ${height * 0.4}, ${width * 0.84} ${height * 0.2}`,
+    ].join(' ');
+
+    plane.style.offsetPath = `path("${path}")`;
+    plane.style.offsetDistance = atDestination ? '100%' : '0%';
+  }, []);
+
+  useLayoutEffect(() => {
+    setFlightPath(flightState === 'arrived');
+    const observer = new ResizeObserver(() => setFlightPath(flightState === 'arrived'));
+    if (runwayRef.current) observer.observe(runwayRef.current);
+    return () => observer.disconnect();
+  }, [flightState, setFlightPath]);
+
+  useEffect(() => () => animationRef.current?.cancel(), []);
+
+  const fly = () => {
+    const plane = planeRef.current;
+    if (!plane) return;
+
+    animationRef.current?.cancel();
+    setFlightPath(false);
+
+    if (shouldReduceMotion) {
+      plane.style.offsetDistance = '100%';
+      setFlightState('arrived');
+      return;
+    }
+
+    setFlightState('flying');
+    animationRef.current = plane.animate(
+      [{ offsetDistance: '0%' }, { offsetDistance: '100%' }],
+      {
+        duration: 8200,
+        easing: 'linear',
+        fill: 'forwards',
+      },
+    );
+    animationRef.current.onfinish = () => {
+      plane.style.offsetDistance = '100%';
+      setFlightState('arrived');
+    };
+  };
+
+  return (
+    <div className="project-paper-plane-runway" ref={runwayRef} aria-label="纸飞机飞行区域">
+      <button
+        className={`project-paper-plane is-${flightState}`}
+        ref={planeRef}
+        type="button"
+        onClick={fly}
+        aria-label={flightState === 'ready' ? '点击放飞纸飞机' : '重新放飞纸飞机'}
+      >
+        <img
+          src={assetUrl('assets/projects-paper-plane-realistic.png')}
+          alt=""
+          aria-hidden="true"
+          draggable="false"
+        />
+      </button>
+      <span className="sr-only" aria-live="polite">
+        {flightState === 'flying' ? '纸飞机正在飞行' : flightState === 'arrived' ? '纸飞机已抵达终点' : ''}
+      </span>
+    </div>
+  );
+}
+
+function WorkflowPiano() {
+  const [activeKey, setActiveKey] = useState(null);
+  const [noteParticles, setNoteParticles] = useState([]);
+  const audioContextRef = useRef(null);
+  const activeKeyTimerRef = useRef(0);
+  const noteParticleIdRef = useRef(0);
+  const noteParticleTimersRef = useRef(new Set());
+
+  useEffect(() => () => {
+    window.clearTimeout(activeKeyTimerRef.current);
+    noteParticleTimersRef.current.forEach((timer) => window.clearTimeout(timer));
+    noteParticleTimersRef.current.clear();
+    if (audioContextRef.current) audioContextRef.current.close().catch(() => {});
+  }, []);
+
+  const playNote = useCallback((index) => {
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextClass) return;
+    const context = audioContextRef.current || new AudioContextClass();
+    audioContextRef.current = context;
+    if (context.state === 'suspended') context.resume();
+
+    const now = context.currentTime;
+    const master = context.createGain();
+    const body = context.createBiquadFilter();
+    body.type = 'lowpass';
+    body.frequency.setValueAtTime(3200, now);
+    master.gain.setValueAtTime(0.0001, now);
+    master.gain.exponentialRampToValueAtTime(0.3, now + 0.012);
+    master.gain.exponentialRampToValueAtTime(0.08, now + 0.28);
+    master.gain.exponentialRampToValueAtTime(0.0001, now + 1.45);
+    body.connect(master).connect(context.destination);
+
+    [1, 2, 3, 4].forEach((harmonic, harmonicIndex) => {
+      const oscillator = context.createOscillator();
+      const gain = context.createGain();
+      oscillator.type = harmonicIndex === 0 ? 'triangle' : 'sine';
+      oscillator.frequency.setValueAtTime(workflowNotes[index].frequency * harmonic, now);
+      oscillator.detune.setValueAtTime(harmonicIndex === 0 ? -2 : harmonicIndex, now);
+      gain.gain.setValueAtTime([0.72, 0.2, 0.07, 0.025][harmonicIndex], now);
+      oscillator.connect(gain).connect(body);
+      oscillator.start(now);
+      oscillator.stop(now + 1.5);
+    });
+  }, []);
+
+  const pressKey = useCallback((index) => {
+    const particleId = ++noteParticleIdRef.current;
+    const particle = {
+      id: particleId,
+      glyph: workflowNotes[index].glyph,
+      index,
+      rotation: index % 2 === 0 ? -16 : 14,
+    };
+
+    setActiveKey(index);
+    setNoteParticles((current) => [...current, particle]);
+    playNote(index);
+
+    window.clearTimeout(activeKeyTimerRef.current);
+    activeKeyTimerRef.current = window.setTimeout(
+      () => setActiveKey((current) => (current === index ? null : current)),
+      190,
+    );
+
+    const particleTimer = window.setTimeout(() => {
+      setNoteParticles((current) => current.filter((item) => item.id !== particleId));
+      noteParticleTimersRef.current.delete(particleTimer);
+    }, 1250);
+    noteParticleTimersRef.current.add(particleTimer);
+  }, [playNote]);
+
+  return (
+    <div className="strength-workflow reveal-on-scroll" aria-label="内容运营完整流程钢琴">
+      <div className="workflow-piano-stage">
+        <div className="workflow-piano-body">
+          <div className="workflow-note-particle-layer" aria-hidden="true">
+            {noteParticles.map((particle) => (
+              <span
+                className="workflow-note-particle"
+                key={particle.id}
+                style={{
+                  '--note-origin-y': `${Math.max(14, ((particle.index + 0.5) / workflowNotes.length) * 100)}%`,
+                  '--note-rotation': `${particle.rotation}deg`,
+                }}
+              >
+                {particle.glyph}
+              </span>
+            ))}
+          </div>
+          <div className="workflow-piano-art" aria-hidden="true">
+            <img src={assetUrl('assets/strengths-piano-keyboard-v2.png')} alt="" />
+          </div>
+          <ol className="workflow-piano" aria-label="工作方法标题与六步内容运营链路组成的完整七声音阶">
+            {workflowSteps.map((step, index) => (
+              <li className="workflow-piano-slot" style={{ '--piano-key-index': index }} key={step.number || step.title}>
+                <button
+                  type="button"
+                  className={`workflow-piano-key${activeKey === index ? ' is-pressed' : ''}`}
+                  onPointerDown={(event) => {
+                    if (event.button === 0) pressKey(index);
+                  }}
+                  onKeyDown={(event) => {
+                    if (!event.repeat && (event.key === 'Enter' || event.key === ' ')) pressKey(index);
+                  }}
+                  aria-label={`${step.title}，${step.detail}，${workflowNotes[index].label} 音`}
+                >
+                  <span className="piano-key-number">{step.number}</span>
+                  <span className="piano-key-copy">
+                    <strong>{step.title}</strong>
+                    <small>{step.detail}</small>
+                  </span>
+                  <span className="piano-key-note" aria-hidden="true">{workflowNotes[index].label}</span>
+                </button>
+              </li>
+            ))}
+          </ol>
+        </div>
+        <p className="workflow-piano-hint">按下步骤琴键，听见完整工作链路</p>
+      </div>
+      <section className="workflow-summary" aria-labelledby="workflow-summary-title">
+        <header className="workflow-summary-heading">
+          <span>Workflow summary</span>
+          <h3 id="workflow-summary-title">工作方法汇总</h3>
+          <p>不操作琴键，也可以直接阅读从判断到复盘的完整内容运营链路。</p>
+        </header>
+        <ol className="workflow-summary-list">
+          {workflowSteps.slice(1).map((step) => (
+            <li key={step.number}>
+              <span className="workflow-summary-number">{step.number}</span>
+              <strong>{step.title}</strong>
+              <span>{step.detail}</span>
+            </li>
+          ))}
+        </ol>
+      </section>
+    </div>
+  );
+}
+
+const strengthNumberLabels = ['一', '二', '三', '四', '五'];
+
+function StrengthTarotFront({ index, item }) {
+  const isAiCapability = index === strengths.length;
+
+  return (
+    <article className={`strength-tarot-copy${isAiCapability ? ' strength-ai-capability' : ''}`}>
+      <div className="strength-tarot-kicker">
+        <span>{String(index + 1).padStart(2, '0')}</span>
+        <span>Core capability</span>
+      </div>
+      <div className="strength-tarot-copy-main">
+        <div className="strength-icon">{item.icon}</div>
+        <h3>{item.title}</h3>
+        <p>{item.text}</p>
+      </div>
+    </article>
+  );
+}
+
+function StrengthPostcardCarousel() {
+  const carouselItems = [
+    ...strengths,
+    {
+      icon: <Sparkles aria-hidden="true" />,
+      title: 'AI 工作流与数字作品',
+      text: '已借助 AI 工具完成“不牛马厨房”及 3 套 Skill，把内容判断、视觉规范和重复流程转化为可使用、可复用的数字作品。',
+    },
+  ];
+  const stageRef = useRef(null);
+  const ringRef = useRef(null);
+  const frameRef = useRef(0);
+  const rotationRef = useRef(0);
+  const velocityRef = useRef(0);
+  const lastFrameRef = useRef(0);
+  const targetRotationRef = useRef(null);
+  const dragRef = useRef({ active: false, x: 0, moved: false });
+  const activeIndexRef = useRef(0);
+  const isDealtRef = useRef(false);
+  const flippedCardsRef = useRef(new Set());
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [isDealt, setIsDealt] = useState(false);
+  const [flippedCards, setFlippedCards] = useState(() => new Set());
+  const [geometry, setGeometry] = useState({ cardWidth: 300, cardHeight: 480 });
+  const [isStrengthSummaryOpen, setIsStrengthSummaryOpen] = useState(false);
+  const reduceMotion = useReducedMotion();
+  const itemCount = carouselItems.length;
+  const angle = 360 / itemCount;
+  const radius = (geometry.cardWidth * 1.42) / (2 * Math.tan(Math.PI / itemCount));
+
+  useEffect(() => {
+    const stage = stageRef.current;
+    if (!stage) return undefined;
+
+    const measure = () => {
+      const width = stage.clientWidth;
+      const mobile = window.matchMedia('(max-width: 680px)').matches;
+      if (mobile) {
+        const cardWidth = Math.min(226, width * 0.62);
+        setGeometry({ cardWidth, cardHeight: cardWidth * 1.6 });
+        return;
+      }
+      if (width <= 920) {
+        const cardWidth = Math.min(260, width * 0.36);
+        setGeometry({ cardWidth, cardHeight: cardWidth * 1.6 });
+        return;
+      }
+      const cardWidth = Math.min(280, width * 0.27);
+      setGeometry({ cardWidth, cardHeight: cardWidth * 1.6 });
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(stage);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const ring = ringRef.current;
+    if (!ring) return undefined;
+
+    const apply = () => {
+      ring.style.transform = isDealtRef.current
+        ? `translateZ(${-radius}px) rotateY(${rotationRef.current}deg)`
+        : 'translateZ(0) rotateY(0deg)';
+      const nextIndex = ((Math.round(-rotationRef.current / angle) % itemCount) + itemCount) % itemCount;
+      if (nextIndex !== activeIndexRef.current) {
+        activeIndexRef.current = nextIndex;
+        setActiveIndex(nextIndex);
+      }
+    };
+
+    const draw = (now) => {
+      const delta = lastFrameRef.current ? Math.min((now - lastFrameRef.current) / 1000, 0.1) : 0;
+      lastFrameRef.current = now;
+      const target = targetRotationRef.current;
+
+      if (!dragRef.current.active) {
+        if (target !== null) {
+          const distance = ((target - rotationRef.current + 540) % 360) - 180;
+          rotationRef.current += distance * Math.min(1, delta * 7.5);
+          if (Math.abs(distance) < 0.08) {
+            rotationRef.current = target;
+            targetRotationRef.current = null;
+          }
+        } else if (Math.abs(velocityRef.current) > 0.1) {
+          rotationRef.current += velocityRef.current * delta;
+          velocityRef.current *= Math.pow(0.94, delta * 60);
+        } else if (isDealtRef.current && !reduceMotion && flippedCardsRef.current.size === 0) {
+          rotationRef.current += 8 * delta;
+        }
+      }
+
+      apply();
+      frameRef.current = window.requestAnimationFrame(draw);
+    };
+
+    apply();
+    frameRef.current = window.requestAnimationFrame(draw);
+    return () => {
+      window.cancelAnimationFrame(frameRef.current);
+      lastFrameRef.current = 0;
+    };
+  }, [angle, itemCount, radius, reduceMotion]);
+
+  const restoreCardBacks = useCallback(() => {
+    const next = new Set();
+    flippedCardsRef.current = next;
+    setFlippedCards(next);
+  }, []);
+
+  const dealCards = useCallback(() => {
+    if (isDealtRef.current) return;
+    isDealtRef.current = true;
+    setIsDealt(true);
+  }, []);
+
+  const selectCard = useCallback((index) => {
+    dealCards();
+    restoreCardBacks();
+    velocityRef.current = 0;
+    targetRotationRef.current = -index * angle;
+    activeIndexRef.current = index;
+    setActiveIndex(index);
+  }, [angle, dealCards, restoreCardBacks]);
+
+  const handlePointerDown = (event) => {
+    if (!isDealtRef.current) return;
+    targetRotationRef.current = null;
+    velocityRef.current = 0;
+    dragRef.current = { active: true, startX: event.clientX, x: event.clientX, moved: false };
+  };
+
+  const handlePointerMove = (event) => {
+    if (!isDealtRef.current || !dragRef.current.active) return;
+    const deltaX = event.clientX - dragRef.current.x;
+    dragRef.current.x = event.clientX;
+    dragRef.current.moved ||= Math.abs(event.clientX - dragRef.current.startX) > 6;
+    if (dragRef.current.moved && !event.currentTarget.hasPointerCapture?.(event.pointerId)) {
+      event.currentTarget.setPointerCapture?.(event.pointerId);
+    }
+    rotationRef.current += deltaX * 0.52;
+    velocityRef.current = deltaX * 28;
+  };
+
+  const handlePointerUp = (event) => {
+    if (event.currentTarget.hasPointerCapture?.(event.pointerId)) {
+      event.currentTarget.releasePointerCapture?.(event.pointerId);
+    }
+    dragRef.current.active = false;
+  };
+
+  const activateCard = (index) => {
+    if (dragRef.current.moved) {
+      dragRef.current.moved = false;
+      return;
+    }
+    if (!isDealtRef.current) {
+      dealCards();
+      return;
+    }
+    velocityRef.current = 0;
+    targetRotationRef.current = -index * angle;
+    activeIndexRef.current = index;
+    setActiveIndex(index);
+    setFlippedCards((current) => {
+      const next = current.has(index) ? new Set() : new Set([index]);
+      flippedCardsRef.current = next;
+      return next;
+    });
+  };
+
+  return (
+    <div className="strength-round-carousel reveal-on-scroll" data-carousel-state={isDealt ? 'dealt' : 'deck'}>
+      <div
+        className="strength-round-carousel-stage"
+        ref={stageRef}
+        role="region"
+        aria-label="可旋转、可翻面的核心能力塔罗牌"
+        aria-roledescription="carousel"
+        tabIndex={0}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onPointerCancel={handlePointerUp}
+        onKeyDown={(event) => {
+          if (event.key === 'ArrowLeft') {
+            event.preventDefault();
+            selectCard((activeIndex - 1 + itemCount) % itemCount);
+          }
+          if (event.key === 'ArrowRight') {
+            event.preventDefault();
+            selectCard((activeIndex + 1) % itemCount);
+          }
+        }}
+      >
+        <div className="strength-round-carousel-tilt">
+          <div
+            className="strength-round-carousel-ring"
+            ref={ringRef}
+            style={{
+              '--strength-card-width': `${geometry.cardWidth}px`,
+              '--strength-card-height': `${geometry.cardHeight}px`,
+            }}
+          >
+            {carouselItems.map((item, index) => (
+              <div
+                className={`strength-round-carousel-face${activeIndex === index ? ' is-active' : ''}`}
+                style={{
+                  transform: isDealt
+                    ? `rotateY(${index * angle}deg) translateZ(${radius}px)`
+                    : `translate3d(${(index - 2) * 2}px, ${index * -2}px, ${index * -1}px) rotateZ(${(index - 2) * 0.7}deg)`,
+                  zIndex: isDealt ? undefined : itemCount - index,
+                }}
+                aria-hidden={isDealt ? activeIndex !== index : index !== 0}
+                key={item.title}
+              >
+                <button
+                  type="button"
+                  className={`strength-tarot-card${flippedCards.has(index) ? ' is-flipped' : ''}`}
+                  data-card-index={index}
+                  aria-label={`${item.title}，${flippedCards.has(index) ? '当前为优势正面，点击翻回猫咪牌背' : '当前为猫咪牌背，点击查看优势'}`}
+                  aria-pressed={flippedCards.has(index)}
+                   tabIndex={isDealt ? (activeIndex === index ? 0 : -1) : (index === 0 ? 0 : -1)}
+                  onPointerUp={(event) => {
+                    if (!dragRef.current.moved) {
+                      event.stopPropagation();
+                      dragRef.current.active = false;
+                      activateCard(index);
+                    }
+                  }}
+                  onKeyDown={(event) => {
+                    if (!event.repeat && (event.key === 'Enter' || event.key === ' ')) {
+                      event.preventDefault();
+                      activateCard(index);
+                    }
+                  }}
+                >
+                  <span className="strength-tarot-side strength-tarot-back">
+                    <img src={strengthTarotAssets[index].back} alt="" draggable="false" />
+                  </span>
+                  <span className="strength-tarot-side strength-tarot-front">
+                    <img src={strengthTarotAssets[index].front} alt="" draggable="false" />
+                    <StrengthTarotFront index={index} item={item} />
+                  </span>
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="strength-postcard-index" aria-label="核心能力编号">
+        {carouselItems.map((item, index) => (
+          <button
+            type="button"
+            className={activeIndex === index ? 'is-active' : ''}
+            aria-current={activeIndex === index ? 'true' : undefined}
+            aria-label={`查看第${strengthNumberLabels[index]}项能力：${item.title}`}
+            onClick={() => selectCard(index)}
+            key={item.title}
+          >
+            {strengthNumberLabels[index]}
+          </button>
+        ))}
+      </div>
+      <p className="strength-round-carousel-hint" aria-live="polite">
+        {isDealt ? '五只猫咪，五项核心能力' : '点击牌堆，开始发牌'}
+      </p>
+      <section
+        className={`project-summary strength-summary${isStrengthSummaryOpen ? ' is-open' : ''}`}
+        aria-labelledby="strength-summary-title"
+      >
+        <button
+          className="project-summary-toggle"
+          type="button"
+          onClick={() => setIsStrengthSummaryOpen((current) => !current)}
+          aria-expanded={isStrengthSummaryOpen}
+          aria-controls="strength-summary-list"
+        >
+          <strong id="strength-summary-title">查看我的核心能力汇总</strong>
+          <span>4 项内容运营能力 · 1 项 AI 数字作品能力</span>
+          <span className="project-summary-toggle-icon" aria-hidden="true"><ChevronDown /></span>
+        </button>
+        <div className="project-summary-list" id="strength-summary-list" hidden={!isStrengthSummaryOpen}>
+          {carouselItems.map((item, index) => (
+            <button
+              className="project-summary-row strength-summary-row"
+              type="button"
+              onClick={() => selectCard(index)}
+              key={item.title}
+            >
+              <span className="project-summary-number">{String(index + 1).padStart(2, '0')}</span>
+              <span className="project-summary-copy">
+                <strong>{item.title}</strong>
+                <span>{item.text}</span>
+              </span>
+              <span className="project-summary-result">
+                {index === carouselItems.length - 1 ? 'AI 数字作品' : '内容运营'}
+              </span>
+              <RotateCw aria-hidden="true" />
+            </button>
+          ))}
+        </div>
+      </section>
+    </div>
+  );
+}
+
 function Strengths() {
   return (
     <section className="section strengths-section" id="strengths">
-      <div className="section-heading editorial-page-heading reveal-on-scroll" data-watermark="STRENGTHS">
-        <p className="eyebrow">能力结构</p>
-        <h2>内容运营能力结构</h2>
-        <p>从内容判断到数据复盘，把每一次创作放进可执行、可协同、可迭代的工作链路。</p>
+      <div className="section-heading strengths-clipboard-heading reveal-on-scroll">
+        <img
+          className="strengths-clipboard-image"
+          src={assetUrl('assets/strengths-clipboard-panel.webp')}
+          alt=""
+          aria-hidden="true"
+        />
+        <div className="strengths-clipboard-copy">
+          <p className="eyebrow">能力结构</p>
+          <h2 aria-label="内容运营能力结构">
+            <span>内容运营</span>
+            <span>能力结构</span>
+          </h2>
+          <p>从内容判断到数据复盘，把每一次创作放进可执行、可协同、可迭代的工作链路。</p>
+        </div>
       </div>
       <div className="strengths-editorial-layout">
         <div className="strengths-editorial-column strengths-process-column">
-          <div className="strength-block-heading reveal-on-scroll">
-            <span>01</span>
-            <div>
-              <p>工作方法</p>
-              <h3>一条完整的内容运营链路</h3>
-            </div>
-          </div>
-          <div className="strength-workflow reveal-on-scroll" aria-label="内容运营完整流程">
-            <ol className="workflow-flow">
-              {workflowSteps.map((step) => (
-                <li className="workflow-step" key={step.number}>
-                  <span className="workflow-number">{step.number}</span>
-                  <div>
-                    <h3>{step.title}</h3>
-                    <p>{step.detail}</p>
-                  </div>
-                </li>
-              ))}
-            </ol>
-          </div>
+          <WorkflowPiano />
         </div>
         <div className="strengths-editorial-column strengths-capability-column">
-          <div className="strength-block-heading reveal-on-scroll">
-            <span>02</span>
-            <div>
-              <p>核心能力</p>
-              <h3>能独立推进，也能进入协作</h3>
-            </div>
-          </div>
-          <div className="strength-capabilities">
-            {strengths.map((item) => (
-              <article className="strength-card reveal-on-scroll" key={item.title}>
-                <div className="strength-icon">{item.icon}</div>
-                <div className="strength-copy">
-                  <h3>{item.title}</h3>
-                  <p>{item.text}</p>
-                </div>
-              </article>
-            ))}
-            <article className="strength-card strength-ai-capability reveal-on-scroll">
-              <div className="strength-icon"><Sparkles aria-hidden="true" /></div>
-              <div className="strength-copy">
-                <h3>AI 产品与 Skill 创作</h3>
-                <p>已独立制作并上线“不牛马厨房”，并围绕动态宠物、面试准备复盘和透明贴纸生产完成 3 套 Skill，把个人判断转化为可复用、可校验的工作流。</p>
-              </div>
-            </article>
-          </div>
+          <StrengthsIntroStamp />
+          <StrengthPostcardCarousel />
         </div>
       </div>
       <PageContinuation href="#contact" label="联系" />
@@ -3369,32 +4233,264 @@ function Strengths() {
   );
 }
 
+function StrengthsIntroStamp() {
+  const [isFlipped, setIsFlipped] = useState(false);
+
+  return (
+    <div className="strengths-intro-stamp-wrap reveal-on-scroll">
+      <button
+        className={`strengths-intro-stamp${isFlipped ? ' is-flipped' : ''}`}
+        type="button"
+        aria-label={isFlipped
+          ? '核心能力邮票当前为西高地图案正面，点击返回文字背面'
+          : '核心能力邮票当前为文字背面，点击查看西高地图案正面'}
+        aria-pressed={isFlipped}
+        onClick={() => setIsFlipped((current) => !current)}
+      >
+        <span className="strengths-intro-stamp-inner">
+          <span className="strengths-intro-stamp-face strengths-intro-stamp-back">
+            <img src={strengthStampAssets.back} alt="" draggable="false" />
+            <span className="strengths-intro-stamp-copy">
+              <span className="strengths-intro-stamp-kicker">
+                <span>02</span>
+                <span>核心能力</span>
+              </span>
+              <strong>能独立推进，<br />也能进入协作</strong>
+              <span className="strengths-intro-stamp-rule" aria-hidden="true" />
+            </span>
+          </span>
+          <span className="strengths-intro-stamp-face strengths-intro-stamp-front">
+            <img src={strengthStampAssets.front} alt="蓝色西高地犬主题邮票" draggable="false" />
+          </span>
+        </span>
+      </button>
+    </div>
+  );
+}
+
+const contactBubbleParticles = Array.from({ length: 5 }, (_, index) => {
+  const angle = (-164 + ((index * 47) % 148)) * (Math.PI / 180);
+  const distance = 58 + ((index * 37) % 138);
+
+  return {
+    id: index,
+    x: Math.cos(angle) * distance,
+    y: Math.sin(angle) * distance - 18 - ((index * 19) % 48),
+    size: 14 + ((index * 7) % 22),
+    delay: (index % 5) * 52,
+    duration: 1380 + ((index * 83) % 680),
+  };
+});
+
+const contactGoldfish = [
+  { id: 1, right: '7%', top: '-36px', size: '78px', rotation: '-4deg', bubbleCount: 2, spread: 0.88 },
+  { id: 2, right: '20%', top: '-52px', size: '94px', rotation: '3deg', bubbleCount: 5, spread: 1.08 },
+  { id: 3, right: '34%', top: '-34px', size: '72px', rotation: '-2deg', bubbleCount: 3, spread: 0.96 },
+  { id: 4, right: '48%', top: '-46px', size: '86px', rotation: '4deg', bubbleCount: 1, spread: 0.78 },
+];
+
 function Contact() {
+  const [submissionState, setSubmissionState] = useState('idle');
+  const [submissionMessage, setSubmissionMessage] = useState('');
+  const [bubbleBurst, setBubbleBurst] = useState(null);
+
+  const prepareSuccessSound = () => {
+    try {
+      const audio = document.createElement('audio');
+      audio.src = assetUrl('audio/contact-send-success.wav');
+      audio.preload = 'auto';
+      audio.muted = true;
+      const unlockPromise = audio.play()
+        .then(() => {
+          audio.pause();
+          audio.currentTime = 0;
+          audio.muted = false;
+          audio.volume = 0.46;
+          return true;
+        })
+        .catch(() => false);
+
+      return {
+        async play() {
+          const unlocked = await unlockPromise;
+          if (!unlocked) return;
+          audio.currentTime = 0;
+          await audio.play();
+        },
+        close() {
+          audio.pause();
+          audio.removeAttribute('src');
+          audio.load();
+        },
+      };
+    } catch {
+      return null;
+    }
+  };
+
+  const handleContactSubmit = async (event) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+    const payload = Object.fromEntries(formData.entries());
+    const selectedIntents = formData.getAll('来意');
+
+    if (formData.get('_honey')) return;
+
+    payload.来意 = selectedIntents.length ? selectedIntents.join('、') : '未选择';
+
+    const successSound = prepareSuccessSound();
+    setSubmissionState('sending');
+    setSubmissionMessage('');
+
+    try {
+      const response = await fetch('https://formsubmit.co/ajax/2436528353@qq.com', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+      const result = await response.json();
+
+      if (!response.ok || result.success === false) {
+        throw new Error(result.message || 'Unable to send message');
+      }
+
+      form.reset();
+      setSubmissionState('success');
+      setSubmissionMessage('已发送，谢谢你认真留下这些信息。我会通过你填写的联系方式回复。');
+      successSound?.play().catch(() => {});
+    } catch {
+      successSound?.close();
+      setSubmissionState('error');
+      setSubmissionMessage('暂时没有发送成功。你可以稍后重试，或直接点击下方邮箱联系我。');
+    }
+  };
+
   return (
     <section className="contact-section" id="contact">
-      <img
-        className="contact-background"
-        src={assetUrl('assets/contact-green-light.webp')}
-        alt=""
-        aria-hidden="true"
-      />
       <div className="contact-inner editorial-page-heading reveal-on-scroll" data-watermark="CONTACT">
         <div className="contact-masthead">
           <p className="eyebrow">Contact</p>
           <span>05 / 05</span>
+        </div>
+        <div className="contact-opening-image">
+          <img
+            src={assetUrl('assets/contact-window-cat-and-fish.webp')}
+            alt="一只猫坐在窗前，看着悬挂在明亮窗景中的金鱼与蓝色玻璃装饰"
+            width="1254"
+            height="1254"
+            loading="eager"
+            decoding="async"
+            fetchPriority="high"
+          />
         </div>
         <h2 className="contact-statement">
           <span>期待在真实业务里</span>
           <span>继续把内容做得</span>
           <span>可见、可信，也可转化。</span>
         </h2>
-        <div className="contact-information-grid">
+        <div className="contact-information-grid contact-information-grid-with-form">
+          <span className="contact-goldfish-school">
+            {contactGoldfish.map((fish) => (
+              <button
+                key={fish.id}
+                className="contact-goldfish"
+                type="button"
+                aria-label={`点击第 ${fish.id} 条金鱼，让它吐出泡泡`}
+                style={{
+                  '--goldfish-right': fish.right,
+                  '--goldfish-top': fish.top,
+                  '--goldfish-size': fish.size,
+                  '--goldfish-rotation': fish.rotation,
+                }}
+                onClick={() => setBubbleBurst({ fishId: fish.id, key: Date.now() })}
+              >
+                <img src={assetUrl('assets/contact-goldfish-transparent.png')} alt="" draggable="false" />
+                {bubbleBurst?.fishId === fish.id && (
+                  <span key={bubbleBurst.key} className="contact-bubble-burst" aria-hidden="true">
+                    {contactBubbleParticles.slice(0, fish.bubbleCount).map((bubble) => (
+                      <span
+                        key={bubble.id}
+                        className="contact-bubble"
+                        style={{
+                          '--bubble-x': `${bubble.x * fish.spread}px`,
+                          '--bubble-y': `${bubble.y * fish.spread}px`,
+                          '--bubble-size': `${bubble.size}px`,
+                          '--bubble-delay': `${bubble.delay}ms`,
+                          '--bubble-duration': `${bubble.duration}ms`,
+                        }}
+                      />
+                    ))}
+                  </span>
+                )}
+              </button>
+            ))}
+          </span>
+          <span className="sr-only" role="status" aria-live="polite">
+            {bubbleBurst ? `第 ${bubbleBurst.fishId} 条金鱼吐出了一簇泡泡。` : ''}
+          </span>
           <div className="contact-actions">
-            <span>求职联系</span>
+            <span>写信给我</span>
+            <form className="contact-form" onSubmit={handleContactSubmit}>
+              <fieldset className="contact-intent-group">
+                <legend>你想聊什么？</legend>
+                <div className="contact-intent-options">
+                  {['作品集建议', '能力建议', '合作邀约', '面试邀约'].map((intent) => (
+                    <label key={intent}>
+                      <input type="checkbox" name="来意" value={intent} />
+                      <span>{intent}</span>
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
+
+              <div className="contact-field">
+                <input id="contact-name" name="姓名或称呼" type="text" placeholder=" " autoComplete="name" required />
+                <label htmlFor="contact-name">姓名或称呼</label>
+              </div>
+
+              <div className="contact-field">
+                <input id="contact-method" name="回复方式" type="text" placeholder=" " autoComplete="email" aria-describedby="contact-method-hint" required />
+                <label htmlFor="contact-method">邮箱 / 微信 / 电话</label>
+                <small id="contact-method-hint">填写任意一种方便联系你的方式</small>
+              </div>
+
+              <div className="contact-field contact-field-message">
+                <textarea id="contact-message" name="具体留言" placeholder=" " rows="5" required />
+                <label htmlFor="contact-message">想对我说的话</label>
+              </div>
+
+              <input className="contact-honeypot" type="text" name="_honey" tabIndex="-1" autoComplete="off" />
+              <input type="hidden" name="_subject" value="作品集收到一条新的联系留言" />
+              <input type="hidden" name="_template" value="table" />
+
+              <div className="contact-submit-stage">
+                <button className="contact-submit" type="submit" disabled={submissionState === 'sending'}>
+                  <span>{submissionState === 'sending' ? '正在发送' : submissionState === 'success' ? '发送成功' : '发送留言'}</span>
+                  <Send aria-hidden="true" />
+                </button>
+                <span className={`contact-success-flight${submissionState === 'success' ? ' is-visible' : ''}`} aria-hidden="true">
+                  <Send />
+                </span>
+              </div>
+              <p className={`contact-form-status${submissionState !== 'idle' ? ` is-${submissionState}` : ''}`} role="status" aria-live="polite">
+                {submissionMessage}
+              </p>
+            </form>
+
+            <span className="contact-email-label">也可以直接发邮件</span>
             <a className="button button-primary" href="mailto:2436528353@qq.com">
               <Mail aria-hidden="true" />
               2436528353@qq.com
             </a>
+          </div>
+          <div className="contact-introduction">
+            <span>Leave a note</span>
+            <p>无论是对作品集或能力的建议、合作想法，还是面试邀约，都欢迎把具体情况留给我。</p>
+            <p>请留下一个方便回复的联系方式，我会认真阅读。</p>
           </div>
         </div>
         <PageContinuation href="#home" label="首页" isReturn />
@@ -3604,135 +4700,174 @@ function PortfolioEntryLegacy({ onEnter }) {
   );
 }
 
-function PortfolioEntry({ onEnter }) {
-  const [isLeaving, setIsLeaving] = useState(false);
-  const exitTimerRef = useRef(null);
-  const leavingRef = useRef(false);
+function getButterflyFlight(progress) {
+  const t = Math.min(1, Math.max(0, progress / 100));
+  const sections = [
+    { start: [16, 220], c1: [92, 102], c2: [230, 54], end: [382, 38] },
+    { start: [382, 38], c1: [482, 28], c2: [566, 58], end: [650, 112] },
+    { start: [650, 112], c1: [734, 164], c2: [824, 178], end: [876, 160] },
+    { start: [876, 160], c1: [930, 150], c2: [972, 118], end: [1000, 82] },
+  ];
+  const scaled = t * sections.length;
+  const section = sections[Math.min(sections.length - 1, Math.floor(scaled))];
+  const localT = Math.min(1, scaled % 1 || (t === 1 ? 1 : 0));
+  const inverseT = 1 - localT;
+  const point = (axis) => (
+    (inverseT ** 3 * section.start[axis])
+    + (3 * inverseT ** 2 * localT * section.c1[axis])
+    + (3 * inverseT * localT ** 2 * section.c2[axis])
+    + (localT ** 3 * section.end[axis])
+  );
+  const tangent = (axis) => (
+    (3 * inverseT ** 2 * (section.c1[axis] - section.start[axis]))
+    + (6 * inverseT * localT * (section.c2[axis] - section.c1[axis]))
+    + (3 * localT ** 2 * (section.end[axis] - section.c2[axis]))
+  );
 
-  const enterPortfolio = useCallback(() => {
-    if (leavingRef.current) return;
-    leavingRef.current = true;
-    setIsLeaving(true);
+  return {
+    x: point(0),
+    y: point(1),
+    angle: Math.atan2(tangent(1), tangent(0)) * (180 / Math.PI),
+  };
+}
+
+function PortfolioEntry({ onComplete }) {
+  const [progress, setProgress] = useState(0);
+  const timersRef = useRef([]);
+  const frameRef = useRef(0);
+  const completedRef = useRef(false);
+  const assetsReadyRef = useRef(false);
+  const butterflyFlights = [
+    { ...getButterflyFlight((progress * 0.92) + 8), formationY: -26 },
+    { ...getButterflyFlight((progress * 0.96) + 4), formationY: 22 },
+    { ...getButterflyFlight(progress), formationY: -4 },
+  ];
+
+  useEffect(() => {
+    let cancelled = false;
+    preloadEntryAssets().finally(() => {
+      if (!cancelled) assetsReadyRef.current = true;
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const finishEntry = useCallback((delay = 520) => {
+    if (completedRef.current) return;
+    completedRef.current = true;
+    setProgress(100);
+    document.body.classList.add('is-entry-leaving');
+    timersRef.current.push(window.setTimeout(onComplete, delay));
+  }, [onComplete]);
+
+  useEffect(() => {
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    exitTimerRef.current = window.setTimeout(() => onEnter('#home'), reduceMotion ? 20 : 480);
-  }, [onEnter]);
+    const duration = reduceMotion ? 500 : 4300;
+    const startedAt = performance.now();
+    let releaseStartedAt = 0;
+
+    const tick = (now) => {
+      const elapsed = Math.min(1, (now - startedAt) / duration);
+      const eased = 1 - ((1 - elapsed) ** 2.35);
+      let nextProgress = Math.min(92, Math.round(eased * 92));
+
+      if (elapsed >= 1 && !assetsReadyRef.current) {
+        nextProgress = 92;
+      }
+
+      if (elapsed >= 1 && assetsReadyRef.current) {
+        releaseStartedAt ||= now;
+        const releaseElapsed = Math.min(1, (now - releaseStartedAt) / (reduceMotion ? 80 : 420));
+        nextProgress = Math.round(92 + (1 - ((1 - releaseElapsed) ** 2)) * 8);
+        if (releaseElapsed >= 1) {
+          setProgress(100);
+          timersRef.current.push(window.setTimeout(() => finishEntry(reduceMotion ? 80 : 560), 240));
+          return;
+        }
+      }
+
+      setProgress(nextProgress);
+      frameRef.current = window.requestAnimationFrame(tick);
+    };
+
+    frameRef.current = window.requestAnimationFrame(tick);
+    return () => window.cancelAnimationFrame(frameRef.current);
+  }, [finishEntry]);
 
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     const handleKeyDown = (event) => {
-      if (event.key === 'Escape') enterPortfolio();
+      if (event.key === 'Escape' && assetsReadyRef.current) finishEntry(180);
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => {
       document.body.style.overflow = previousOverflow;
+      document.body.classList.remove('is-entry-leaving');
       window.removeEventListener('keydown', handleKeyDown);
-      if (exitTimerRef.current) window.clearTimeout(exitTimerRef.current);
+      timersRef.current.forEach((timer) => window.clearTimeout(timer));
+      window.cancelAnimationFrame(frameRef.current);
     };
-  }, [enterPortfolio]);
+  }, [finishEntry]);
 
   return (
     <section
-      className={`portfolio-entry portfolio-entry-editorial${isLeaving ? ' is-leaving' : ''}`}
-      aria-label={'\u5185\u5bb9\u8fd0\u8425\u4f5c\u54c1\u96c6\u5165\u53e3'}
+      className="portfolio-entry portfolio-entry-loading"
+      aria-label="折椿作品集加载入口"
     >
-      <div className="entry-book-reveal" aria-hidden="true">
-        <div className="entry-book-object">
-          <div className="entry-book-page entry-book-page-back">
-            <div className="entry-open-page-content">
-              <div className="entry-open-page-head">
-                <span>内容纪事 · 卷一</span>
-                <span>2023—2026</span>
-              </div>
-              <h3>把经历写进<br />每一页里</h3>
-              <p>从品牌内容、平台增长到 AI 产品实践，记录每一次真实发生的判断、创作与抵达。</p>
-              <div className="entry-open-page-index">
-                <span>品牌</span>
-                <span>增长</span>
-                <span>产品</span>
-              </div>
-              <small>001</small>
-            </div>
+      <div className="entry-butterfly-flight" aria-hidden="true">
+        {butterflyFlights.map((flight, index) => (
+          <div
+            className={`entry-butterfly-traveler entry-butterfly-traveler-${index + 1}`}
+            key={index}
+            style={{
+              '--butterfly-sprite': `url("${assetUrl('assets/entry-butterfly-flock.png')}")`,
+              left: `${flight.x / 10}%`,
+              opacity: Math.min(1, progress / 7) * Math.min(1, (100 - progress) / 7),
+              top: `${(flight.y + flight.formationY) / 2.8}%`,
+              transform: `rotate(${flight.angle * 0.22}deg)`,
+            }}
+          >
+            <span className="entry-butterfly-glow" />
+            <span className="entry-butterfly-trail" />
+            <span className={`entry-butterfly entry-butterfly-${index + 1}`} />
+            <span className="entry-firefly entry-firefly-star" />
+            <span className="entry-firefly entry-firefly-small" />
+            <span className="entry-firefly entry-firefly-far" />
           </div>
-          <div className="entry-book-page entry-book-flip entry-book-flip-one">
-            <span>内容</span>
-          </div>
-          <div className="entry-book-page entry-book-flip entry-book-flip-two">
-            <span>品牌</span>
-          </div>
-          <div className="entry-book-page entry-book-flip entry-book-flip-three">
-            <span>增长</span>
-          </div>
-          <div className="entry-book-page entry-book-flip entry-book-flip-four">
-            <span>产品</span>
-          </div>
-          <div className="entry-book-page entry-book-flip entry-book-flip-five">
-            <span>记录</span>
-          </div>
-          <div className="entry-book-cover">
-            <div className="entry-book-cover-copy">
-              <div className="entry-book-cover-head">
-                <small>CONTENT ARCHIVE</small>
-                <small>2023—2026</small>
-              </div>
-              <div className="entry-book-cover-title">
-                <strong>内容</strong>
-                <strong>纪事</strong>
-                <span>折椿作品集</span>
-              </div>
-              <div className="entry-book-cover-foot">
-                <span>品牌 · 增长 · 产品</span>
-                <span>第一卷</span>
-              </div>
-            </div>
-            <div className="entry-book-cover-inside">
-              <span>序</span>
-              <p>一本关于内容、审美与成长的工作档案。</p>
-              <small>SUN XIAOTING</small>
-            </div>
-            <span className="entry-book-spine-line" />
-          </div>
-        </div>
+        ))}
       </div>
-      <div className="entry-cinematic" aria-hidden="true">
-        <div className="entry-cinematic-image" />
-        <div className="entry-cinematic-shade" />
-      </div>
-      <div className="entry-rule entry-rule-top" aria-hidden="true" />
-      <div className="entry-rule entry-rule-bottom" aria-hidden="true" />
-
-      <div className="entry-editorial">
-        <header className="entry-masthead">
-          <span>SUN XIAOTING</span>
-          <span>PORTFOLIO / 2026</span>
-        </header>
-
-        <div className="entry-title-block">
-          <p>{'\u5185\u5bb9\u8fd0\u8425 \u00b7 \u7f16\u8f91\u7b56\u5212'}</p>
-          <h1>
-            <span>{'\u8ba9\u5185\u5bb9\u88ab\u770b\u89c1\uff0c'}</span>
-            <span>{'\u4e5f\u8ba9\u54c1\u724c\u88ab\u8bb0\u4f4f\u3002'}</span>
-          </h1>
-          <div className="entry-title-meta">
-            <span>{'\u54c1\u724c\u81ea\u5a92\u4f53'}</span>
-            <span>{'\u793e\u5a92\u4f53\u8fd0\u8425'}</span>
-            <span>{'\u5185\u5bb9\u7b56\u5212'}</span>
+      <div className="entry-loading" aria-live="polite" aria-label={`作品集加载进度 ${progress}%`}>
+        <p className="entry-loading-copy">请稍等，作品集正在加载</p>
+        <div className="entry-loading-frame">
+          <div className="entry-loading-route" aria-hidden="true">
+            <div className="entry-loading-line">
+              <div className="entry-loading-fill" style={{ transform: `scaleX(${progress / 100})` }} />
+            </div>
+            <div className="entry-loading-cat" style={{ left: `${progress}%` }}>
+              <img
+                className="entry-cat-figure entry-cat-figure-motion"
+                src={assetUrl('assets/entry-walking-cat-animated.webp')}
+                alt=""
+                draggable="false"
+              />
+              <img
+                className="entry-cat-figure entry-cat-figure-still"
+                src={assetUrl('assets/entry-walking-cat.webp')}
+                alt=""
+                draggable="false"
+              />
+            </div>
           </div>
+          <strong>{String(progress).padStart(2, '0')}%</strong>
         </div>
-
-        <footer className="entry-enter-row">
-          <p>Selected work / 2023—2026</p>
-          <button type="button" onClick={enterPortfolio}>
-            <span>{'\u8fdb\u5165\u4f5c\u54c1\u96c6'}</span>
-            <ArrowUpRight aria-hidden="true" />
-          </button>
-        </footer>
       </div>
     </section>
   );
 }
 
-export default function App() {
+function PortfolioSite() {
   const {
     activeSection,
     scrollProgress,
@@ -3758,9 +4893,37 @@ export default function App() {
         >
           {pages[activeSection]}
         </div>
+        <div
+          className={`persistent-turntable-layer${activeSection === 'home' ? ' is-visible' : ''}`}
+          aria-hidden={activeSection !== 'home'}
+        >
+          <VinylMusicButton />
+        </div>
       </main>
       <BackToTop visible={showBackToTop} />
       <ClickBloom />
+    </>
+  );
+}
+
+export default function App() {
+  const [showEntry, setShowEntry] = useState(() => {
+    if (window.location.hash !== '#home') {
+      window.history.replaceState({ ...window.history.state, portfolioProject: undefined }, '', '#home');
+    }
+    return true;
+  });
+  const closeEntry = useCallback(() => {
+    if (window.location.hash !== '#home') {
+      window.history.replaceState({ ...window.history.state, portfolioProject: undefined }, '', '#home');
+    }
+    setShowEntry(false);
+  }, []);
+
+  return (
+    <>
+      <PortfolioSite />
+      {showEntry && <PortfolioEntry onComplete={closeEntry} />}
     </>
   );
 }
