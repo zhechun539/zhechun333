@@ -330,10 +330,11 @@ function buildUmbrellaModel(THREE, OBB, scene, experiences, palette) {
 
   experiences.slice(0, 7).forEach((item, index) => {
     const angle = THREE.MathUtils.degToRad(CARD_ANGLES[index]);
-    const anchorRadius = 2.62;
     const stringLength = CARD_LENGTHS[index];
+    const openAnchor = domePoint(angle, 1);
+    const foldedAnchor = foldedDomePoint(angle, 1);
     const pivot = new THREE.Group();
-    pivot.position.set(Math.sin(angle) * anchorRadius, 0.64, Math.cos(angle) * anchorRadius);
+    pivot.position.copy(openAnchor);
     pivot.rotation.y = angle;
     const pendulum = new THREE.Group();
     pivot.add(pendulum);
@@ -373,10 +374,9 @@ function buildUmbrellaModel(THREE, OBB, scene, experiences, palette) {
       paperGroup,
       cardMaterials,
       basePaperY,
-      basePosition: pivot.position.clone(),
-      foldedPosition: foldedDomePoint(angle, 1),
+      basePosition: openAnchor,
+      foldedPosition: foldedAnchor,
       baseRotation: angle,
-      phase: index * 0.77,
       fall: 0,
       outwardAngle: 0,
       outwardVelocity: 0,
@@ -446,7 +446,7 @@ function UmbrellaThreeScene({ experiences, isOpen, isRotating, fallingIndex, onT
       renderer.setClearColor(0x000000, 0);
       renderer.outputColorSpace = THREE.SRGBColorSpace;
       renderer.shadowMap.enabled = true;
-      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      renderer.shadowMap.type = THREE.PCFShadowMap;
       renderer.domElement.className = 'experience-umbrella-webgl-canvas';
       renderer.domElement.setAttribute('aria-hidden', 'true');
       mount.prepend(renderer.domElement);
@@ -493,7 +493,8 @@ function UmbrellaThreeScene({ experiences, isOpen, isRotating, fallingIndex, onT
       const model = buildUmbrellaModel(THREE, OBB, scene, experiences, palette);
       const raycaster = new THREE.Raycaster();
       const pointer = new THREE.Vector2();
-      const clock = new THREE.Clock();
+      const timer = new THREE.Timer();
+      timer.connect(document);
       const reduceMotionMedia = window.matchMedia('(prefers-reduced-motion: reduce)');
       const drag = { active: false, moved: false, suppressClick: false, x: 0 };
       let reduceMotion = reduceMotionMedia.matches;
@@ -502,52 +503,6 @@ function UmbrellaThreeScene({ experiences, isOpen, isRotating, fallingIndex, onT
       let autoRotationVelocity = 0;
       let observedAngularVelocity = 0;
       let previousRootRotation = model.modelRoot.rotation.y;
-      const windSeedBuffer = new Uint32Array(1);
-      window.crypto?.getRandomValues?.(windSeedBuffer);
-      let windSeed = windSeedBuffer[0] || 0x3a7f19c5;
-      const wind = {
-        currentDirection: -0.8,
-        targetDirection: -0.8,
-        strength: 0.16,
-        startedAt: 0,
-        duration: 3.8,
-        nextAt: 0,
-        attack: 0.28,
-        pulseRate: 1.8,
-        pulseDepth: 0.1,
-        pulsePhase: 0,
-      };
-      const nextWindRandom = () => {
-        windSeed = (Math.imul(windSeed, 1664525) + 1013904223) >>> 0;
-        return windSeed / 4294967296;
-      };
-      const scheduleWindGust = (elapsed) => {
-        wind.targetDirection = nextWindRandom() * Math.PI * 2 - Math.PI;
-        wind.strength = 0.11 + nextWindRandom() * 0.18;
-        const durationRoll = nextWindRandom();
-        wind.duration = 2.1 + durationRoll * durationRoll * 6.9;
-        wind.attack = 0.14 + nextWindRandom() * 0.34;
-        wind.pulseRate = 1.1 + nextWindRandom() * 2.7;
-        wind.pulseDepth = 0.05 + nextWindRandom() * 0.14;
-        wind.pulsePhase = nextWindRandom() * Math.PI * 2;
-        wind.startedAt = elapsed;
-        const gap = Math.min(8.2, 0.35 - Math.log(Math.max(0.0001, 1 - nextWindRandom())) * 2.35);
-        wind.nextAt = elapsed + wind.duration + gap;
-      };
-      const windEnvelopeAt = (elapsed, delay = 0) => {
-        const progress = (elapsed - wind.startedAt - delay) / wind.duration;
-        if (progress <= 0 || progress >= 1) return 0;
-        const rampProgress = progress < wind.attack
-          ? progress / wind.attack
-          : (1 - progress) / (1 - wind.attack);
-        const smoothRamp = rampProgress * rampProgress * (3 - 2 * rampProgress);
-        const pulse = 1 + Math.sin(progress * Math.PI * 2 * wind.pulseRate + wind.pulsePhase)
-          * wind.pulseDepth
-          * smoothRamp;
-        return Math.max(0, smoothRamp * pulse);
-      };
-      scheduleWindGust(-nextWindRandom() * 1.6);
-
       const resize = () => {
         const { width, height } = mount.getBoundingClientRect();
         if (!width || !height) return;
@@ -617,8 +572,9 @@ function UmbrellaThreeScene({ experiences, isOpen, isRotating, fallingIndex, onT
       reduceMotionMedia.addEventListener?.('change', onMotionChange);
 
       const render = () => {
-        const delta = Math.min(clock.getDelta(), 0.05);
-        const elapsed = clock.elapsedTime;
+        timer.update();
+        const delta = Math.min(timer.getDelta(), 0.05);
+        const elapsed = timer.getElapsed();
         const targetOpen = stateRef.current.isOpen ? 1 : 0;
         openProgress = reduceMotion ? targetOpen : THREE.MathUtils.lerp(openProgress, targetOpen, 1 - Math.exp(-delta * 6.5));
         const targetRotationVelocity = stateRef.current.isRotating && stateRef.current.isOpen && !reduceMotion ? 0.62 : 0;
@@ -630,13 +586,6 @@ function UmbrellaThreeScene({ experiences, isOpen, isRotating, fallingIndex, onT
         const angularAcceleration = THREE.MathUtils.clamp((nextAngularVelocity - observedAngularVelocity) / Math.max(delta, 0.001), -8, 8);
         observedAngularVelocity = nextAngularVelocity;
         previousRootRotation = model.modelRoot.rotation.y;
-
-        if (!reduceMotion && elapsed >= wind.nextAt) scheduleWindGust(elapsed);
-        const windTurn = Math.atan2(
-          Math.sin(wind.targetDirection - wind.currentDirection),
-          Math.cos(wind.targetDirection - wind.currentDirection),
-        );
-        wind.currentDirection += windTurn * (1 - Math.exp(-delta * 0.72));
 
         const foldProgress = 1 - openProgress;
         model.canopyGroup.scale.set(1, 1, 1);
@@ -668,49 +617,26 @@ function UmbrellaThreeScene({ experiences, isOpen, isRotating, fallingIndex, onT
           } else {
             const speedRatio = Math.min(Math.abs(observedAngularVelocity) / 0.62, 1.7);
             const lengthFactor = record.basePaperY / -2.4;
-            const rotatingOutwardTarget = -Math.min(0.5, (0.21 + lengthFactor * 0.06) * speedRatio * speedRatio);
-            const worldAngle = model.modelRoot.rotation.y + record.baseRotation;
-            const windFacing = Math.cos(worldAngle - wind.currentDirection);
-            const windArrivalDelay = (windFacing + 1) * 0.16;
-            const gustEnvelope = windEnvelopeAt(elapsed, windArrivalDelay);
-            const breeze = 0.012
-              + Math.sin(elapsed * 0.43 + record.phase) * 0.007
-              + Math.sin(elapsed * 0.19 + record.phase * 1.7) * 0.004;
-            const turbulence = Math.sin(elapsed * 0.86 + record.phase) * 0.64
-              + Math.sin(elapsed * 1.37 + record.phase * 1.9) * 0.36;
-            const leeSide = (1 - windFacing) * 0.5;
-            const localWindDirection = wind.currentDirection
-              + turbulence * (0.1 + leeSide * 0.13);
-            const localWindFacing = Math.cos(worldAngle - localWindDirection);
-            const localWindStrength = (breeze + gustEnvelope * wind.strength)
-              * (1 + turbulence * (0.06 + leeSide * 0.06));
-            const windScale = THREE.MathUtils.lerp(0.18, 1, openProgress);
-            const windOutward = -localWindStrength * localWindFacing * 1.08 * windScale;
-            const windTangential = localWindStrength
-              * Math.sin(localWindDirection - worldAngle)
-              * 1.08
-              * windScale;
-            const outwardTarget = THREE.MathUtils.lerp(closedOutwardTarget, rotatingOutwardTarget, openProgress)
-              + windOutward;
+            const rotatingOutwardTarget = -Math.min(0.18, (0.075 + lengthFactor * 0.025) * speedRatio * speedRatio);
+            const outwardTarget = THREE.MathUtils.lerp(closedOutwardTarget, rotatingOutwardTarget, openProgress);
             const rotatingTangentialTarget = THREE.MathUtils.clamp(
-              -observedAngularVelocity * 0.48 - angularAcceleration * 0.12,
-              -0.62,
-              0.62,
+              -observedAngularVelocity * 0.2 - angularAcceleration * 0.035,
+              -0.24,
+              0.24,
             );
             const tangentialTarget = THREE.MathUtils.clamp(
-              THREE.MathUtils.lerp(closedTangentialTarget, rotatingTangentialTarget, openProgress) + windTangential,
-              -0.62,
-              0.62,
+              THREE.MathUtils.lerp(closedTangentialTarget, rotatingTangentialTarget, openProgress),
+              -0.24,
+              0.24,
             );
-            const springStrength = 13.5 / Math.max(lengthFactor, 0.78);
+            const springStrength = 15.5 / Math.max(lengthFactor, 0.78);
             const settlingClosed = openProgress < 0.12;
-            record.outwardVelocity += ((outwardTarget - record.outwardAngle) * springStrength - record.outwardVelocity * (settlingClosed ? 8.5 : 4.2)) * delta;
+            record.outwardVelocity += ((outwardTarget - record.outwardAngle) * springStrength - record.outwardVelocity * (settlingClosed ? 9 : 6.8)) * delta;
             record.outwardAngle += record.outwardVelocity * delta;
-            record.tangentialVelocity += ((tangentialTarget - record.tangentialAngle) * springStrength - record.tangentialVelocity * (settlingClosed ? 8 : 3.3)) * delta;
+            record.tangentialVelocity += ((tangentialTarget - record.tangentialAngle) * springStrength - record.tangentialVelocity * (settlingClosed ? 9 : 6.4)) * delta;
             record.tangentialAngle += record.tangentialVelocity * delta;
             if (
-              openProgress < 0.015
-              && localWindStrength < 0.004
+              Math.abs(observedAngularVelocity) < 0.004
               && Math.abs(record.outwardAngle - closedOutwardTarget) < 0.002
               && Math.abs(record.tangentialAngle - closedTangentialTarget) < 0.002
               && Math.abs(record.outwardVelocity) < 0.002
@@ -727,7 +653,7 @@ function UmbrellaThreeScene({ experiences, isOpen, isRotating, fallingIndex, onT
           record.fall = THREE.MathUtils.lerp(record.fall, isFalling ? 1 : 0, 1 - Math.exp(-delta * (isFalling ? 8 : 12)));
           const fallEase = record.fall * record.fall;
           record.paperGroup.position.set(Math.sin(index + 1) * fallEase * 0.28, record.basePaperY - fallEase * 2.05, 0);
-          record.paperGroup.rotation.y = record.tangentialAngle * 0.65;
+          record.paperGroup.rotation.y = record.tangentialAngle * 0.28;
           record.paperGroup.rotation.z = (index % 2 ? -1 : 1) * fallEase * 0.4;
           const opacity = Math.max(0, 1 - fallEase);
           record.cardMaterials.forEach((material) => { material.opacity = opacity; });
@@ -778,12 +704,9 @@ function UmbrellaThreeScene({ experiences, isOpen, isRotating, fallingIndex, onT
         });
 
         renderer.domElement.dataset.modelRotation = model.modelRoot.rotation.y.toFixed(4);
-        renderer.domElement.dataset.windStrength = reduceMotion
+        renderer.domElement.dataset.motionEnergy = reduceMotion
           ? '0'
-          : (windEnvelopeAt(elapsed) * wind.strength).toFixed(4);
-        renderer.domElement.dataset.windDirection = wind.currentDirection.toFixed(3);
-        renderer.domElement.dataset.windDuration = wind.duration.toFixed(2);
-        renderer.domElement.dataset.windNextAt = wind.nextAt.toFixed(2);
+          : Math.abs(observedAngularVelocity).toFixed(4);
         renderer.render(scene, camera);
         frameId = requestAnimationFrame(render);
       };
@@ -798,6 +721,7 @@ function UmbrellaThreeScene({ experiences, isOpen, isRotating, fallingIndex, onT
         renderer.domElement.removeEventListener('pointermove', onPointerMove);
         renderer.domElement.removeEventListener('pointerup', onPointerUp);
         renderer.domElement.removeEventListener('click', onClick);
+        timer.dispose();
         disposeScene(renderer, scene);
         renderer.domElement.remove();
       };

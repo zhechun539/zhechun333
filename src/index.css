@@ -10347,8 +10347,24 @@ body.is-entry-leaving .portfolio-entry-loading {
   }
 
   .entry-butterfly-flight {
-    top: clamp(28px, 7vh, 58px);
-    height: min(28vh, 220px);
+    top: max(74px, calc(env(safe-area-inset-top, 0px) + 36px));
+    height: min(26vh, 220px);
+  }
+
+  .entry-butterfly {
+    width: clamp(52px, 14vw, 60px);
+    max-width: 15.5vw;
+    filter:
+      drop-shadow(0 0 4px hsl(52 100% 98% / 0.88))
+      drop-shadow(0 2px 2px hsl(158 26% 20% / 0.28));
+  }
+
+  .entry-butterfly-glow {
+    opacity: 0.58;
+  }
+
+  .entry-butterfly-trail {
+    opacity: 0.46;
   }
 
   .entry-loading-frame {
@@ -10364,6 +10380,31 @@ body.is-entry-leaving .portfolio-entry-loading {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .entry-butterfly-traveler {
+    transition: none;
+  }
+
+  .entry-butterfly-traveler-1 {
+    left: 34% !important;
+    top: 24% !important;
+    opacity: 0.88 !important;
+    transform: none !important;
+  }
+
+  .entry-butterfly-traveler-2 {
+    left: 48% !important;
+    top: 44% !important;
+    opacity: 0.8 !important;
+    transform: none !important;
+  }
+
+  .entry-butterfly-traveler-3 {
+    left: 61% !important;
+    top: 29% !important;
+    opacity: 0.84 !important;
+    transform: none !important;
+  }
+
   .entry-butterfly,
   .entry-butterfly-glow,
   .entry-butterfly-trail,
@@ -16530,9 +16571,9 @@ body {
   gap: 0.12em;
   margin: clamp(42px, 6vw, 76px) 0 clamp(52px, 7vw, 86px);
   color: var(--contact-forest-deep);
-  font-family: "Cheese Foam Oolong Song Contact", SimSun, "宋体", "Songti SC", STSong, serif;
+  font-family: "微雅软黑", "Microsoft YaHei", "PingFang SC", "Noto Sans SC", sans-serif;
   font-size: clamp(2.6rem, 4.8vw, 4.7rem);
-  font-weight: 700;
+  font-weight: 400;
   font-synthesis: none;
   line-height: 1.16;
   letter-spacing: 0;
@@ -20326,6 +20367,23 @@ body.experience-reading .about-section .about-grid {
     transform: translateY(-100%) rotate(-0.25deg);
   }
 
+  .about-postcard-reader .about-postcard-address > span {
+    left: 55%;
+    font-size: 0.5rem;
+  }
+
+  .about-postcard-reader .about-postcard-address > span:nth-child(1),
+  .about-postcard-reader .about-postcard-address > span:nth-child(4) {
+    font-family: var(--font-serif);
+    font-size: 0.475rem;
+    letter-spacing: 0.02em;
+  }
+
+  .about-postcard-reader .about-postcard-address > span:nth-child(1) { width: 23.5%; }
+  .about-postcard-reader .about-postcard-address > span:nth-child(2) { width: 22%; }
+  .about-postcard-reader .about-postcard-address > span:nth-child(3) { width: 20.5%; }
+  .about-postcard-reader .about-postcard-address > span:nth-child(4) { width: 19.5%; }
+
   .about-section .experience-postcard-detail.is-visible {
     width: min(92vw, 560px);
     min-height: 440px;
@@ -21703,6 +21761,8 @@ body.experience-reading .about-section .about-grid {
   --hero-cup-canvas-height: clamp(117px, 11.7vw, 130px);
   --hero-person-canvas-height: clamp(179.4px, 17.94vw, 200.2px);
   --hero-cat-canvas-height: clamp(140.4px, 14.04vw, 156px);
+  --hero-cat-canvas-width: clamp(84.8px, 8.49vw, 94.3px);
+  --hero-sticker-gap: clamp(9.1px, 1.3vw, 13px);
   --hero-top-line: clamp(76px, 8vw, 90px);
   --hero-bottom-line: clamp(70px, 7vw, 78px);
 }
@@ -21725,33 +21785,25 @@ body.experience-reading .about-section .about-grid {
   aspect-ratio: 1;
 }
 
-.hero-sticker-pair {
+.hero-mint-guitar-sticker,
+.hero-cat-sticker {
   --sticker-rotation: 0deg;
-  right: clamp(16px, 2.5vw, 28px);
+  top: auto;
   bottom: var(--hero-bottom-line);
-  display: flex;
   width: auto;
-  height: var(--hero-sticker-visible-height);
-  align-items: flex-end;
-  gap: clamp(9.1px, 1.3vw, 13px);
-  isolation: isolate;
   transform-origin: 50% 100%;
 }
 
-.hero-sticker-pair-guitar,
-.hero-sticker-pair-cat {
-  display: block;
-  width: auto;
-  pointer-events: none;
-  user-select: none;
-}
-
-.hero-sticker-pair-guitar {
+.hero-mint-guitar-sticker {
+  right: calc(clamp(16px, 2.5vw, 28px) + var(--hero-cat-canvas-width) + var(--hero-sticker-gap));
   height: var(--hero-sticker-visible-height);
+  aspect-ratio: 616 / 1697;
 }
 
-.hero-sticker-pair-cat {
+.hero-cat-sticker {
+  right: clamp(16px, 2.5vw, 28px);
   height: var(--hero-cat-canvas-height);
+  aspect-ratio: 725 / 1200;
 }
 
 .vinyl-switcher.turntable-switcher {
@@ -21766,6 +21818,8 @@ body.experience-reading .about-section .about-grid {
     --hero-cup-canvas-height: 101px;
     --hero-person-canvas-height: 156px;
     --hero-cat-canvas-height: 122.2px;
+    --hero-cat-canvas-width: 73.825px;
+    --hero-sticker-gap: 9.1px;
     --hero-top-line: 22px;
     --hero-bottom-line: 100px;
   }
@@ -21790,11 +21844,8 @@ body.experience-reading .about-section .about-grid {
     height: var(--hero-person-canvas-height);
   }
 
-  .hero-sticker-pair {
-    right: 12px;
-    bottom: var(--hero-bottom-line);
-    gap: 9.1px;
-  }
+  .hero-mint-guitar-sticker { right: calc(12px + var(--hero-cat-canvas-width) + var(--hero-sticker-gap)); }
+  .hero-cat-sticker { right: 12px; }
 
   .magazine-poster > .hero-sticker-actions {
     right: 10px;
@@ -23503,7 +23554,7 @@ body.experience-reading .about-section .about-grid {
 
 .persistent-turntable-layer {
   position: absolute;
-  top: 98px;
+  top: 56px;
   right: 0;
   bottom: 0;
   left: 0;
@@ -23527,6 +23578,7 @@ body.experience-reading .about-section .about-grid {
   }
 
   .persistent-turntable-layer {
+    top: calc(50px + max(62px, calc(50dvh - 340px)) - clamp(57px, 6vw, 67.5px));
     right: auto;
     left: 50%;
     width: min(1120px, 100%);
@@ -23541,7 +23593,7 @@ body.experience-reading .about-section .about-grid {
 
 @media (max-width: 760px) {
   .portfolio-page-view > .hero-section .magazine-poster { --hero-top-line: 16.5px; }
-  .persistent-turntable-layer { top: 84px; }
+  .persistent-turntable-layer { top: 42px; }
   .persistent-turntable-layer .vinyl-switcher.turntable-switcher { top: 16.5px; }
 }
 
@@ -23726,9 +23778,14 @@ body.experience-reading .about-section .about-grid {
 
 .workflow-piano-body .workflow-piano-key:active,
 .workflow-piano-body .workflow-piano-key.is-pressed {
-  background: linear-gradient(90deg, hsl(48 14% 86%), hsl(48 22% 95%) 40%, hsl(48 20% 94%));
-  box-shadow: inset 8px 0 14px hsl(45 10% 35% / 0.16), inset 0 3px 7px hsl(45 10% 35% / 0.18);
-  transform: perspective(900px) rotateY(-2.2deg) translateX(3px);
+  background: linear-gradient(180deg, hsl(48 15% 88%), hsl(48 19% 93%));
+  box-shadow:
+    inset 0 5px 9px hsl(45 10% 35% / 0.2),
+    inset 0 -1px 0 hsl(0 0% 100% / 0.62),
+    0 1px 0 hsl(45 9% 63% / 0.7);
+  filter: brightness(0.975);
+  transform: translate3d(0, 2px, 0);
+  transform-origin: center;
 }
 
 @media (max-width: 720px) {
@@ -23774,6 +23831,11 @@ body.experience-reading .about-section .about-grid {
 @media (prefers-reduced-motion: reduce) {
   .workflow-note-particle {
     animation: workflowNoteFade 260ms ease-out forwards;
+  }
+
+  .workflow-piano-body .workflow-piano-key:active,
+  .workflow-piano-body .workflow-piano-key.is-pressed {
+    transform: none;
   }
 }
 
@@ -24366,7 +24428,7 @@ section#strengths .strengths-clipboard-copy > p:not(.eyebrow) {
   .project-paper-plane img { transition: none; }
 }
 
-/* v04.58 - direct-reading workflow summary below the interactive piano. */
+/* v04.65 - reuse the collapsible project summary language below the piano. */
 .workflow-summary {
   width: min(100%, 680px);
   margin: clamp(42px, 6vw, 68px) auto 0;
@@ -24374,78 +24436,20 @@ section#strengths .strengths-clipboard-copy > p:not(.eyebrow) {
   font-family: var(--display-font);
 }
 
-.workflow-summary-heading {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(220px, 0.85fr);
-  gap: 5px clamp(24px, 5vw, 64px);
-  align-items: end;
-  padding-bottom: 20px;
-  border-bottom: 1px solid hsl(153 16% 38% / 0.38);
-}
-
-.workflow-summary-heading > span {
-  color: hsl(148 24% 57%);
-  font-size: 0.72rem;
-  text-transform: uppercase;
-}
-
-.workflow-summary-heading h3 {
-  grid-column: 1;
-  margin: 0;
-  font-size: clamp(1.45rem, 2.7vw, 2rem);
-  font-weight: 400;
-  letter-spacing: 0;
-}
-
-.workflow-summary-heading p {
-  grid-row: 1 / span 2;
-  grid-column: 2;
-  margin: 0;
-  color: var(--text-muted);
-  font-size: 0.82rem;
-  line-height: 1.7;
-}
-
 .workflow-summary-list {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.workflow-summary-list li {
-  display: grid;
-  grid-template-columns: 34px minmax(0, 1fr);
-  gap: 4px 12px;
-  min-width: 0;
-  padding: 18px 18px 18px 0;
-  border-bottom: 1px solid hsl(153 14% 45% / 0.2);
+.workflow-summary-row {
+  grid-template-columns: 42px minmax(0, 1fr) minmax(90px, 0.2fr);
+  cursor: default;
 }
 
-.workflow-summary-list li:nth-child(even) {
-  padding-right: 0;
-  padding-left: 18px;
-  border-left: 1px solid hsl(153 14% 45% / 0.2);
-}
-
-.workflow-summary-number {
-  grid-row: 1 / span 2;
-  color: hsl(148 24% 57%);
-  font-size: 0.74rem;
-  font-variant-numeric: tabular-nums;
-}
-
-.workflow-summary-list strong {
-  font-size: 1rem;
-  font-weight: 400;
-  line-height: 1.3;
-}
-
-.workflow-summary-list li > span:last-child {
-  color: var(--text-muted);
-  font-size: 0.76rem;
-  line-height: 1.5;
+.workflow-summary-row:hover {
+  color: var(--text-primary);
+  background: transparent;
 }
 
 @media (max-width: 720px) {
@@ -24454,31 +24458,8 @@ section#strengths .strengths-clipboard-copy > p:not(.eyebrow) {
     margin-top: 38px;
   }
 
-  .workflow-summary-heading {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 4px;
-    padding-bottom: 16px;
-  }
-
-  .workflow-summary-heading h3,
-  .workflow-summary-heading p {
-    grid-row: auto;
-    grid-column: 1;
-  }
-
-  .workflow-summary-heading p {
-    margin-top: 7px;
-    font-size: 0.76rem;
-  }
-
-  .workflow-summary-list {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .workflow-summary-list li,
-  .workflow-summary-list li:nth-child(even) {
-    padding: 15px 0;
-    border-left: 0;
+  .workflow-summary-row {
+    grid-template-columns: 30px minmax(0, 1fr);
   }
 }
 
@@ -24571,7 +24552,7 @@ section#strengths .strengths-intro-stamp-wrap {
 }
 
 section#strengths .strengths-intro-stamp {
-  width: clamp(119px, 12vw, 153px);
+  width: clamp(238px, 24vw, 306px);
   padding: 0;
   border: 0;
   aspect-ratio: 0.834;
@@ -24633,29 +24614,29 @@ section#strengths .strengths-intro-stamp-copy {
   font-family: "Real Typewriter Stamp", var(--strengths-clipboard-font);
   font-weight: 300;
   text-align: left;
-  text-shadow: 0 1px 0 hsl(42 45% 98% / 0.55);
+  text-shadow: 0 2px 0 hsl(42 45% 98% / 0.55);
 }
 
 section#strengths .strengths-intro-stamp-kicker {
   display: flex;
   align-items: center;
-  gap: 7px;
-  margin-bottom: 7px;
-  font-size: 0.48rem;
+  gap: 14px;
+  margin-bottom: 14px;
+  font-size: 0.96rem;
   line-height: 1;
 }
 
 section#strengths .strengths-intro-stamp-kicker > span:first-child {
   display: grid;
-  width: 18px;
-  height: 18px;
-  border: 1px solid hsl(207 28% 39% / 0.38);
+  width: 36px;
+  height: 36px;
+  border: 2px solid hsl(207 28% 39% / 0.38);
   border-radius: 50%;
   place-items: center;
 }
 
 section#strengths .strengths-intro-stamp-copy strong {
-  font-size: clamp(0.66rem, 1vw, 0.76rem);
+  font-size: clamp(1.32rem, 2vw, 1.52rem);
   font-weight: 300;
   line-height: 1.42;
   letter-spacing: 0;
@@ -24663,13 +24644,13 @@ section#strengths .strengths-intro-stamp-copy strong {
 
 section#strengths .strengths-intro-stamp-rule {
   width: 100%;
-  height: 1px;
-  margin-top: 10px;
+  height: 2px;
+  margin-top: 20px;
   background: hsl(207 25% 38% / 0.3);
 }
 
 section#strengths .strengths-intro-stamp:hover .strengths-intro-stamp-inner {
-  filter: drop-shadow(0 16px 18px hsl(160 20% 18% / 0.12));
+  filter: drop-shadow(0 32px 36px hsl(160 20% 18% / 0.12));
 }
 
 section#strengths .strengths-intro-stamp:active .strengths-intro-stamp-inner {
@@ -24681,8 +24662,8 @@ section#strengths .strengths-intro-stamp.is-flipped:active .strengths-intro-stam
 }
 
 section#strengths .strengths-intro-stamp:focus-visible {
-  outline: 3px solid hsl(207 32% 38%);
-  outline-offset: 7px;
+  outline: 6px solid hsl(207 32% 38%);
+  outline-offset: 14px;
 }
 
 section#strengths .strength-round-carousel {
@@ -24805,14 +24786,27 @@ section#strengths .strength-tarot-side > img {
 
 section#strengths .strength-tarot-copy {
   position: absolute;
-  inset: 10.5% 10.5% 9.5%;
+  inset: 2em;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 14px;
+  gap: 1em;
   color: hsl(153 25% 20%);
-  font-family: var(--body-font);
+  font-family: "微雅软黑", "Microsoft YaHei", "PingFang SC", "Noto Sans SC", sans-serif;
+  font-size: 0.88rem;
+  font-weight: 400;
+  font-synthesis: none;
   text-align: left;
+}
+
+section#strengths .strength-tarot-copy.strength-ai-capability {
+  inset-inline: 4em;
+}
+
+section#strengths .strength-tarot-copy * {
+  font-family: inherit;
+  font-weight: 400 !important;
+  font-synthesis: none;
 }
 
 section#strengths .strength-tarot-kicker {
@@ -24821,7 +24815,7 @@ section#strengths .strength-tarot-kicker {
   justify-content: space-between;
   padding-bottom: 9px;
   border-bottom: 1px solid hsl(153 22% 32% / 0.24);
-  font-size: 0.62rem;
+  font-size: 0.7em;
   line-height: 1;
   text-transform: uppercase;
 }
@@ -24829,14 +24823,14 @@ section#strengths .strength-tarot-kicker {
 section#strengths .strength-tarot-copy-main {
   display: grid;
   justify-items: start;
-  gap: 14px;
+  gap: 1em;
 }
 
 section#strengths .strength-tarot-copy .strength-icon,
 section#strengths .strength-tarot-copy.strength-ai-capability .strength-icon {
   display: grid;
-  width: 42px;
-  height: 42px;
+  width: 3em;
+  height: 3em;
   place-items: center;
   border: 1px solid hsl(153 26% 34% / 0.28);
   border-radius: 50%;
@@ -24845,15 +24839,14 @@ section#strengths .strength-tarot-copy.strength-ai-capability .strength-icon {
 }
 
 section#strengths .strength-tarot-copy .strength-icon svg {
-  width: 19px;
-  height: 19px;
+  width: 1.35em;
+  height: 1.35em;
 }
 
 section#strengths .strength-tarot-copy h3 {
   margin: 0;
   color: inherit;
-  font-family: var(--postcard-font);
-  font-size: clamp(1.34rem, 2vw, 1.58rem);
+  font-size: 1.52em;
   font-weight: 400;
   line-height: 1.34;
   letter-spacing: 0;
@@ -24862,7 +24855,8 @@ section#strengths .strength-tarot-copy h3 {
 section#strengths .strength-tarot-copy p {
   margin: 0;
   color: inherit;
-  font-size: 0.88rem;
+  font-size: 1em;
+  font-weight: 400;
   line-height: 1.7;
   letter-spacing: 0;
 }
@@ -24905,7 +24899,7 @@ section#strengths .strength-summary-row:focus-visible > svg {
   }
 
   section#strengths .strengths-intro-stamp {
-    width: min(36vw, 134px);
+    width: min(72vw, 268px);
   }
 
   section#strengths .strengths-intro-stamp-copy {
@@ -24913,7 +24907,7 @@ section#strengths .strength-summary-row:focus-visible > svg {
   }
 
   section#strengths .strengths-intro-stamp-copy strong {
-    font-size: 0.66rem;
+    font-size: 1.32rem;
   }
 
   section#strengths .strength-round-carousel-stage {
@@ -24921,8 +24915,9 @@ section#strengths .strength-summary-row:focus-visible > svg {
   }
 
   section#strengths .strength-tarot-copy {
-    inset: 10% 10% 9%;
-    gap: 9px;
+    inset: 2em;
+    gap: 0.8em;
+    font-size: 0.7rem;
   }
 
   section#strengths .strength-tarot-kicker {
@@ -24931,27 +24926,16 @@ section#strengths .strength-summary-row:focus-visible > svg {
   }
 
   section#strengths .strength-tarot-copy-main {
-    gap: 10px;
-  }
-
-  section#strengths .strength-tarot-copy .strength-icon,
-  section#strengths .strength-tarot-copy.strength-ai-capability .strength-icon {
-    width: 34px;
-    height: 34px;
-  }
-
-  section#strengths .strength-tarot-copy .strength-icon svg {
-    width: 15px;
-    height: 15px;
+    gap: 0.9em;
   }
 
   section#strengths .strength-tarot-copy h3 {
-    font-size: 1.08rem;
+    font-size: 1.52em;
     line-height: 1.3;
   }
 
   section#strengths .strength-tarot-copy p {
-    font-size: 0.7rem;
+    font-size: 1em;
     line-height: 1.55;
   }
 
@@ -25017,7 +25001,7 @@ section#strengths .workflow-piano-body {
 }
 
 section#strengths .strengths-intro-stamp {
-  width: clamp(112px, 10vw, 128px);
+  width: clamp(224px, 20vw, 256px);
 }
 
 section#strengths .strength-round-carousel-stage {
@@ -25054,7 +25038,7 @@ section#strengths .strength-round-carousel-stage {
   }
 
   section#strengths .strengths-intro-stamp {
-    width: min(31vw, 116px);
+    width: min(62vw, 232px);
   }
 
   section#strengths .strength-round-carousel-stage {
@@ -25063,6 +25047,10 @@ section#strengths .strength-round-carousel-stage {
 }
 
 /* v04.09 final piano layout override: complete labels at every responsive width. */
+.workflow-piano-body .workflow-piano-slot {
+  height: 100%;
+}
+
 .workflow-piano-body .workflow-piano-key {
   inset: 0;
   width: 100%;

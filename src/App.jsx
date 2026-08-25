@@ -566,7 +566,7 @@ const sectionPreloadAssets = {
     'assets/projects-ccd-frame-silver.webp',
     'assets/projects-film-canister-superia-200-cutout.webp',
     'assets/projects-film-canister-superia-200-horizontal.webp',
-    'assets/projects-film-canister-superia-200-powder-blue.webp',
+    'assets/projects-film-canister-superia-200-powder-blue-clean.webp',
     'assets/projects-paper-plane-realistic.png',
     ...projects.map((project) => project.image.replace(import.meta.env.BASE_URL, '')),
   ],
@@ -1733,33 +1733,6 @@ function DraggableGrapeSodaSticker() {
   );
 }
 
-function DraggableCatGuitarStickerPair() {
-  return (
-    <DraggableHeroElement
-      as="div"
-      className="hero-sticker-pair"
-      label="移动薄荷绿电吉他与猫咪贴纸组合"
-    >
-      <img
-        className="hero-sticker-pair-guitar"
-        src={assetUrl('assets/mint-guitar-sticker.webp')}
-        alt=""
-        aria-hidden="true"
-        decoding="async"
-        draggable="false"
-      />
-      <img
-        className="hero-sticker-pair-cat"
-        src={assetUrl('assets/cat-sticker-v2.webp')}
-        alt=""
-        aria-hidden="true"
-        decoding="async"
-        draggable="false"
-      />
-    </DraggableHeroElement>
-  );
-}
-
 const phoneMessage = '用审美判断、内容组织和平台语感，完成从选题到传播反馈的运营表达。';
 
 function HeroPhone() {
@@ -1932,7 +1905,16 @@ function Hero() {
           label="移动人物吉他贴纸"
         />
         <DraggableGrapeSodaSticker />
-        <DraggableCatGuitarStickerPair />
+        <DraggableHeroSticker
+          className="hero-mint-guitar-sticker"
+          src={assetUrl('assets/mint-guitar-sticker.webp')}
+          label="移动薄荷绿电吉他贴纸"
+        />
+        <DraggableHeroSticker
+          className="hero-cat-sticker"
+          src={assetUrl('assets/cat-sticker-v2.webp')}
+          label="移动橘白猫咪贴纸"
+        />
         <PageContinuation className="page-hint" href="#about" label="关于" />
       </div>
     </section>
@@ -3735,6 +3717,7 @@ function ProjectPaperPlane() {
 function WorkflowPiano() {
   const [activeKey, setActiveKey] = useState(null);
   const [noteParticles, setNoteParticles] = useState([]);
+  const [isWorkflowSummaryOpen, setIsWorkflowSummaryOpen] = useState(false);
   const audioContextRef = useRef(null);
   const activeKeyTimerRef = useRef(0);
   const noteParticleIdRef = useRef(0);
@@ -3852,18 +3835,34 @@ function WorkflowPiano() {
         </div>
         <p className="workflow-piano-hint">按下步骤琴键，听见完整工作链路</p>
       </div>
-      <section className="workflow-summary" aria-labelledby="workflow-summary-title">
-        <header className="workflow-summary-heading">
-          <span>Workflow summary</span>
-          <h3 id="workflow-summary-title">工作方法汇总</h3>
-          <p>不操作琴键，也可以直接阅读从判断到复盘的完整内容运营链路。</p>
-        </header>
-        <ol className="workflow-summary-list">
-          {workflowSteps.slice(1).map((step) => (
-            <li key={step.number}>
-              <span className="workflow-summary-number">{step.number}</span>
-              <strong>{step.title}</strong>
-              <span>{step.detail}</span>
+      <section
+        className={`project-summary workflow-summary${isWorkflowSummaryOpen ? ' is-open' : ''}`}
+        aria-labelledby="workflow-summary-title"
+      >
+        <button
+          className="project-summary-toggle"
+          type="button"
+          onClick={() => setIsWorkflowSummaryOpen((current) => !current)}
+          aria-expanded={isWorkflowSummaryOpen}
+          aria-controls="workflow-summary-list"
+        >
+          <strong id="workflow-summary-title">查看工作方法汇总</strong>
+          <span>6 步内容运营链路 · 从判断到复盘</span>
+          <span className="project-summary-toggle-icon" aria-hidden="true"><ChevronDown /></span>
+        </button>
+        <ol
+          className="project-summary-list workflow-summary-list"
+          id="workflow-summary-list"
+          hidden={!isWorkflowSummaryOpen}
+        >
+          {workflowSteps.slice(1).map((step, index) => (
+            <li className="project-summary-row workflow-summary-row" key={step.number}>
+              <span className="project-summary-number">{step.number}</span>
+              <span className="project-summary-copy">
+                <strong>{step.title}</strong>
+                <span>{step.detail}</span>
+              </span>
+              <span className="project-summary-result">{workflowNotes[index + 1].label} 音</span>
             </li>
           ))}
         </ol>
@@ -4763,7 +4762,7 @@ function PortfolioEntry({ onComplete }) {
 
   useEffect(() => {
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const duration = reduceMotion ? 500 : 4300;
+    const duration = reduceMotion ? 1200 : 4300;
     const startedAt = performance.now();
     let releaseStartedAt = 0;
 

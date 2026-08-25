@@ -206,7 +206,7 @@ export default function DraggableProjectGrid({ projects, onProjectOpen }) {
           <span className="project-film-canister-contact" />
           <span className="project-film-canister-throat" />
           <img
-            src={`${import.meta.env.BASE_URL}assets/projects-film-canister-superia-200-powder-blue.webp`}
+            src={`${import.meta.env.BASE_URL}assets/projects-film-canister-superia-200-powder-blue-clean.webp`}
             alt=""
             width="310"
             height="464"
