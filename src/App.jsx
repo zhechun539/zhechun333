@@ -621,7 +621,7 @@ function preloadSectionAssets(section) {
 }
 
 function preloadEntryAssets() {
-  return preloadSectionAssets('home');
+  return Promise.allSettled(['home', 'about'].map((section) => preloadSectionAssets(section)));
 }
 
 function startBackgroundPreload(section) {
@@ -4740,6 +4740,7 @@ function PortfolioEntry({ onComplete }) {
   const timersRef = useRef([]);
   const frameRef = useRef(0);
   const completedRef = useRef(false);
+  const initialSectionsReadyRef = useRef(false);
   const butterflyFlights = [
     { ...getButterflyFlight((progress * 0.92) + 8), formationY: -26 },
     { ...getButterflyFlight((progress * 0.96) + 4), formationY: 22 },
@@ -4747,7 +4748,13 @@ function PortfolioEntry({ onComplete }) {
   ];
 
   useEffect(() => {
-    void preloadEntryAssets().catch(() => undefined);
+    let cancelled = false;
+    preloadEntryAssets().then(() => {
+      if (!cancelled) initialSectionsReadyRef.current = true;
+    });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const finishEntry = useCallback((delay = 520) => {
@@ -4769,7 +4776,11 @@ function PortfolioEntry({ onComplete }) {
       const eased = 1 - ((1 - elapsed) ** 2.35);
       let nextProgress = Math.min(92, Math.round(eased * 92));
 
-      if (elapsed >= 1) {
+      if (elapsed >= 1 && !initialSectionsReadyRef.current) {
+        nextProgress = 92;
+      }
+
+      if (elapsed >= 1 && initialSectionsReadyRef.current) {
         releaseStartedAt ||= now;
         const releaseElapsed = Math.min(1, (now - releaseStartedAt) / (reduceMotion ? 80 : 420));
         nextProgress = Math.round(92 + (1 - ((1 - releaseElapsed) ** 2)) * 8);
@@ -4792,7 +4803,7 @@ function PortfolioEntry({ onComplete }) {
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     const handleKeyDown = (event) => {
-      if (event.key === 'Escape') finishEntry(180);
+      if (event.key === 'Escape' && initialSectionsReadyRef.current) finishEntry(180);
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => {
