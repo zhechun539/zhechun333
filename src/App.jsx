@@ -3914,10 +3914,8 @@ function StrengthPostcardCarousel() {
   const targetRotationRef = useRef(null);
   const dragRef = useRef({ active: false, x: 0, moved: false });
   const activeIndexRef = useRef(0);
-  const isDealtRef = useRef(false);
   const flippedCardsRef = useRef(new Set());
   const [activeIndex, setActiveIndex] = useState(0);
-  const [isDealt, setIsDealt] = useState(false);
   const [flippedCards, setFlippedCards] = useState(() => new Set());
   const [geometry, setGeometry] = useState({ cardWidth: 300, cardHeight: 480 });
   const [isStrengthSummaryOpen, setIsStrengthSummaryOpen] = useState(false);
@@ -3957,9 +3955,7 @@ function StrengthPostcardCarousel() {
     if (!ring) return undefined;
 
     const apply = () => {
-      ring.style.transform = isDealtRef.current
-        ? `translateZ(${-radius}px) rotateY(${rotationRef.current}deg)`
-        : 'translateZ(0) rotateY(0deg)';
+      ring.style.transform = `translateZ(${-radius}px) rotateY(${rotationRef.current}deg)`;
       const nextIndex = ((Math.round(-rotationRef.current / angle) % itemCount) + itemCount) % itemCount;
       if (nextIndex !== activeIndexRef.current) {
         activeIndexRef.current = nextIndex;
@@ -3983,7 +3979,7 @@ function StrengthPostcardCarousel() {
         } else if (Math.abs(velocityRef.current) > 0.1) {
           rotationRef.current += velocityRef.current * delta;
           velocityRef.current *= Math.pow(0.94, delta * 60);
-        } else if (isDealtRef.current && !reduceMotion && flippedCardsRef.current.size === 0) {
+        } else if (!reduceMotion && flippedCardsRef.current.size === 0) {
           rotationRef.current += 8 * delta;
         }
       }
@@ -4006,30 +4002,22 @@ function StrengthPostcardCarousel() {
     setFlippedCards(next);
   }, []);
 
-  const dealCards = useCallback(() => {
-    if (isDealtRef.current) return;
-    isDealtRef.current = true;
-    setIsDealt(true);
-  }, []);
-
   const selectCard = useCallback((index) => {
-    dealCards();
     restoreCardBacks();
     velocityRef.current = 0;
     targetRotationRef.current = -index * angle;
     activeIndexRef.current = index;
     setActiveIndex(index);
-  }, [angle, dealCards, restoreCardBacks]);
+  }, [angle, restoreCardBacks]);
 
   const handlePointerDown = (event) => {
-    if (!isDealtRef.current) return;
     targetRotationRef.current = null;
     velocityRef.current = 0;
     dragRef.current = { active: true, startX: event.clientX, x: event.clientX, moved: false };
   };
 
   const handlePointerMove = (event) => {
-    if (!isDealtRef.current || !dragRef.current.active) return;
+    if (!dragRef.current.active) return;
     const deltaX = event.clientX - dragRef.current.x;
     dragRef.current.x = event.clientX;
     dragRef.current.moved ||= Math.abs(event.clientX - dragRef.current.startX) > 6;
@@ -4052,10 +4040,6 @@ function StrengthPostcardCarousel() {
       dragRef.current.moved = false;
       return;
     }
-    if (!isDealtRef.current) {
-      dealCards();
-      return;
-    }
     velocityRef.current = 0;
     targetRotationRef.current = -index * angle;
     activeIndexRef.current = index;
@@ -4068,7 +4052,7 @@ function StrengthPostcardCarousel() {
   };
 
   return (
-    <div className="strength-round-carousel reveal-on-scroll" data-carousel-state={isDealt ? 'dealt' : 'deck'}>
+    <div className="strength-round-carousel reveal-on-scroll" data-carousel-state="ring">
       <div
         className="strength-round-carousel-stage"
         ref={stageRef}
@@ -4104,12 +4088,9 @@ function StrengthPostcardCarousel() {
               <div
                 className={`strength-round-carousel-face${activeIndex === index ? ' is-active' : ''}`}
                 style={{
-                  transform: isDealt
-                    ? `rotateY(${index * angle}deg) translateZ(${radius}px)`
-                    : `translate3d(${(index - 2) * 2}px, ${index * -2}px, ${index * -1}px) rotateZ(${(index - 2) * 0.7}deg)`,
-                  zIndex: isDealt ? undefined : itemCount - index,
+                  transform: `rotateY(${index * angle}deg) translateZ(${radius}px)`,
                 }}
-                aria-hidden={isDealt ? activeIndex !== index : index !== 0}
+                aria-hidden={activeIndex !== index}
                 key={item.title}
               >
                 <button
@@ -4118,7 +4099,7 @@ function StrengthPostcardCarousel() {
                   data-card-index={index}
                   aria-label={`${item.title}，${flippedCards.has(index) ? '当前为优势正面，点击翻回猫咪牌背' : '当前为猫咪牌背，点击查看优势'}`}
                   aria-pressed={flippedCards.has(index)}
-                   tabIndex={isDealt ? (activeIndex === index ? 0 : -1) : (index === 0 ? 0 : -1)}
+                  tabIndex={activeIndex === index ? 0 : -1}
                   onPointerUp={(event) => {
                     if (!dragRef.current.moved) {
                       event.stopPropagation();
@@ -4162,7 +4143,7 @@ function StrengthPostcardCarousel() {
         ))}
       </div>
       <p className="strength-round-carousel-hint" aria-live="polite">
-        {isDealt ? '五只猫咪，五项核心能力' : '点击牌堆，开始发牌'}
+        五只猫咪，五项核心能力
       </p>
       <section
         className={`project-summary strength-summary${isStrengthSummaryOpen ? ' is-open' : ''}`}

@@ -16571,7 +16571,7 @@ body {
   gap: 0.12em;
   margin: clamp(42px, 6vw, 76px) 0 clamp(52px, 7vw, 86px);
   color: var(--contact-forest-deep);
-  font-family: "微雅软黑", "Microsoft YaHei", "PingFang SC", "Noto Sans SC", sans-serif;
+  font-family: var(--font-latin);
   font-size: clamp(2.6rem, 4.8vw, 4.7rem);
   font-weight: 400;
   font-synthesis: none;
