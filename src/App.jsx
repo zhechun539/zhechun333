@@ -568,7 +568,7 @@ const sectionPreloadAssets = {
     'assets/projects-film-canister-superia-200-horizontal.webp',
     'assets/projects-film-canister-superia-200-powder-blue-clean.webp',
     'assets/projects-paper-plane-realistic.webp',
-    ...projects.slice(0, 4).map((project) => project.image.replace(import.meta.env.BASE_URL, '')),
+    ...projects.map((project) => project.image.replace(import.meta.env.BASE_URL, '')),
   ],
   strengths: [
     'assets/strengths-clipboard-panel.webp',
@@ -622,6 +622,14 @@ function preloadSectionAssets(section) {
 
 function preloadEntryAssets() {
   return preloadSectionAssets('home');
+}
+
+function startBackgroundPreload(section) {
+  void preloadSectionAssets(section).catch(() => undefined);
+}
+
+function startAllBackgroundPreloads() {
+  navItems.forEach(({ href }) => startBackgroundPreload(href.slice(1)));
 }
 
 const strengths = [
@@ -698,22 +706,10 @@ function usePageInteractions() {
     transitionPhase: 'idle',
   });
   const transitionLockRef = useRef(false);
-  const navigationRequestRef = useRef(0);
 
   useEffect(() => {
-    const activeIndex = navItems.findIndex((item) => item.href === `#${pageState.activeSection}`);
-    const nextSection = navItems[(activeIndex + 1) % navItems.length]?.href.slice(1);
-    if (!nextSection) return undefined;
-
-    const startPreload = () => preloadSectionAssets(nextSection);
-    if ('requestIdleCallback' in window) {
-      const idleId = window.requestIdleCallback(startPreload, { timeout: 1200 });
-      return () => window.cancelIdleCallback(idleId);
-    }
-
-    const timerId = window.setTimeout(startPreload, 180);
-    return () => window.clearTimeout(timerId);
-  }, [pageState.activeSection]);
+    startAllBackgroundPreloads();
+  }, []);
 
   useEffect(() => {
     let frameId = 0;
@@ -778,15 +774,13 @@ function usePageInteractions() {
       resetScrollInstantly();
     };
 
-    const handleHashChange = async () => {
+    const handleHashChange = () => {
       const targetSection = getSectionFromHash();
-      const requestId = ++navigationRequestRef.current;
-      await preloadSectionAssets(targetSection);
-      if (requestId !== navigationRequestRef.current || targetSection !== getSectionFromHash()) return;
+      startBackgroundPreload(targetSection);
       showSection(targetSection);
     };
 
-    const handleChapterNavigate = async (event) => {
+    const handleChapterNavigate = (event) => {
       const href = event.detail?.href;
       const targetSection = href?.replace(/^#/, '');
       const projectIndex = Number.isInteger(event.detail?.projectIndex)
@@ -807,12 +801,7 @@ function usePageInteractions() {
       }
 
       transitionLockRef.current = true;
-      const requestId = ++navigationRequestRef.current;
-      await preloadSectionAssets(targetSection);
-      if (requestId !== navigationRequestRef.current) {
-        transitionLockRef.current = false;
-        return;
-      }
+      startBackgroundPreload(targetSection);
       resetScrollInstantly();
       window.history.pushState(
         { ...window.history.state, portfolioProject: projectIndex ?? undefined },
@@ -1055,6 +1044,21 @@ function VinylMusicButton() {
       title: '继续走',
       credit: 'Michael Ramir C.',
       src: assetUrl('audio/just-keep-walking-michael-ramir-c.mp3'),
+    },
+    {
+      title: '心跳回声',
+      credit: 'Michael Ramir C.',
+      src: assetUrl('audio/i-can-hear-your-heartbeat-michael-ramir-c.mp3'),
+    },
+    {
+      title: '延迟航班',
+      credit: 'Michael Ramir C.',
+      src: assetUrl('audio/delayed-flight-michael-ramir-c.mp3'),
+    },
+    {
+      title: '特别感觉',
+      credit: 'Michael Ramir C.',
+      src: assetUrl('audio/a-special-feeling-michael-ramir-c.mp3'),
     },
     {
       title: '森林雨幕',
@@ -1451,7 +1455,7 @@ function VinylMusicButton() {
       ref={playerRef}
       className={`vinyl-switcher turntable-switcher${isPlayerDragging ? ' is-dragging' : ''}`}
       role="group"
-      aria-label={`可移动唱片机，当前曲目${currentTrack.title}`}
+      aria-label={`可移动唱片机，共${tracks.length}首曲目，当前曲目${currentTrack.title}`}
       aria-keyshortcuts="ArrowUp ArrowDown ArrowLeft ArrowRight Home"
       tabIndex={0}
       title="拖动唱片机移动，双击或按 Home 复位"
@@ -1488,7 +1492,7 @@ function VinylMusicButton() {
           <div className="turntable-footer">
             <span className="turntable-track" aria-live="polite">
               <strong>{currentTrack.title}</strong>
-              <small>{currentTrack.credit ? `${currentTrack.credit} · ${statusText}` : statusText}</small>
+              <small>{currentTrack.credit ? `${trackIndex + 1} / ${tracks.length} · ${currentTrack.credit} · ${statusText}` : `${trackIndex + 1} / ${tracks.length} · ${statusText}`}</small>
             </span>
             <div
               className="turntable-controls"
@@ -1496,7 +1500,7 @@ function VinylMusicButton() {
               aria-label="音乐播放控制"
               onPointerDown={primeAudioContext}
             >
-              <button type="button" aria-label="播放上一首" onClick={() => changeTrack(-1)}>
+              <button type="button" aria-label="播放上一首" title="上一首" onClick={() => changeTrack(-1)}>
                 <SkipBack aria-hidden="true" />
               </button>
               <button
@@ -1504,16 +1508,17 @@ function VinylMusicButton() {
                 type="button"
                 aria-label={playbackStatus === 'loading'
                   ? `正在加载${currentTrack.title}`
-                  : active
-                    ? `暂停${currentTrack.title}`
-                    : `播放${currentTrack.title}`}
+                    : active
+                      ? `暂停${currentTrack.title}`
+                      : `播放${currentTrack.title}`}
+                title={active ? '暂停' : '播放'}
                 aria-pressed={active}
                 disabled={playbackStatus === 'loading'}
                 onClick={togglePlayback}
               >
                 {active ? <Pause aria-hidden="true" /> : <Play aria-hidden="true" />}
               </button>
-              <button type="button" aria-label="播放下一首" onClick={() => changeTrack(1)}>
+              <button type="button" aria-label="播放下一首" title="下一首" onClick={() => changeTrack(1)}>
                 <SkipForward aria-hidden="true" />
               </button>
             </div>
@@ -2929,7 +2934,7 @@ function ProjectCarousel({ images, title, skillName }) {
           className="project-static-image"
           src={images[0].src}
           alt={`${title}宣传图：${images[0].label}`}
-          loading="lazy"
+          loading="eager"
           width="941"
           height="1672"
         />
@@ -2966,14 +2971,14 @@ function ProjectCarousel({ images, title, skillName }) {
               className="carousel-image carousel-image-side carousel-image-prev"
               src={previousImage.src}
               alt=""
-              loading="lazy"
+              loading="eager"
               aria-hidden="true"
             />
             <img
               className="carousel-image carousel-image-side carousel-image-next"
               src={nextImage.src}
               alt=""
-              loading="lazy"
+              loading="eager"
               aria-hidden="true"
             />
           </>
@@ -3000,7 +3005,7 @@ function ProjectCarousel({ images, title, skillName }) {
               className="carousel-image carousel-image-current"
               src={currentImage.src}
               alt={`${title}当前截图：${currentImage.label}`}
-              loading="lazy"
+              loading="eager"
               custom={{ direction: slideDirection, reduceMotion }}
               variants={carouselSlideVariants}
               initial="enter"
@@ -3068,7 +3073,7 @@ function ProjectCarousel({ images, title, skillName }) {
             }}
             key={`${image.src}-${index}`}
           >
-            <img className="project-thumb" src={image.src} alt="" loading="lazy" />
+            <img className="project-thumb" src={image.src} alt="" loading="eager" />
           </button>
         ))}
       </div>
@@ -3186,7 +3191,7 @@ function AiDesignShowcase({ content }) {
               aria-label={`放大查看${example.label}`}
               onClick={() => openExample(index)}
             >
-              <img src={example.src} alt={example.label} loading="lazy" />
+              <img src={example.src} alt={example.label} loading="eager" />
               <Maximize2 aria-hidden="true" />
             </button>
             <figcaption>{example.label}</figcaption>
@@ -4735,7 +4740,6 @@ function PortfolioEntry({ onComplete }) {
   const timersRef = useRef([]);
   const frameRef = useRef(0);
   const completedRef = useRef(false);
-  const assetsReadyRef = useRef(false);
   const butterflyFlights = [
     { ...getButterflyFlight((progress * 0.92) + 8), formationY: -26 },
     { ...getButterflyFlight((progress * 0.96) + 4), formationY: 22 },
@@ -4743,13 +4747,7 @@ function PortfolioEntry({ onComplete }) {
   ];
 
   useEffect(() => {
-    let cancelled = false;
-    preloadEntryAssets().finally(() => {
-      if (!cancelled) assetsReadyRef.current = true;
-    });
-    return () => {
-      cancelled = true;
-    };
+    void preloadEntryAssets().catch(() => undefined);
   }, []);
 
   const finishEntry = useCallback((delay = 520) => {
@@ -4762,7 +4760,7 @@ function PortfolioEntry({ onComplete }) {
 
   useEffect(() => {
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const duration = reduceMotion ? 1200 : 4300;
+    const duration = reduceMotion ? 600 : 1600;
     const startedAt = performance.now();
     let releaseStartedAt = 0;
 
@@ -4771,11 +4769,7 @@ function PortfolioEntry({ onComplete }) {
       const eased = 1 - ((1 - elapsed) ** 2.35);
       let nextProgress = Math.min(92, Math.round(eased * 92));
 
-      if (elapsed >= 1 && !assetsReadyRef.current) {
-        nextProgress = 92;
-      }
-
-      if (elapsed >= 1 && assetsReadyRef.current) {
+      if (elapsed >= 1) {
         releaseStartedAt ||= now;
         const releaseElapsed = Math.min(1, (now - releaseStartedAt) / (reduceMotion ? 80 : 420));
         nextProgress = Math.round(92 + (1 - ((1 - releaseElapsed) ** 2)) * 8);
@@ -4798,7 +4792,7 @@ function PortfolioEntry({ onComplete }) {
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     const handleKeyDown = (event) => {
-      if (event.key === 'Escape' && assetsReadyRef.current) finishEntry(180);
+      if (event.key === 'Escape') finishEntry(180);
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => {

@@ -236,7 +236,7 @@ export default function DraggableProjectGrid({ projects, onProjectOpen }) {
               key={project.title}
             >
               <span className="draggable-project-tile-visual film-project-visual">
-                <img src={project.image} alt="" loading={index < 4 ? 'eager' : 'lazy'} draggable="false" />
+                <img src={project.image} alt="" loading="eager" draggable="false" />
                 <span className="draggable-project-tile-number">{String(index + 1).padStart(2, '0')}</span>
               </span>
               <span className="draggable-project-tile-copy">
