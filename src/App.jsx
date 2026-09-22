@@ -44,49 +44,49 @@ const pdfImage = (file, label) => ({
 
 const projectImages = {
   brand: [
-    pdfImage('full_p05_i01_Im474.jpg', '公众号推文与内容封面'),
-    pdfImage('full_p05_i02_Im476.jpg', '小红书内容截图'),
-    pdfImage('full_p05_i03_Im478.jpg', '百度百科词条页面'),
-    pdfImage('full_p05_i04_Im480.jpg', '评论互动截图'),
-    pdfImage('full_p06_i01_Im534.jpg', '活动与品牌页面'),
-    pdfImage('full_p06_i02_Im536.jpg', '产品种草笔记'),
-    pdfImage('full_p06_i03_Im538.jpg', '内容数据表'),
-    pdfImage('full_p06_i04_Im540.jpg', '售罄活动反馈'),
+    pdfImage('full_p05_i01_Im474.webp', '公众号推文与内容封面'),
+    pdfImage('full_p05_i02_Im476.webp', '小红书内容截图'),
+    pdfImage('full_p05_i03_Im478.webp', '百度百科词条页面'),
+    pdfImage('full_p05_i04_Im480.webp', '评论互动截图'),
+    pdfImage('full_p06_i01_Im534.webp', '活动与品牌页面'),
+    pdfImage('full_p06_i02_Im536.webp', '产品种草笔记'),
+    pdfImage('full_p06_i03_Im538.webp', '内容数据表'),
+    pdfImage('full_p06_i04_Im540.webp', '售罄活动反馈'),
   ],
   seeding: [
-    pdfImage('full_p07_i01_Im598.jpg', '达人数据与内容表现'),
-    pdfImage('full_p07_i02_Im600.jpg', '达人内容案例'),
-    pdfImage('full_p07_i03_Im602.jpg', '种草项目核心数据'),
-    pdfImage('full_p07_i04_Im604.jpg', '高赞稿件示例'),
+    pdfImage('full_p07_i01_Im598.webp', '达人数据与内容表现'),
+    pdfImage('full_p07_i02_Im600.webp', '达人内容案例'),
+    pdfImage('full_p07_i03_Im602.webp', '种草项目核心数据'),
+    pdfImage('full_p07_i04_Im604.webp', '高赞稿件示例'),
   ],
   education: [
-    pdfImage('full_p08_i01_Im659.jpg', '教育类账号内容与咨询截图'),
-    pdfImage('full_p08_i02_Im665.jpg', '矩阵账号与内容账号截图'),
+    pdfImage('full_p08_i01_Im659.webp', '教育类账号内容与咨询截图'),
+    pdfImage('full_p08_i02_Im665.webp', '矩阵账号与内容账号截图'),
   ],
   software: [
-    pdfImage('full_p09_i01_Im714.jpg', 'B 端软件小红书内容截图'),
-    pdfImage('full_p09_i02_Im716.jpg', '财务场景图文内容'),
-    pdfImage('full_p09_i03_Im718.jpg', '用友品牌与项目说明'),
-    pdfImage('full_p09_i04_Im720.jpg', '畅捷通账号与内容截图'),
+    pdfImage('full_p09_i01_Im714.webp', 'B 端软件小红书内容截图'),
+    pdfImage('full_p09_i02_Im716.webp', '财务场景图文内容'),
+    pdfImage('full_p09_i03_Im718.webp', '用友品牌与项目说明'),
+    pdfImage('full_p09_i04_Im720.webp', '畅捷通账号与内容截图'),
   ],
   travel: [
-    pdfImage('full_p10_i01_Im782.jpg', '去哪儿内容账号截图'),
-    pdfImage('full_p10_i02_Im784.jpg', '旅游攻略封面与互动'),
-    pdfImage('full_p10_i03_Im786.jpg', '旅游内容数据表'),
-    pdfImage('full_p10_i04_Im788.jpg', '旅游内容数据补充'),
+    pdfImage('full_p10_i01_Im782.webp', '去哪儿内容账号截图'),
+    pdfImage('full_p10_i02_Im784.webp', '旅游攻略封面与互动'),
+    pdfImage('full_p10_i03_Im786.webp', '旅游内容数据表'),
+    pdfImage('full_p10_i04_Im788.webp', '旅游内容数据补充'),
     pdfImage('related_p01_i03_X41.webp', '旅游项目排名截图'),
   ],
   official: [
-    pdfImage('full_p11_i01_Im856.jpg', '热点内容与官方账号案例'),
-    pdfImage('full_p11_i02_Im858.jpg', '学而思官方账号截图'),
-    pdfImage('full_p11_i03_Im860.jpg', '天眼查账号截图'),
-    pdfImage('full_p11_i04_Im862.jpg', '天眼查内容数据截图'),
+    pdfImage('full_p11_i01_Im856.webp', '热点内容与官方账号案例'),
+    pdfImage('full_p11_i02_Im858.webp', '学而思官方账号截图'),
+    pdfImage('full_p11_i03_Im860.webp', '天眼查账号截图'),
+    pdfImage('full_p11_i04_Im862.webp', '天眼查内容数据截图'),
   ],
   personal: [
-    pdfImage('full_p12_i05_Im918.jpg', '松子穿搭账号资料'),
-    pdfImage('full_p12_i06_Im920.jpg', '松子文案馆账号资料'),
-    pdfImage('full_p12_i07_Im922.jpg', '个人账号爆款内容截图'),
-    pdfImage('full_p12_i08_Im924.jpg', '个人账号内容数据截图'),
+    pdfImage('full_p12_i05_Im918.webp', '松子穿搭账号资料'),
+    pdfImage('full_p12_i06_Im920.webp', '松子文案馆账号资料'),
+    pdfImage('full_p12_i07_Im922.webp', '个人账号爆款内容截图'),
+    pdfImage('full_p12_i08_Im924.webp', '个人账号内容数据截图'),
     pdfImage('related_p07_i01_X89.webp', '个人账号主页截图'),
     pdfImage('related_p07_i02_X90.webp', '个人账号内容数据截图'),
   ],
@@ -104,15 +104,15 @@ const projectImages = {
 
 const aiDesignExamples = [
   {
-    src: assetUrl('media/ai-design/ai-mountain-story.jpeg'),
+    src: assetUrl('media/ai-design/ai-mountain-story.webp'),
     label: '品牌角色山野叙事画面',
   },
   {
-    src: assetUrl('media/ai-design/ai-pixel-bot.jpeg'),
+    src: assetUrl('media/ai-design/ai-pixel-bot.webp'),
     label: '小鹿家护肤 bot 视觉',
   },
   {
-    src: assetUrl('media/ai-design/ai-christmas-display.jpeg'),
+    src: assetUrl('media/ai-design/ai-christmas-display.webp'),
     label: '圣诞主题产品陈列',
   },
   {
@@ -540,13 +540,13 @@ const strengthTarotAssets = Array.from({ length: 5 }, (_, index) => {
 });
 
 const strengthStampAssets = {
-  back: assetUrl('assets/strengths-stamp-westie-back.png'),
-  front: assetUrl('assets/strengths-stamp-westie-front.png'),
+  back: assetUrl('assets/strengths-stamp-westie-back.webp'),
+  front: assetUrl('assets/strengths-stamp-westie-front.webp'),
 };
 
 const sectionPreloadAssets = {
   home: [
-    'assets/entry-butterfly-flock.png',
+    'assets/entry-butterfly-flock.webp',
     'assets/entry-walking-cat-animated.webp',
     'assets/entry-walking-cat.webp',
     'assets/rotary-phone.webp',
@@ -560,26 +560,26 @@ const sectionPreloadAssets = {
     'assets/about-postcard-front.webp',
     'assets/about-postcard-back.webp',
     'assets/instax-mini8-butter-yellow-v4.webp',
-    'media/pdf-images/full_p02_i01_Im73.jpg',
+    'media/pdf-images/full_p02_i01_Im73.webp',
   ],
   projects: [
     'assets/projects-ccd-frame-silver.webp',
     'assets/projects-film-canister-superia-200-cutout.webp',
     'assets/projects-film-canister-superia-200-horizontal.webp',
     'assets/projects-film-canister-superia-200-powder-blue-clean.webp',
-    'assets/projects-paper-plane-realistic.png',
-    ...projects.map((project) => project.image.replace(import.meta.env.BASE_URL, '')),
+    'assets/projects-paper-plane-realistic.webp',
+    ...projects.slice(0, 4).map((project) => project.image.replace(import.meta.env.BASE_URL, '')),
   ],
   strengths: [
     'assets/strengths-clipboard-panel.webp',
-    'assets/strengths-piano-keyboard-v2.png',
-    'assets/strengths-stamp-westie-back.png',
-    'assets/strengths-stamp-westie-front.png',
+    'assets/strengths-piano-keyboard-v2.webp',
+    'assets/strengths-stamp-westie-back.webp',
+    'assets/strengths-stamp-westie-front.webp',
     ...strengthTarotAssets.flatMap(({ back, front }) => [back, front].map((path) => path.replace(import.meta.env.BASE_URL, ''))),
   ],
   contact: [
     'assets/contact-window-cat-and-fish.webp',
-    'assets/contact-goldfish-transparent.png',
+    'assets/contact-goldfish-transparent.webp',
   ],
 };
 
@@ -2443,7 +2443,7 @@ function PortraitProfile() {
           <span className="instant-photo-inner">
             <span className="instant-photo-face instant-photo-front">
               <span className="instant-photo-image">
-                <img src={assetUrl('media/pdf-images/full_p02_i01_Im73.jpg')} alt="折椿个人照片" />
+                <img src={assetUrl('media/pdf-images/full_p02_i01_Im73.webp')} alt="折椿个人照片" />
               </span>
             </span>
             <span className="instant-photo-face instant-photo-back">
@@ -3701,7 +3701,7 @@ function ProjectPaperPlane() {
         aria-label={flightState === 'ready' ? '点击放飞纸飞机' : '重新放飞纸飞机'}
       >
         <img
-          src={assetUrl('assets/projects-paper-plane-realistic.png')}
+          src={assetUrl('assets/projects-paper-plane-realistic.webp')}
           alt=""
           aria-hidden="true"
           draggable="false"
@@ -3806,7 +3806,7 @@ function WorkflowPiano() {
             ))}
           </div>
           <div className="workflow-piano-art" aria-hidden="true">
-            <img src={assetUrl('assets/strengths-piano-keyboard-v2.png')} alt="" />
+            <img src={assetUrl('assets/strengths-piano-keyboard-v2.webp')} alt="" />
           </div>
           <ol className="workflow-piano" aria-label="工作方法标题与六步内容运营链路组成的完整七声音阶">
             {workflowSteps.map((step, index) => (
@@ -4407,7 +4407,7 @@ function Contact() {
                 }}
                 onClick={() => setBubbleBurst({ fishId: fish.id, key: Date.now() })}
               >
-                <img src={assetUrl('assets/contact-goldfish-transparent.png')} alt="" draggable="false" />
+                <img src={assetUrl('assets/contact-goldfish-transparent.webp')} alt="" draggable="false" />
                 {bubbleBurst?.fishId === fish.id && (
                   <span key={bubbleBurst.key} className="contact-bubble-burst" aria-hidden="true">
                     {contactBubbleParticles.slice(0, fish.bubbleCount).map((bubble) => (
@@ -4821,7 +4821,7 @@ function PortfolioEntry({ onComplete }) {
             className={`entry-butterfly-traveler entry-butterfly-traveler-${index + 1}`}
             key={index}
             style={{
-              '--butterfly-sprite': `url("${assetUrl('assets/entry-butterfly-flock.png')}")`,
+              '--butterfly-sprite': `url("${assetUrl('assets/entry-butterfly-flock.webp')}")`,
               left: `${flight.x / 10}%`,
               opacity: Math.min(1, progress / 7) * Math.min(1, (100 - progress) / 7),
               top: `${(flight.y + flight.formationY) / 2.8}%`,
