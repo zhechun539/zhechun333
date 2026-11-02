@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 
-const CARD_ANGLES = [0, 45, 90, 135, 225, 270, 315];
+import { createUmbrellaRig, getHangingAnchor, loadUmbrellaModel, disposeUmbrellaModel } from './umbrellaModel';
 const CARD_LENGTHS = [1.08, 1.48, 1.16, 2.02, 1.62, 1.92, 1.28];
 
 function fitText(context, text, maxWidth) {
@@ -68,111 +68,6 @@ function createCardTexture(THREE, item, index, isBack, palette) {
   return texture;
 }
 
-const CANOPY_RADIUS = 2.92;
-const CANOPY_RIM_Y = 0.72;
-const CANOPY_HEIGHT = 1.82;
-
-function canopyPoint(THREE, angle, radialProgress, panelProgress = 0) {
-  const arch = radialProgress * Math.PI * 0.5;
-  const edgeInfluence = Math.pow(radialProgress, 7);
-  const scallop = -0.16 * Math.sin(panelProgress * Math.PI) * edgeInfluence;
-  return new THREE.Vector3(
-    Math.sin(angle) * CANOPY_RADIUS * Math.sin(arch),
-    CANOPY_RIM_Y + CANOPY_HEIGHT * Math.pow(Math.cos(arch), 0.82) + scallop,
-    Math.cos(angle) * CANOPY_RADIUS * Math.sin(arch),
-  );
-}
-
-function foldedCanopyPoint(THREE, angle, radialProgress, panelProgress = 0) {
-  const radius = 0.022 + 0.27 * Math.pow(radialProgress, 0.72);
-  const foldRidge = 0.014 * Math.cos(panelProgress * Math.PI * 2) * radialProgress;
-  const hemDrop = 0.08 * Math.sin(panelProgress * Math.PI) * Math.pow(radialProgress, 7);
-  return new THREE.Vector3(
-    Math.sin(angle) * (radius + foldRidge),
-    CANOPY_RIM_Y + CANOPY_HEIGHT - 3.18 * radialProgress - hemDrop,
-    Math.cos(angle) * (radius + foldRidge),
-  );
-}
-
-function createCanopyPanelGeometry(THREE, startAngle, endAngle) {
-  const radialSegments = 16;
-  const angularSegments = 8;
-  const positions = [];
-  const foldedPositions = [];
-  const uvs = [];
-  const indices = [];
-
-  for (let radial = 0; radial <= radialSegments; radial += 1) {
-    const t = radial / radialSegments;
-    for (let angular = 0; angular <= angularSegments; angular += 1) {
-      const u = angular / angularSegments;
-      const angle = startAngle + (endAngle - startAngle) * u;
-      const point = canopyPoint(THREE, angle, t, u);
-      const foldedPoint = foldedCanopyPoint(THREE, angle, t, u);
-      positions.push(point.x, point.y, point.z);
-      foldedPositions.push(foldedPoint.x, foldedPoint.y, foldedPoint.z);
-      uvs.push(u, t);
-    }
-  }
-
-  const row = angularSegments + 1;
-  for (let radial = 0; radial < radialSegments; radial += 1) {
-    for (let angular = 0; angular < angularSegments; angular += 1) {
-      const a = radial * row + angular;
-      const b = a + row;
-      indices.push(a, b, a + 1, b, b + 1, a + 1);
-    }
-  }
-
-  const geometry = new THREE.BufferGeometry();
-  geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-  geometry.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
-  geometry.setIndex(indices);
-  geometry.computeVertexNormals();
-  const foldedGeometry = new THREE.BufferGeometry();
-  foldedGeometry.setAttribute('position', new THREE.Float32BufferAttribute(foldedPositions, 3));
-  foldedGeometry.setIndex(indices);
-  foldedGeometry.computeVertexNormals();
-  geometry.morphAttributes.position = [foldedGeometry.attributes.position.clone()];
-  geometry.morphAttributes.normal = [foldedGeometry.attributes.normal.clone()];
-  foldedGeometry.dispose();
-  return geometry;
-}
-
-function createCylinderBetween(THREE, start, end, radius, material) {
-  const direction = new THREE.Vector3().subVectors(end, start);
-  const length = direction.length();
-  const mesh = new THREE.Mesh(new THREE.CylinderGeometry(radius, radius, length, 8), material);
-  mesh.userData.baseLength = length;
-  mesh.position.copy(start).add(end).multiplyScalar(0.5);
-  mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), direction.normalize());
-  return mesh;
-}
-
-function updateCylinderBetween(THREE, mesh, start, end) {
-  const direction = new THREE.Vector3().subVectors(end, start);
-  const length = direction.length();
-  mesh.position.copy(start).add(end).multiplyScalar(0.5);
-  mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), direction.normalize());
-  mesh.scale.set(1, length / mesh.userData.baseLength, 1);
-}
-
-function createTube(THREE, points, radius, material, segments = 24) {
-  return new THREE.Mesh(
-    new THREE.TubeGeometry(new THREE.CatmullRomCurve3(points), segments, radius, 8, false),
-    material,
-  );
-}
-
-function createMorphingTube(THREE, openPoints, foldedPoints, radius, material, segments = 24) {
-  const geometry = new THREE.TubeGeometry(new THREE.CatmullRomCurve3(openPoints), segments, radius, 8, false);
-  const foldedGeometry = new THREE.TubeGeometry(new THREE.CatmullRomCurve3(foldedPoints), segments, radius, 8, false);
-  geometry.morphAttributes.position = [foldedGeometry.attributes.position.clone()];
-  geometry.morphAttributes.normal = [foldedGeometry.attributes.normal.clone()];
-  foldedGeometry.dispose();
-  return new THREE.Mesh(geometry, material);
-}
-
 function createShadowTexture(THREE) {
   const canvas = document.createElement('canvas');
   canvas.width = 256;
@@ -187,152 +82,24 @@ function createShadowTexture(THREE) {
   return new THREE.CanvasTexture(canvas);
 }
 
-function buildUmbrellaModel(THREE, OBB, scene, experiences, palette) {
+function buildUmbrellaModel(THREE, OBB, scene, experiences, palette, asset) {
   const modelRoot = new THREE.Group();
-  const canopyGroup = new THREE.Group();
+  const rig = createUmbrellaRig(THREE, asset);
   const cardsGroup = new THREE.Group();
-  const morphMeshes = [];
-  const canopyMaterials = [];
-  const tipRecords = [];
-  const stretcherRecords = [];
-  modelRoot.add(canopyGroup, cardsGroup);
+  modelRoot.add(rig.group, cardsGroup);
   scene.add(modelRoot);
-
-  const metalMaterial = new THREE.MeshPhysicalMaterial({ color: palette.metal, metalness: 0.88, roughness: 0.17, clearcoat: 0.9, clearcoatRoughness: 0.12 });
-  const softMetalMaterial = new THREE.MeshStandardMaterial({ color: palette.softMetal, metalness: 0.62, roughness: 0.32, transparent: true, opacity: 0.58 });
-  const tipMaterial = new THREE.MeshPhysicalMaterial({ color: palette.tip, metalness: 0.04, roughness: 0.18, clearcoat: 0.92, clearcoatRoughness: 0.12 });
-  const seamMaterial = new THREE.MeshPhysicalMaterial({ color: palette.seam, transparent: true, opacity: 0.42, roughness: 0.2, depthWrite: false });
-  const handleMaterial = new THREE.MeshPhysicalMaterial({ color: palette.handle, transmission: 0.42, transparent: true, opacity: 0.9, roughness: 0.16, clearcoat: 1, clearcoatRoughness: 0.1 });
   const clipMaterial = new THREE.MeshStandardMaterial({ color: palette.clip, metalness: 0.12, roughness: 0.46 });
   const stringMaterial = new THREE.MeshStandardMaterial({ color: palette.string, transparent: true, opacity: 0.64, roughness: 0.66 });
   clipMaterial.userData.baseOpacity = clipMaterial.opacity;
   stringMaterial.userData.baseOpacity = stringMaterial.opacity;
-
-  for (let panel = 0; panel < 8; panel += 1) {
-    const start = panel * Math.PI / 4;
-    const end = (panel + 1) * Math.PI / 4;
-    const material = new THREE.MeshPhysicalMaterial({
-      color: panel % 2 ? palette.canopyAlt : palette.canopy,
-      transparent: true,
-      opacity: panel % 2 ? 0.2 : 0.24,
-      transmission: 0.68,
-      thickness: 0.08,
-      roughness: 0.12,
-      metalness: 0,
-      clearcoat: 1,
-      clearcoatRoughness: 0.1,
-      ior: 1.42,
-      iridescence: 0.08,
-      iridescenceIOR: 1.28,
-      side: THREE.DoubleSide,
-      depthWrite: false,
-    });
-    material.userData.openOpacity = material.opacity;
-    material.userData.foldedOpacity = panel % 2 ? 0.34 : 0.4;
-    canopyMaterials.push(material);
-    const canopyPanel = new THREE.Mesh(createCanopyPanelGeometry(THREE, start, end), material);
-    canopyGroup.add(canopyPanel);
-    morphMeshes.push(canopyPanel);
-
-    const hemPoints = Array.from({ length: 13 }, (_, point) => {
-      const u = point / 12;
-      return canopyPoint(THREE, start + (end - start) * u, 1, u);
-    });
-    const foldedHemPoints = Array.from({ length: 13 }, (_, point) => {
-      const u = point / 12;
-      return foldedCanopyPoint(THREE, start + (end - start) * u, 1, u);
-    });
-    const hem = createMorphingTube(THREE, hemPoints, foldedHemPoints, 0.009, seamMaterial, 28);
-    canopyGroup.add(hem);
-    morphMeshes.push(hem);
-
-    const centerAngle = (start + end) * 0.5;
-    const panelSeam = Array.from({ length: 11 }, (_, point) => canopyPoint(THREE, centerAngle, point / 10, 0.5));
-    const foldedPanelSeam = Array.from({ length: 11 }, (_, point) => foldedCanopyPoint(THREE, centerAngle, point / 10, 0.5));
-    const seam = createMorphingTube(THREE, panelSeam, foldedPanelSeam, 0.0045, seamMaterial, 24);
-    canopyGroup.add(seam);
-    morphMeshes.push(seam);
-  }
-
-  const domePoint = (angle, t) => canopyPoint(THREE, angle, t, 0);
-  const foldedDomePoint = (angle, t) => foldedCanopyPoint(THREE, angle, t, 0);
-
-  for (let rib = 0; rib < 8; rib += 1) {
-    const angle = rib * Math.PI / 4;
-    const ribSections = [[0, 0.565], [0.595, 1]];
-    ribSections.forEach(([start, end]) => {
-      const ribPoints = Array.from({ length: 9 }, (_, point) => domePoint(angle, THREE.MathUtils.lerp(start, end, point / 8)));
-      const foldedRibPoints = Array.from({ length: 9 }, (_, point) => foldedDomePoint(angle, THREE.MathUtils.lerp(start, end, point / 8)));
-      const ribMesh = createMorphingTube(THREE, ribPoints, foldedRibPoints, 0.012, metalMaterial, 22);
-      canopyGroup.add(ribMesh);
-      morphMeshes.push(ribMesh);
-    });
-
-    const joint = new THREE.Mesh(new THREE.SphereGeometry(0.034, 14, 10), tipMaterial);
-    const openJoint = domePoint(angle, 0.58);
-    const foldedJoint = foldedDomePoint(angle, 0.58);
-    joint.position.copy(openJoint);
-    canopyGroup.add(joint);
-    tipRecords.push({ tip: joint, openTip: openJoint, foldedTip: foldedJoint });
-
-    const openStretcherStart = new THREE.Vector3(0, 1.48, 0);
-    const foldedStretcherStart = new THREE.Vector3(0, 0.4, 0);
-    const openStretcherEnd = domePoint(angle, 0.61);
-    const foldedStretcherEnd = foldedDomePoint(angle, 0.61);
-    const stretcher = createCylinderBetween(THREE, openStretcherStart, openStretcherEnd, 0.007, softMetalMaterial);
-    canopyGroup.add(stretcher);
-    stretcherRecords.push({
-      stretcher,
-      openStretcherStart,
-      foldedStretcherStart,
-      openStretcherEnd,
-      foldedStretcherEnd,
-      currentStart: new THREE.Vector3(),
-      currentEnd: new THREE.Vector3(),
-    });
-
-    const tip = new THREE.Mesh(new THREE.SphereGeometry(0.035, 14, 10), tipMaterial);
-    const openTip = domePoint(angle, 1);
-    const foldedTip = foldedDomePoint(angle, 1);
-    tip.position.copy(openTip);
-    canopyGroup.add(tip);
-    tipRecords.push({ tip, openTip, foldedTip });
-  }
-
-  const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.026, 0.026, 3.51, 16), metalMaterial);
-  shaft.position.y = 0.785;
-  canopyGroup.add(shaft);
-  const runner = new THREE.Mesh(new THREE.CylinderGeometry(0.074, 0.064, 0.25, 18), softMetalMaterial);
-  runner.position.y = 1.48;
-  canopyGroup.add(runner);
-  const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.13, 0.17, 20), metalMaterial);
-  cap.position.y = 2.59;
-  canopyGroup.add(cap);
-  const topPin = new THREE.Mesh(new THREE.CylinderGeometry(0.023, 0.034, 0.42, 14), metalMaterial);
-  topPin.position.y = 2.88;
-  canopyGroup.add(topPin);
-
-  const handlePoints = [
-    new THREE.Vector3(0, -0.95, 0),
-    new THREE.Vector3(0, -1.19, 0),
-    new THREE.Vector3(0.04, -1.41, 0),
-    new THREE.Vector3(0.2, -1.57, 0),
-    new THREE.Vector3(0.43, -1.62, 0),
-    new THREE.Vector3(0.64, -1.52, 0),
-    new THREE.Vector3(0.72, -1.31, 0),
-    new THREE.Vector3(0.67, -1.13, 0),
-  ];
-  canopyGroup.add(createTube(THREE, handlePoints, 0.068, handleMaterial, 44));
 
   const clickableCards = [];
   const cardRecords = [];
   const fadeMaterials = [stringMaterial, clipMaterial];
 
   experiences.slice(0, 7).forEach((item, index) => {
-    const angle = THREE.MathUtils.degToRad(CARD_ANGLES[index]);
+    const { angle, open: openAnchor, folded: foldedAnchor } = getHangingAnchor(THREE, index);
     const stringLength = CARD_LENGTHS[index];
-    const openAnchor = domePoint(angle, 1);
-    const foldedAnchor = foldedDomePoint(angle, 1);
     const pivot = new THREE.Group();
     pivot.position.copy(openAnchor);
     pivot.rotation.y = angle;
@@ -398,16 +165,11 @@ function buildUmbrellaModel(THREE, OBB, scene, experiences, palette) {
 
   return {
     modelRoot,
-    canopyGroup,
+    rig,
     cardsGroup,
     clickableCards,
     cardRecords,
     fadeMaterials,
-    canopyMaterials,
-    morphMeshes,
-    tipRecords,
-    stretcherRecords,
-    runner,
   };
 }
 
@@ -439,8 +201,17 @@ function UmbrellaThreeScene({ experiences, isOpen, isRotating, fallingIndex, onT
     let disposed = false;
     let cleanup = () => {};
 
-    Promise.all([import('three'), import('three/addons/math/OBB.js')]).then(([THREE, { OBB }]) => {
+    Promise.all([
+      import('three'),
+      import('three/addons/math/OBB.js'),
+      import('three/addons/environments/RoomEnvironment.js'),
+    ]).then(async ([THREE, { OBB }, { RoomEnvironment }]) => {
       if (disposed) return;
+      const asset = loadUmbrellaModel(THREE);
+      if (disposed) {
+        disposeUmbrellaModel(asset);
+        return;
+      }
       const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.8));
       renderer.setClearColor(0x000000, 0);
@@ -453,9 +224,25 @@ function UmbrellaThreeScene({ experiences, isOpen, isRotating, fallingIndex, onT
 
       const scene = new THREE.Scene();
       scene.background = null;
+      let environment;
+      cleanup = () => {
+        environment?.dispose();
+        disposeUmbrellaModel(asset);
+        disposeScene(renderer, scene);
+        renderer.domElement.remove();
+      };
+      const environmentGenerator = new THREE.PMREMGenerator(renderer);
+      const room = new RoomEnvironment();
+      environment = environmentGenerator.fromScene(room, 0.04);
+      room.dispose();
+      environmentGenerator.dispose();
       const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 30);
       const css = getComputedStyle(mount);
-      const token = (name, fallback) => css.getPropertyValue(name).trim() || fallback;
+      const token = (name, fallback) => {
+        const value = css.getPropertyValue(name).trim() || fallback;
+        // Canvas accepts modern HSL, but Three.Color expects comma-separated HSL.
+        return value.replace(/hsl\(([-\d.]+)\s+([\d.]+)%\s+([\d.]+)%\)/g, 'hsl($1, $2%, $3%)');
+      };
       const palette = {
         canopy: token('--model-canopy', 'hsl(154 42% 83%)'),
         canopyAlt: token('--model-canopy-alt', 'hsl(342 35% 90%)'),
@@ -490,7 +277,14 @@ function UmbrellaThreeScene({ experiences, isOpen, isRotating, fallingIndex, onT
       rimLight.position.set(0, 4, -5);
       scene.add(rimLight);
 
-      const model = buildUmbrellaModel(THREE, OBB, scene, experiences, palette);
+      const model = buildUmbrellaModel(THREE, OBB, scene, experiences, palette, asset);
+      model.rig.group.traverse((mesh) => {
+        if (!mesh.isMesh) return;
+        mesh.material.envMap = environment.texture;
+        mesh.material.envMapIntensity = 0.6;
+      });
+      renderer.domElement.dataset.modelAsset = 'career-umbrella-procedural';
+      renderer.domElement.dataset.cardCount = String(model.cardRecords.length);
       const raycaster = new THREE.Raycaster();
       const pointer = new THREE.Vector2();
       const timer = new THREE.Timer();
@@ -511,11 +305,11 @@ function UmbrellaThreeScene({ experiences, isOpen, isRotating, fallingIndex, onT
         const compact = Math.min(width, window.innerWidth) <= 760;
         camera.fov = compact ? 39 : 34;
         const halfFovTangent = Math.tan(THREE.MathUtils.degToRad(camera.fov * 0.5));
-        const verticalFitDistance = 3.58 / halfFovTangent;
-        const horizontalFitDistance = 3.58 / (halfFovTangent * camera.aspect);
+        const verticalFitDistance = 3.8 / halfFovTangent;
+        const horizontalFitDistance = 3.8 / (halfFovTangent * camera.aspect);
         const cameraDistance = Math.max(verticalFitDistance, horizontalFitDistance);
-        camera.position.set(0, 0.08, cameraDistance);
-        camera.lookAt(0, 0.04, 0);
+        camera.position.set(0, -0.24, cameraDistance);
+        camera.lookAt(0, -0.24, 0);
         camera.updateProjectionMatrix();
       };
       const resizeObserver = new ResizeObserver(resize);
@@ -587,22 +381,7 @@ function UmbrellaThreeScene({ experiences, isOpen, isRotating, fallingIndex, onT
         observedAngularVelocity = nextAngularVelocity;
         previousRootRotation = model.modelRoot.rotation.y;
 
-        const foldProgress = 1 - openProgress;
-        model.canopyGroup.scale.set(1, 1, 1);
-        model.cardsGroup.scale.set(1, 1, 1);
-        model.morphMeshes.forEach((mesh) => { mesh.morphTargetInfluences[0] = foldProgress; });
-        model.canopyMaterials.forEach((material) => {
-          material.opacity = THREE.MathUtils.lerp(material.userData.foldedOpacity, material.userData.openOpacity, openProgress);
-        });
-        model.tipRecords.forEach(({ tip, openTip, foldedTip }) => {
-          tip.position.lerpVectors(foldedTip, openTip, openProgress);
-        });
-        model.stretcherRecords.forEach((record) => {
-          record.currentStart.lerpVectors(record.foldedStretcherStart, record.openStretcherStart, openProgress);
-          record.currentEnd.lerpVectors(record.foldedStretcherEnd, record.openStretcherEnd, openProgress);
-          updateCylinderBetween(THREE, record.stretcher, record.currentStart, record.currentEnd);
-        });
-        model.runner.position.y = THREE.MathUtils.lerp(0.4, 1.48, openProgress);
+        model.rig.update(openProgress);
 
         model.cardRecords.forEach((record, index) => {
           record.pivot.position.lerpVectors(record.foldedPosition, record.basePosition, openProgress);
@@ -703,6 +482,7 @@ function UmbrellaThreeScene({ experiences, isOpen, isRotating, fallingIndex, onT
           material.opacity = material.userData.baseOpacity;
         });
 
+        renderer.domElement.dataset.openProgress = openProgress.toFixed(4);
         renderer.domElement.dataset.modelRotation = model.modelRoot.rotation.y.toFixed(4);
         renderer.domElement.dataset.motionEnergy = reduceMotion
           ? '0'
@@ -722,10 +502,13 @@ function UmbrellaThreeScene({ experiences, isOpen, isRotating, fallingIndex, onT
         renderer.domElement.removeEventListener('pointerup', onPointerUp);
         renderer.domElement.removeEventListener('click', onClick);
         timer.dispose();
+        environment.dispose();
         disposeScene(renderer, scene);
         renderer.domElement.remove();
       };
     }).catch(() => {
+      cleanup();
+      cleanup = () => {};
       if (!disposed) setStatus('error');
     });
 

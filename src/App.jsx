@@ -28,6 +28,16 @@ const ExperienceUmbrella = lazy(() => import('./ExperienceUmbrella'));
 
 const assetUrl = (path) => `${import.meta.env.BASE_URL}${path}`;
 const chapterNavigateEvent = 'portfolio:chapter-navigate';
+const portfolioTags = new Set(['full', 'real']);
+
+function getPortfolioTag() {
+  const tag = new URLSearchParams(window.location.search).get('tag');
+  return portfolioTags.has(tag) ? tag : 'full';
+}
+
+function getSectionUrl(section) {
+  return `${window.location.pathname}${window.location.search}#${section}`;
+}
 
 const navItems = [
   { label: '首页', href: '#home' },
@@ -612,7 +622,9 @@ function preloadSectionAssets(section) {
   if (sectionPreloadCache.has(section)) return sectionPreloadCache.get(section);
 
   const tasks = (sectionPreloadAssets[section] ?? []).map(preloadImage);
-  if (section === 'about') tasks.push(import('./ExperienceUmbrella'));
+  if (section === 'about') {
+    tasks.push(import('./ExperienceUmbrella').catch(() => undefined));
+  }
   if (section === 'home' && document.fonts?.ready) tasks.push(document.fonts.ready);
 
   const preloadPromise = Promise.all(tasks).then(waitForPaint);
@@ -794,7 +806,7 @@ function usePageInteractions() {
         window.history.pushState(
           { ...window.history.state, portfolioProject: projectIndex },
           '',
-          href,
+          getSectionUrl(targetSection),
         );
         window.dispatchEvent(new PopStateEvent('popstate', { state: window.history.state }));
         return;
@@ -806,7 +818,7 @@ function usePageInteractions() {
       window.history.pushState(
         { ...window.history.state, portfolioProject: projectIndex ?? undefined },
         '',
-        href,
+        getSectionUrl(targetSection),
       );
       flushSync(() => {
         setPageState((current) => ({
@@ -3522,7 +3534,7 @@ function Projects() {
     window.history.pushState(
       { ...window.history.state, portfolioProject: index },
       '',
-      '#projects',
+      getSectionUrl('projects'),
     );
     setSelectedIndex(index);
   };
@@ -4852,7 +4864,7 @@ function PortfolioEntry({ onComplete }) {
   );
 }
 
-function PortfolioSite() {
+function PortfolioSite({ tag }) {
   const {
     activeSection,
     scrollProgress,
@@ -4871,7 +4883,7 @@ function PortfolioSite() {
     <>
       <a className="skip-link" href="#main-content">跳到主要内容</a>
       <Header activeSection={activeSection} scrollProgress={scrollProgress} />
-      <main className="portfolio-page-shell" id="main-content" tabIndex="-1">
+      <main className="portfolio-page-shell" id="main-content" tabIndex="-1" data-portfolio-tag={tag}>
         <div
           className={`portfolio-page-view is-${transitionPhase}`}
           key={activeSection}
@@ -4892,22 +4904,31 @@ function PortfolioSite() {
 }
 
 export default function App() {
+  const tag = getPortfolioTag();
   const [showEntry, setShowEntry] = useState(() => {
     if (window.location.hash !== '#home') {
-      window.history.replaceState({ ...window.history.state, portfolioProject: undefined }, '', '#home');
+      window.history.replaceState(
+        { ...window.history.state, portfolioProject: undefined },
+        '',
+        getSectionUrl('home'),
+      );
     }
     return true;
   });
   const closeEntry = useCallback(() => {
     if (window.location.hash !== '#home') {
-      window.history.replaceState({ ...window.history.state, portfolioProject: undefined }, '', '#home');
+      window.history.replaceState(
+        { ...window.history.state, portfolioProject: undefined },
+        '',
+        getSectionUrl('home'),
+      );
     }
     setShowEntry(false);
   }, []);
 
   return (
     <>
-      <PortfolioSite />
+      <PortfolioSite tag={tag} />
       {showEntry && <PortfolioEntry onComplete={closeEntry} />}
     </>
   );

@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>折椿网站使用教程</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:wght@500;600&family=Noto+Serif+SC:wght@400;500;600;700&display=swap');
+    :root { --ink:#173f35; --muted:#64766d; --paper:#f4f6ed; --mint:#dbe9dd; --mint-dark:#b5d0bd; --line:#c9d8cd; --cream:#fffdf7; --gold:#bd8a49; }
+    * { box-sizing: border-box; }
+    body { margin:0; background:#dfe7df; color:var(--ink); font-family:'Noto Serif SC', 'Songti SC', serif; }
+    .poster { width:1440px; min-height:2200px; margin:0 auto; padding:72px 84px 88px; background:radial-gradient(circle at 14% 9%, rgba(255,255,255,.9), transparent 25%), radial-gradient(circle at 88% 52%, rgba(210,232,218,.7), transparent 24%), var(--paper); position:relative; overflow:hidden; }
+    .poster:before { content:''; position:absolute; inset:0; opacity:.18; background-image:radial-gradient(#8fa89a 0.7px, transparent .7px); background-size:18px 18px; pointer-events:none; }
+    .content { position:relative; z-index:1; }
+    .masthead { display:flex; justify-content:space-between; align-items:flex-end; border-bottom:1px solid var(--line); padding-bottom:26px; }
+    .eyebrow { font:600 22px/1 'EB Garamond', serif; letter-spacing:.18em; text-transform:uppercase; color:#6f8c7d; }
+    h1 { margin:14px 0 0; font-size:68px; line-height:1.05; letter-spacing:.03em; font-weight:700; }
+    .sub { margin:18px 0 0; color:var(--muted); font-size:22px; line-height:1.7; }
+    .url { font:500 19px/1.5 'EB Garamond',serif; color:var(--ink); padding:13px 20px; border:1px solid var(--line); border-radius:999px; background:rgba(255,255,255,.58); }
+    .hero { margin-top:40px; display:grid; grid-template-columns: 1.3fr .7fr; gap:28px; align-items:stretch; }
+    .shot { background:rgba(255,255,255,.72); border:1px solid var(--line); border-radius:24px; padding:14px; box-shadow:0 20px 50px rgba(34,73,57,.12); }
+    .shot img { display:block; width:100%; height:610px; object-fit:cover; object-position:top center; border-radius:15px; }
+    .shot figcaption { display:flex; justify-content:space-between; gap:20px; padding:16px 8px 2px; color:var(--muted); font-size:17px; }
+    .hero-note { padding:42px 34px; background:var(--ink); color:#f3f7ee; border-radius:24px; display:flex; flex-direction:column; justify-content:space-between; min-height:686px; }
+    .hero-note h2 { font-size:36px; line-height:1.35; margin:0 0 24px; font-weight:600; }
+    .hero-note p { font-size:20px; line-height:1.9; color:#dce9df; margin:0; }
+    .route { margin-top:44px; display:grid; grid-template-columns: repeat(4,1fr); gap:16px; }
+    .step { min-height:244px; background:rgba(255,253,247,.8); border:1px solid var(--line); border-radius:20px; padding:24px 22px 22px; position:relative; }
+    .step:not(:last-child):after { content:'→'; position:absolute; right:-22px; top:96px; width:36px; height:36px; border-radius:50%; background:var(--paper); border:1px solid var(--line); display:grid; place-items:center; color:var(--gold); font-size:24px; z-index:2; }
+    .num { display:inline-grid; place-items:center; width:42px; height:42px; border-radius:50%; background:var(--mint); color:var(--ink); font:600 24px 'EB Garamond',serif; }
+    .step h3 { margin:18px 0 10px; font-size:24px; }
+    .step p { margin:0; color:var(--muted); font-size:16px; line-height:1.75; }
+    .section { margin-top:50px; }
+    .section-title { display:flex; align-items:baseline; gap:16px; border-bottom:1px solid var(--line); padding-bottom:15px; }
+    .section-title h2 { margin:0; font-size:38px; }
+    .section-title span { font:500 20px 'EB Garamond',serif; color:#7b9588; letter-spacing:.12em; }
+    .cards { margin-top:22px; display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+    .info-card { background:rgba(255,253,247,.76); border:1px solid var(--line); border-radius:20px; padding:26px 28px; display:grid; grid-template-columns:76px 1fr; gap:18px; }
+    .info-card .icon { width:64px; height:64px; border-radius:18px; background:var(--mint); display:grid; place-items:center; font-size:30px; color:var(--ink); }
+    .info-card h3 { margin:0 0 10px; font-size:25px; }
+    .info-card p { margin:0; color:var(--muted); line-height:1.8; font-size:17px; }
+    .info-card strong { color:var(--ink); }
+    .callout { margin-top:20px; background:linear-gradient(120deg,#e8f1e7,#f9f7ed); border:1px dashed #a6c1ae; border-radius:16px; padding:18px 22px; color:#45675a; font-size:17px; line-height:1.75; }
+    .menu { margin-top:20px; display:grid; grid-template-columns:repeat(5,1fr); gap:12px; }
+    .menu-item { text-align:center; background:rgba(255,253,247,.82); border:1px solid var(--line); border-radius:14px; padding:20px 12px; }
+    .menu-item b { display:block; font-size:21px; margin-bottom:7px; }
+    .menu-item span { color:var(--muted); font-size:15px; }
+    .contact { margin-top:48px; border-radius:24px; padding:34px 38px; background:var(--ink); color:#f4f7ef; display:grid; grid-template-columns:1fr 1fr; gap:28px; align-items:center; }
+    .contact h2 { margin:0 0 10px; font-size:34px; }
+    .contact p { margin:0; color:#d9e6dc; font-size:18px; line-height:1.75; }
+    .email { margin-top:18px; display:inline-block; font:600 31px 'EB Garamond',serif; color:#fff; border-bottom:1px solid #98c1aa; padding-bottom:5px; }
+    .contact-list { margin:0; padding-left:24px; color:#e4eee6; font-size:17px; line-height:2; }
+    .footer { margin-top:28px; display:flex; justify-content:space-between; color:#748d80; font-size:15px; }
+    @media print { body{background:white;} .poster{margin:0;} }
+    @media (max-width:700px) {
+      .poster { width:100%; min-height:0; padding:30px 18px 36px; }
+      .masthead { align-items:flex-start; flex-direction:column; gap:20px; }
+      h1 { font-size:42px; }
+      .sub { font-size:17px; }
+      .url { font-size:16px; }
+      .hero,.cards,.contact { grid-template-columns:1fr; }
+      .shot img { height:auto; aspect-ratio:1.22; }
+      .shot figcaption { font-size:13px; }
+      .hero-note { min-height:0; gap:28px; padding:28px 24px; }
+      .hero-note h2 { font-size:28px; }
+      .hero-note p { font-size:17px; }
+      .route { grid-template-columns:1fr; gap:12px; }
+      .step { min-height:0; padding:20px; }
+      .step:not(:last-child):after { content:'↓'; right:20px; top:auto; bottom:-20px; }
+      .section { margin-top:34px; }
+      .section-title h2 { font-size:28px; }
+      .section-title span { font-size:14px; }
+      .info-card { grid-template-columns:54px 1fr; padding:20px 16px; gap:14px; }
+      .info-card .icon { width:48px; height:48px; border-radius:14px; font-size:23px; }
+      .info-card h3 { font-size:21px; }
+      .info-card p,.callout { font-size:15px; }
+      .menu { grid-template-columns:1fr 1fr; }
+      .menu-item:last-child { grid-column:span 2; }
+      .contact { padding:26px 22px; }
+      .contact h2 { font-size:27px; }
+      .contact p,.contact-list { font-size:16px; }
+      .email { font-size:25px; }
+      .footer { gap:12px; flex-direction:column; font-size:13px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="poster">
+    <div class="content">
+      <header class="masthead">
+        <div><div class="eyebrow">折椿 · portfolio guide</div><h1>怎么逛这份作品集</h1><p class="sub">从首页出发，快速找到完整经历、全部案例与真实联系入口。</p></div>
+        <div class="url">resume.zhechun.space</div>
+      </header>
+      <section class="hero">
+        <figure class="shot"><img src="线上首页截图.png" alt="折椿作品集线上首页截图"><figcaption><span>线上首页真实界面</span><span>点击电话可听到来电提示</span></figcaption></figure>
+        <aside class="hero-note"><div><h2>先看菜单，再按兴趣深入</h2><p>顶部菜单始终提供五个入口。手机端同样可以直接点击。首页的“精选项目”会跳到案例总览，“联系我”会进入真实邮箱与留言表单。</p></div><p>建议浏览顺序<br><strong>关于 → 经历 → 优势 → 联系</strong></p></aside>
+      </section>
+      <section class="route">
+        <article class="step"><span class="num">01</span><h3>打开菜单</h3><p>点击顶部“关于 / 经历 / 优势 / 联系”，直接切换到对应章节。</p></article>
+        <article class="step"><span class="num">02</span><h3>看完整经历</h3><p>进入“关于”，找到“查看全部 7 段经历”，展开即可逐段阅读职责与成果。</p></article>
+        <article class="step"><span class="num">03</span><h3>看全部案例</h3><p>进入“经历”，打开 CCD 屏幕后浏览 12 个项目，也可展开案例汇总列表。</p></article>
+        <article class="step"><span class="num">04</span><h3>联系折椿</h3><p>点击“联系我”，可填写表单发送，也可直接写信到公开邮箱。</p></article>
+      </section>
+      <section class="section"><div class="section-title"><h2>完整经历在哪里</h2><span>ABOUT / 07 EXPERIENCES</span></div><div class="cards">
+        <article class="info-card"><div class="icon">↗</div><div><h3>关于 → 查看全部 7 段经历</h3><p>在“关于”页面的拍立得、履历雨伞下方，点击入口展开完整列表。每一段都包含<strong>时间、职位、公司、职责、成果</strong>，适合按时间线快速查看。</p></div></article>
+        <article class="info-card"><div class="icon">↕</div><div><h3>也可以沿页面继续下滑</h3><p>页面底部的“经历”提示会继续带你进入案例总览。手机端不需要记住路径，顺着页面向下即可。</p></div></article>
+      </div></section>
+      <section class="section"><div class="section-title"><h2>全部案例怎么查看</h2><span>SELECTED WORK / 12 PROJECTS</span></div><div class="cards">
+        <article class="info-card"><div class="icon">01</div><div><h3>先打开 CCD 屏幕</h3><p>进入“经历”后，点击银色 CCD 右上方的模式转盘。屏幕亮起后，项目胶卷与 12 个项目总览会出现。</p></div></article>
+        <article class="info-card"><div class="icon">12</div><div><h3>拖拽或打开“项目汇总”</h3><p>胶卷可以横向拖动；不想拖动时，点击“查看运营核心案例与 AI 实验室”，按 01—12 选择项目。</p></div></article>
+        <article class="info-card"><div class="icon">↗</div><div><h3>点击项目，进入案例窗口</h3><p>每个项目都能打开独立阅读窗口，查看项目概述、核心数据、截图轮播与补充材料。</p></div></article>
+        <article class="info-card"><div class="icon">⌁</div><div><h3>案例里的链接会跳到原作品</h3><p>打开案例窗口后，找到“原始作品 / 作品链接”区域，点击后会在新页面打开对应作品；看完可关闭窗口回到原位置。</p></div></article>
+      </div><div class="callout"><strong>数量说明：</strong>当前经历页共 12 个项目：8 个运营案例 + 4 个 AI 数字作品。每个项目的首项成果会先显示在胶卷或汇总列表里。</div></section>
+      <section class="section"><div class="section-title"><h2>菜单栏核心功能</h2><span>5 PRIMARY SECTIONS</span></div><div class="menu">
+        <div class="menu-item"><b>首页</b><span>电话、精选项目、音乐入口</span></div><div class="menu-item"><b>关于</b><span>个人介绍与 7 段完整经历</span></div><div class="menu-item"><b>经历</b><span>12 个案例与详情窗口</span></div><div class="menu-item"><b>优势</b><span>工作方法与能力卡片</span></div><div class="menu-item"><b>联系</b><span>表单与直接邮箱</span></div>
+      </div></section>
+      <section class="contact"><div><h2>邮箱是真实可发送的</h2><p>你可以直接复制邮箱写信，也可以在“联系”页提交留言表单。表单会通过 FormSubmit 转发到同一收件邮箱。</p><div class="email">2436528353@qq.com</div></div><ol class="contact-list"><li>点击顶部“联系我”或菜单“联系”。</li><li>填写称呼、回复方式和留言内容。</li><li>点击“发送留言”；也可直接发邮件。</li></ol></section>
+      <footer class="footer"><span>折椿 · 新媒体运营与内容策划作品集</span><span>教程图 · 2026</span></footer>
+    </div>
+  </main>
+</body>
+</html>
