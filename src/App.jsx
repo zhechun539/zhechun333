@@ -190,6 +190,69 @@ const experience = [
   },
 ];
 
+function getExperienceForTag(tag) {
+  if (tag === 'real') {
+    const realOverrides = {
+      '深圳华大基因细胞科技有限公司': {
+        responsibility: '负责公众号、小红书官号内容策划与发布，独立完成公众号选题、撰写和排版；协同营销活动、短视频、达人种草、SEO 与舆情反馈。',
+        achievement: '公众号原创 50+ 篇、阅读 4 万+、互动 3000+；小红书原创 60+ 篇、互动 2000+（单月最高 1000+）；短视频 30+ 条、总阅读 10 万+；百度百科浏览 27 万。',
+      },
+      '网易网络有限公司': {
+        responsibility: '参与教育类小红书矩阵账号从 0 到 1 搭建，持续测试账号定位、选题、标题、封面和正文；通过评论、私信承接咨询，并协同销售跟进。',
+        achievement: '每周稳定产出 2–3 个爆款，单篇点赞收藏近 4000+；累计后台咨询 1000+、及时留资 100+ 条，并参与本地化账号从 0 到 1 搭建。',
+      },
+      '北京金堤科技有限公司（天眼查）': {
+        time: '2024.11 - 2024.12',
+        type: '实习',
+        role: '内容运营',
+        achievement: '知乎单篇阅读 10 万+、话题进入热榜前 5、回答进入前 10；微博所选热点排名第 1，账号排名前 5、曝光 100 万+。',
+      },
+      '畅捷通信息技术股份有限公司': {
+        responsibility: '围绕财务软件账号策略，收集并改编内容，负责小红书日更并同步分发至短视频平台；结合财务工作场景、价格对比和功能价值组织表达，承接评论私信与需求收集。',
+        achievement: '累计收集、二改内容 100+ 篇，单账号最高曝光 1 万+，月均沉淀客户线索 30+ 条，并促成多笔成单。',
+      },
+      '北京趣拿软件科技有限公司（去哪儿）': {
+        achievement: '发布 63 篇攻略、累计获赞 1.2 万；实现全国前 30% UV 下单新客量，团队排名前三并获银牌。',
+      },
+    };
+
+    return experience.map((item) => ({ ...item, ...realOverrides[item.company] }));
+  }
+
+  if (tag !== 'full') return experience;
+
+  return experience.map((item) => {
+    if (item.company === '深圳华大基因细胞科技有限公司') {
+      return {
+        ...item,
+        time: '2025.09 - 2026.07',
+        responsibility: '负责公众号、小红书官号的选题策划、内容创作与发布，协同抖音、视频号短视频和营销活动，并参与 SEO、百科建设与用户互动复盘。',
+        achievement: '公众号原创 100+ 篇、阅读 8 万+、互动 3000+；小红书原创 120+ 篇、评论 4000+（单月最高 1000+）；短视频发布 70+ 条、播放 30 万+；“小鹿精华”百科浏览 30 万+。',
+      };
+    }
+    if (item.company === '网易网络有限公司') {
+      return {
+        ...item,
+        achievement: '每周稳定产出 2–3 个爆款，单篇点赞收藏近 4000+；累计承接后台咨询 1000+，及时留资 100+ 条，并参与本地化账号从 0 到 1 搭建。',
+      };
+    }
+    if (item.company === '畅捷通信息技术股份有限公司') {
+      return {
+        ...item,
+        responsibility: '围绕财务软件账号方向，收集并二次改编 100+ 篇内容，负责小红书日更并同步分发至短视频平台，承接评论私信与需求收集。',
+        achievement: '单账号最高曝光 1 万+，月均沉淀客户线索 30+ 条，并促成多笔成单。',
+      };
+    }
+    if (item.company.includes('去哪儿')) {
+      return {
+        ...item,
+        achievement: '发布 63 篇攻略、累计获赞 1.2 万；实现全国前 30% UV 下单新客量，团队排名前三并获银牌。',
+      };
+    }
+    return item;
+  });
+}
+
 const projectCatalog = [
   {
     title: '不牛马厨房',
@@ -540,6 +603,129 @@ const aiSkillProjects = [
 ];
 
 const projects = [...projectCatalog.slice(1), projectCatalog[0], ...aiSkillProjects];
+
+function getProjectsForTag(tag) {
+  if (tag === 'real') {
+    const realOverrides = {
+      '品牌自媒体运营': {
+        stats: [
+          { value: '50+', label: '公众号原创' },
+          { value: '4W+', label: '公众号阅读' },
+          { value: '60+', label: '小红书原创' },
+        ],
+        summary: '公众号原创 50+ 篇、阅读 4 万+、互动 3000+；小红书原创 60+ 篇、互动 2000+（单月最高 1000+）。协同短视频发布 30+ 条、总阅读 10 万+；推动 84 篇种草稿上线，曝光 200 万+、阅读 36 万+、互动 3 万+，其中 11 篇点赞 1000+；百度百科浏览 27 万。',
+      },
+      '小红书种草协同': {
+        stats: [
+          { value: '84', label: '篇上线稿件' },
+          { value: '200W+', label: '项目曝光' },
+          { value: '36W+', label: '项目阅读' },
+        ],
+        summary: '推动 84 篇种草稿件上线，累计曝光 200 万+、阅读 36 万+、互动 3 万+，其中 11 篇点赞 1000+；持续拓展小红书投放、博主置换及官媒宣发服务商，沉淀媒介渠道与达人资源。',
+      },
+      '教育类小红书获客': {
+        stats: [
+          { value: '2–3', label: '每周爆款内容' },
+          { value: '近4000+', label: '单篇赞藏' },
+          { value: '1000+', label: '后台咨询' },
+        ],
+        summary: '参与教育类小红书矩阵账号从 0 到 1 搭建，每周稳定产出 2–3 个爆款，单篇点赞收藏近 4000+；累计承接后台咨询 1000+、及时留资 100+ 条，并参与本地化账号探索。',
+      },
+      'B 端软件内容运营': {
+        stats: [
+          { value: '100+', label: '收集 / 二改内容' },
+          { value: '1W+', label: '单账号最高曝光' },
+          { value: '30+', label: '月均客户线索' },
+        ],
+        summary: '围绕财务软件账号方向收集并二次改编 100+ 篇内容，负责小红书日更并同步分发至短视频平台；单账号最高曝光 1 万+，月均沉淀客户线索 30+ 条，并促成多笔成单。',
+      },
+      '旅游攻略内容引流': {
+        summary: '围绕酒店、机票、景点等出行决策场景发布 63 篇攻略、累计获赞 1.2 万；实现全国前 30% UV 下单新客量，团队排名前三并获银牌。',
+      },
+      '热点传播与官方账号': {
+        stats: [
+          { value: '10W+', label: '知乎单篇阅读' },
+          { value: 'TOP 1', label: '微博热点排名' },
+          { value: '100W+', label: '微博曝光' },
+        ],
+      },
+      '个人账号运营': {
+        stats: [
+          { value: '3000+', label: '穿搭账号粉丝' },
+          { value: '6.4W+', label: '穿搭账号获赞藏' },
+          { value: '11.8W+', label: '文案账号获赞藏' },
+        ],
+        summary: '独立运营穿搭与文案两个账号：穿搭账号累计阅读 100 万+、粉丝 3000+、获赞藏 6.4 万+、变现 5000+；文案账号累计阅读 100 万+、获赞藏 11.8 万+，产出 20+ 篇千赞内容，抖音单篇最高曝光 51.6 万+，并有官方大促及当当网文案合作经历。',
+      },
+    };
+
+    return projects.map((project) => {
+      const override = realOverrides[project.title];
+      return override ? { ...project, ...override } : project;
+    });
+  }
+
+  if (tag !== 'full') return projects;
+
+  const fullOverrides = {
+    '品牌自媒体运营': {
+      stats: [
+        { value: '100+', label: '公众号原创推文' },
+        { value: '8W+', label: '公众号阅读' },
+        { value: '120+', label: '小红书原创' },
+      ],
+      summary: '公众号原创 100+ 篇、阅读 8 万+、互动 3000+；小红书原创 120+ 篇、累计评论 4000+（单月最高 1000+）；短视频发布 70+ 条、播放 30 万+。协同双十二预热，活动期间产品 2 分钟售罄；“小鹿精华”百度百科浏览 30 万+。',
+    },
+    '小红书种草协同': {
+      stats: [
+        { value: '84', label: '篇上线稿件' },
+        { value: '200W+', label: '项目曝光' },
+        { value: '36W+', label: '项目阅读' },
+      ],
+      summary: '累计推动 84 篇种草稿件上线，获得曝光 200 万+、阅读 36 万+、互动 3 万+，其中 11 篇点赞 1000+；筛选并建联 100+ 位置换博主，推动 2 次产品置换合作。',
+      rationale: {
+        ...projects.find((project) => project.title === '小红书种草协同').rationale,
+        evidence: '累计推动 84 篇稿件上线，项目曝光 200 万+、阅读 36 万+、互动 3 万+，其中 11 篇点赞 1000+。合作复盘结合粉丝量级、内容类型、互动表现和受众匹配度判断稿件价值；项目结束后继续拓展投放与宣发服务商，累计筛选并建联 100+ 位置换博主，推动 2 次产品置换合作，沉淀媒介渠道与达人资源。',
+      },
+    },
+    '教育类小红书获客': {
+      stats: [
+        { value: '2–3', label: '每周爆款内容' },
+        { value: '近4000+', label: '单篇赞藏' },
+        { value: '1000+', label: '后台咨询' },
+      ],
+      summary: '参与教育类小红书矩阵账号从 0 到 1 搭建，每周稳定产出 2–3 个爆款，单篇点赞收藏近 4000+；累计承接后台咨询 1000+、及时留资 100+ 条，并参与本地化账号探索。',
+    },
+    'B 端软件内容运营': {
+      stats: [
+        { value: '100+', label: '收集 / 二改内容' },
+        { value: '1W+', label: '单账号最高曝光' },
+        { value: '30+', label: '月均客户线索' },
+      ],
+      summary: '围绕财务软件账号方向收集、改编并迭代 100+ 篇内容；小红书日更并同步分发至短视频平台，单账号最高曝光 1 万+，月均沉淀客户线索 30+ 条，并促成多笔成单。',
+    },
+    '旅游攻略内容引流': {
+      summary: '围绕酒店、机票、景点等出行决策场景发布 63 篇攻略、累计获赞 1.2 万；实现全国前 30% UV 下单新客量，团队排名前三并获银牌。',
+    },
+    '个人账号运营': {
+      stats: [
+        { value: '3100+', label: '穿搭账号粉丝' },
+        { value: '6.4W+', label: '穿搭账号获赞藏' },
+        { value: '11.8W+', label: '文案账号获赞藏' },
+      ],
+      summary: '独立运营穿搭与文案两个账号：穿搭账号累计阅读 100 万+、粉丝 3100+、获赞藏 6.4 万+，变现 3000+；文案账号累计阅读 100 万+、获赞藏 11.8 万+，产出 20+ 篇千赞内容，抖音单篇最高曝光 51.6 万+。',
+      rationale: {
+        ...projects.find((project) => project.title === '个人账号运营').rationale,
+        evidence: '穿搭账号以不出镜的好物与店铺分享降低制作门槛，累计阅读 100 万+、粉丝 3100+、获赞藏 6.4 万+，并实现 3000+ 变现；文案账号围绕明星、歌曲、歌词与情绪共鸣策划内容，累计阅读 100 万+、获赞藏 11.8 万+，产出 20+ 篇千赞内容。文案内容同步分发至抖音，单篇最高曝光 51.6 万+，并有当当网文案合作经历。',
+      },
+    },
+  };
+
+  return projects.map((project) => {
+    const override = fullOverrides[project.title];
+    return override ? { ...project, ...override } : project;
+  });
+}
 
 const strengthTarotAssets = Array.from({ length: 5 }, (_, index) => {
   const number = String(index + 1).padStart(2, '0');
@@ -2492,7 +2678,7 @@ function PortraitProfile() {
   );
 }
 
-function About() {
+function About({ experiences = experience }) {
   const [isExperienceArchiveOpen, setIsExperienceArchiveOpen] = useState(false);
 
   return (
@@ -2509,7 +2695,7 @@ function About() {
             </section>
           )}
         >
-          <ExperienceUmbrella experiences={experience} />
+          <ExperienceUmbrella experiences={experiences} />
         </Suspense>
         <section className={`about-experience-archive${isExperienceArchiveOpen ? ' is-open' : ''}`} aria-labelledby="about-experience-archive-title">
           <button
@@ -2531,7 +2717,7 @@ function About() {
             id="about-experience-archive-list"
             hidden={!isExperienceArchiveOpen}
           >
-            {experience.map((item, index) => (
+            {experiences.map((item, index) => (
               <article className="about-experience-archive-item" key={`${item.company}-${item.time}`}>
                 <span className="about-experience-archive-number">{String(index + 1).padStart(2, '0')}</span>
                 <div className="about-experience-archive-role">
@@ -3474,7 +3660,7 @@ function ProjectDetailModal({ index, onClose, project, returnFocusElement }) {
   );
 }
 
-function Projects() {
+function Projects({ projects: pageProjects = projects }) {
   const [selectedIndex, setSelectedIndex] = useState(() => {
     const historyIndex = window.history.state?.portfolioProject;
     return Number.isInteger(historyIndex) ? historyIndex : null;
@@ -3483,7 +3669,7 @@ function Projects() {
   const [isProjectSummaryOpen, setIsProjectSummaryOpen] = useState(false);
   const ccdAudioRef = useRef(null);
   const projectButtonRefs = useRef([]);
-  const selectedProject = selectedIndex === null ? null : projects[selectedIndex];
+  const selectedProject = selectedIndex === null ? null : pageProjects[selectedIndex];
 
   useEffect(() => () => {
     ccdAudioRef.current?.close().catch(() => {});
@@ -3592,7 +3778,7 @@ function Projects() {
       <div className="experience-overview-panel">
         <section className="project-field" aria-label="项目胶卷总览">
           <DraggableProjectGrid
-            projects={projects}
+            projects={pageProjects}
             onProjectOpen={openProject}
           />
         </section>
@@ -3610,7 +3796,7 @@ function Projects() {
             <span className="project-summary-toggle-icon" aria-hidden="true"><ChevronDown /></span>
           </button>
           <div className="project-summary-list" id="project-summary-list" hidden={!isProjectSummaryOpen}>
-            {projects.map((project, index) => (
+            {pageProjects.map((project, index) => (
             <button
               className="project-summary-row"
               type="button"
@@ -4871,10 +5057,12 @@ function PortfolioSite({ tag }) {
     showBackToTop,
     transitionPhase,
   } = usePageInteractions();
+  const pageExperience = getExperienceForTag(tag);
+  const pageProjects = getProjectsForTag(tag);
   const pages = {
     home: <Hero />,
-    about: <About />,
-    projects: <Projects />,
+    about: <About experiences={pageExperience} />,
+    projects: <Projects projects={pageProjects} />,
     strengths: <Strengths />,
     contact: <Contact />,
   };
